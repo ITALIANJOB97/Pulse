@@ -3,11 +3,11 @@ Eseguire sudo bash deploy/upgrade-mint.sh dalla cartella estratta.
 Leggere AGGIORNAMENTO_LINUX_MINT.txt. Non ripetere il setup.
 
 PAGINA BIANCA SU UN PC GIA INSTALLATO?
-Usare il pacchetto PULSE-Diagnosi-Linux-Mint-0.2.2.zip oppure, da questa cartella:
+Usare il pacchetto PULSE-Diagnosi-Linux-Mint-0.2.3.zip oppure, da questa cartella:
     sudo bash deploy/diagnose-mint.sh
 Copiare il file nella cartella diagnostica sulla USB e allegarlo alla chat.
 Non occorre reinstallare. I dettagli sono in DIAGNOSI_LINUX_MINT.txt.
-PULSE · DIETIKON 0.2.2 — LINUX MINT 22.x
+PULSE · DIETIKON 0.2.3 — LINUX MINT 22.x
 
 PRIMA INSTALLAZIONE SU UN PC SENZA PULSE
 1. Estrarre completamente lo ZIP.

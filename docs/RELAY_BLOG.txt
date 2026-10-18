@@ -1,0 +1,76 @@
+PULSE — COLLEGAMENTO GITHUB PRIVATO -> BLOG -> MINT
+=================================================
+Questo collegamento si configura sul tuo hosting, anche da Lecce.
+Il Mint continua a usare il canale blog già autorizzato. Nessun token sul Mint,
+nessuna sostituzione del servizio root e nessuna nuova configurazione iniziale.
+La repository resta privata; lo ZIP sul blog è raggiungibile pubblicamente.
+
+REQUISITI HOSTING
+PHP CLI 8.1+ con curl, sodium e mbstring; HTTPS in uscita verso api.github.com
+e release-assets.githubusercontent.com; attività pianificate (cron); una
+cartella privata FUORI dalla radice pubblica del sito. Il programma carica
+lo ZIP in memoria: almeno 256 MB di memory_limit per pacchetti fino a 100 MB.
+Se il tuo piano non offre questi requisiti, non attivare il relay: gli upload
+manuali sul blog continuano a funzionare e non richiedono accesso al Mint.
+
+CONFIGURAZIONE UNA TANTUM
+1. Carica i file della cartella privata/ di PULSE-Relay-Hosting-0.2.3.zip in una
+   cartella fuori dalla radice pubblica, ad esempio /home/ACCOUNT/pulse-relay/.
+   NON caricare quella cartella dentro /myfile/Pulse/ o public_html.
+   Il file release-public.key è solo la chiave pubblica: non serve la chiave privata.
+2. Rinomina blog-relay-config.example.php in config.php e imposta:
+   web_root: percorso assoluto della radice pubblica del sito;
+   public_dir: lo stesso percorso seguito da /myfile/Pulse.
+3. In GitHub crea un fine-grained token con accesso SOLO a ITALIANJOB97/Pulse,
+   permesso Contents: Read-only, scadenza annotata. Inseriscilo soltanto nel
+   config.php PRIVATO oppure nella variabile PULSE_GITHUB_TOKEN del cron.
+   Non metterlo in chat, nel blog pubblico, in un URL o nella repository.
+   Nel pannello file imposta i permessi di config.php a 600.
+4. Nel pannello delle attività pianificate prova il comando (adatta i percorsi):
+   /usr/bin/php /home/ACCOUNT/pulse-relay/blog-sync.php --config /home/ACCOUNT/pulse-relay/config.php
+5. Pianificalo ogni 15 minuti con lo stesso comando. Leggi il suo output dal
+   pannello o salva il log nella cartella PRIVATA del relay.
+   Se riesce: "PULSE X.Y.Z available via blog."
+   Se GitHub non ha ancora una release completa, segnala un errore senza
+   sostituire i file già pubblicati. La Dashboard continua a funzionare.
+6. Quando il token scade, aggiornalo nel config.php privato; nessuna modifica al Mint.
+
+COME PREPARARE UNA VERSIONE (COMPUTER DI SVILUPPO)
+- Testare il codice, incrementare VERSION, aggiornare deploy/release-notes.json.
+- python bin/build-linux-mint-zip.py
+- php -d extension=sodium bin/publish-release.php publish
+- Caricare codice e commit nella repository privata.
+- Creare una GitHub Release stabile vX.Y.Z, inizialmente Draft.
+- Allegare TUTTI questi cinque file da dist/GitHub/vX.Y.Z/:
+  pulse-X.Y.Z.zip, stable.json, stable.json.sig,
+  blog-stable.json, blog-stable.json.sig.
+- Pubblicare come Latest soltanto dopo avere caricato tutti gli allegati.
+  Un semplice commit non è un aggiornamento. Non modificare una versione
+  già pubblicata: incrementare il numero.
+- Entro circa 15 minuti il relay copia il pacchetto firmato sul blog;
+  entro altri 30 minuti il Mint lo rileva e lo programma per la notte.
+
+CONTROLLI
+Il relay verifica firma Ed25519, provenienza/tag, compatibilità con updater v1,
+scadenza, dimensione e SHA-256. Rifiuta downgrade e pacchetti differenti con
+la stessa versione. Non invia il token al CDN. Pubblica lo ZIP prima del
+manifest. Durante i due brevi cambi dei file manifest/firma un controllo
+può fallire: il Mint ritenta, senza installare contenuti non verificati.
+La chiave PRIVATA di firma resta offline sul computer di sviluppo.
+Il relay non cancella vecchi ZIP, dati del sito o dati del Mint.
+
+ARUBA — INDICAZIONI PER IL PANNELLO
+Pannello Aruba > Hosting Linux (o il servizio WordPress) > Processi Cron >
+Aggiungi Cron. Scegli PHP, non HTTP/HTTPS. Indica il percorso privato di
+blog-relay-cron.php: questo wrapper legge config.php nella stessa cartella,
+senza dover scrivere il token o argomenti nel comando del cron.
+Se il campo richiede un comando completo, usa l’interprete PHP indicato
+nel pannello seguito dal percorso dello script; non indovinare il percorso
+assoluto del sito. Frequenza: ogni 15 minuti. Controlla ultima esecuzione e
+Dettagli log errore. Le pianificazioni Aruba sono in UTC; un intervallo
+ogni 15 minuti evita differenze tra ora italiana/svizzera e UTC.
+La disponibilità della cartella privata e i suoi percorsi vanno verificati
+nel tuo piano. Se non puoi accedere fuori dalla radice pubblica, non inserire
+il token in /myfile/Pulse: mantieni per ora la pubblicazione manuale sul blog.
+Guida ufficiale verificata il 18/10/2026:
+https://guide.aruba.it/hosting-e-domini/hosting/hosting-linux/pannello-controllo-linux/processi-cron

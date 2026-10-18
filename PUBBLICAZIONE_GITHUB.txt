@@ -1,11 +1,16 @@
-PULSE 0.2.2 — GITHUB PRIVATO
+PULSE 0.2.3 — GITHUB PRIVATO
 ============================
 Repository: https://github.com/ITALIANJOB97/Pulse
 La repository resta privata. Per leggerla/scaricarla dal browser serve un account autorizzato.
 Git contiene il codice; Releases contiene i pacchetti pronti. I commit da soli non attivano aggiornamenti.
 
-PRIMO PASSAGGIO SU MINT (ANCHE DA 0.1.1 / 0.2.0 / 0.2.1)
-1. Scarica l'allegato pulse-0.2.2.zip dalla release v0.2.2 sul tuo PC autorizzato.
+DUE MODALITÀ
+Per Mint già configurato sul blog, puoi evitare comandi sul PC usando il relay
+hosting: docs/RELAY_BLOG.txt. La credenziale resta sull’hosting.
+I passi seguenti servono SOLO per il passaggio DIRETTO Mint -> GitHub.
+
+PRIMO PASSAGGIO DIRETTO SU MINT (ANCHE DA 0.1.1 / 0.2.0 / 0.2.1)
+1. Scarica l'allegato pulse-0.2.3.zip dalla release v0.2.3 sul tuo PC autorizzato.
    Puoi copiarlo sul Mint via USB. Non usare gli archivi Source code di GitHub.
 2. Crea dalla Dashboard un backup manuale e scaricalo su USB.
 3. Crea su GitHub un fine-grained personal access token:
@@ -59,10 +64,12 @@ PUBBLICARE UNA VERSIONE FUTURA (COMPUTER DI SVILUPPO)
    Su PHP con sodium già attivo l'opzione -d non serve.
 4. In GitHub Releases creare una bozza con tag vX.Y.Z sul commit verificato.
    Copiare il testo da dist/GitHub/vX.Y.Z/release-notes.md.
-5. Allegare dalla stessa cartella tutti e tre i file:
+5. Allegare dalla stessa cartella tutti e cinque i file:
        pulse-X.Y.Z.zip
        stable.json
        stable.json.sig
+       blog-stable.json
+       blog-stable.json.sig
 6. Pubblicare soltanto quando tutti gli allegati sono presenti, come release stabile Latest.
    Non usare prerelease/draft per una versione destinata ai PC del negozio.
    Non sostituire il pacchetto di una versione pubblicata: incrementare VERSION.
@@ -74,6 +81,8 @@ La chiave .release-private/signing.key resta soltanto sul computer di sviluppo:
 conservare una copia protetta offline. Non rigenerarla a ogni release.
 
 BLOG
-La guida può restare sul blog: caricare soltanto public/guide/ in /myfile/Pulse/guide/.
-Per mantenere privato il codice NON pubblicare sul blog il pacchetto del programma
-né lo ZIP PULSE-Blog, che contiene il programma oltre alla guida.
+Il pacchetto PULSE-Blog-0.2.3.zip aggiorna il vecchio canale senza comandi sul
+Mint. Per i successivi aggiornamenti automatici via GitHub configurare il
+relay sul hosting. Vedere PUBBLICAZIONE_BLOG.txt e docs/RELAY_BLOG.txt.
+La repository resta privata ma il pacchetto sul blog è accessibile tramite URL.
+Per mantenere riservato anche il programma, usare il canale GitHub diretto.

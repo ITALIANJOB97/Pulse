@@ -1,12 +1,12 @@
 GIA INSTALLATO? Leggere AGGIORNAMENTO_LINUX_MINT.txt. Questa guida inizia dalla prima installazione.
 
 PULSE · DIETIKON — LINUX MINT
-Versione 0.2.2 | PC Linux Mint 22.x a 64 bit | Schermo orizzontale
+Versione 0.2.3 | PC Linux Mint 22.x a 64 bit | Schermo orizzontale
 Cinnamon, MATE o Xfce. Non usare questo installer su Mint 21 o LMDE.
 
 AVVIO RAPIDO
 ------------
-1. Copiare PULSE-Dietikon-Linux-Mint-0.2.2.zip sul PC e decomprimerlo
+1. Copiare PULSE-Dietikon-Linux-Mint-0.2.3.zip sul PC e decomprimerlo
    nella cartella personale. Aprire un terminale nella cartella estratta.
 2. Installare server e componenti:
        sudo bash deploy/install-mint.sh
@@ -63,7 +63,7 @@ php8.3-xml, php8.3-common, php8.3-opcache, chromium,
 curl, rsync, unzip, ca-certificates e util-linux.
 
 Crea:
-    /opt/pulse/releases/0.2.2       Codice della release
+    /opt/pulse/releases/0.2.3       Codice della release
     /opt/pulse/current              Collegamento alla release attiva
     /var/lib/pulse                  Database, foto, sessioni e backup
     /usr/local/bin/pulse-kiosk      Supervisore della TV
@@ -188,7 +188,7 @@ La copia automatica su NAS non e configurata in questa versione.
 
 Se sul Raspberry esistono gia dati PULSE, creare e scaricare un backup
 PULSE dal Raspberry, poi usare la procedura di ripristino sul PC Mint.
-Il backup 0.1.0 e compatibile con 0.2.2. Non trasferire i file di sessione
+Il backup 0.1.0 e compatibile con 0.2.3. Non trasferire i file di sessione
 o un database aperto copiandoli a mano.
 
 RIPRISTINO (sostituisce dati, account e impostazioni):
@@ -224,13 +224,14 @@ Non rilanciare l'installer iniziale e non copiare file sopra /var/lib/pulse.
 Il comando conserva dati e immagini e richiede un backup verificato prima
 che il codice venga attivato. In caso di errore ripristina la versione precedente.
 
-Da 0.2.2 Mint usa GitHub Releases privato, controllato ogni 30 minuti.
+Le nuove installazioni usano GitHub Releases privato, controllato ogni 30 minuti.
+Un aggiornamento automatico dal blog mantiene invece il servizio blog esistente.
 Configurare la credenziale: sudo python3 deploy/configure-github-mint.py
-Istruzioni complete: PUBBLICAZIONE_GITHUB.txt.
+Istruzioni complete: docs/PUBBLICAZIONE_GITHUB.txt.
 Finestra iniziale: 03:00-04:00 Europe/Zurich, configurabile nelle impostazioni.
 Sono disponibili pausa, rinvio di almeno 24 ore, nuovo tentativo e note release.
 Il servizio crea cinque backup protetti separati in /var/lib/pulse-updater/backups.
-Per i pacchetti privati leggere PUBBLICAZIONE_GITHUB.txt.
+Per i pacchetti privati leggere docs/PUBBLICAZIONE_GITHUB.txt.
 Per la sola guida online leggere PUBBLICAZIONE_BLOG.txt.
 Restano entrambi gli avvisi TV: disponibilita di una versione e installazione.
 Le nuove versioni del servizio privilegiato richiedono un bootstrap manuale.

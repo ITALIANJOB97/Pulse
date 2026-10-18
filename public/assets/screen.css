@@ -8,3 +8,5 @@
 
 /* Four team metrics, including the combined monthly service result. */
 .metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.metric{padding:32px 25px;min-height:450px}.metric h2{font-size:28px;min-height:76px}.metric .value{font-size:82px;letter-spacing:-3px;margin:30px 0}.metric .value small{font-size:32px}.metric .trend{font-size:21px;line-height:1.4}.metric .target{font-size:23px;overflow-wrap:anywhere}.signals{gap:12px;flex-wrap:wrap}.status-label{font-size:20px;margin-left:0}.metric:last-child .value{font-size:62px;min-height:90px;display:flex;align-items:center}
+
+.screen-footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;min-width:230px}.author-credit{color:#fff;font-size:17px;line-height:1.2;text-decoration:none;white-space:nowrap}.author-credit:hover{text-decoration:underline;text-underline-offset:4px}.author-credit:focus-visible{outline:2px solid var(--gold);outline-offset:5px}

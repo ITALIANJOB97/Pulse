@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 declare(strict_types=1);
-// Workstation publisher: private GitHub release assets and a public guide-only ZIP.
+// Workstation publisher: sign private GitHub and legacy blog channels with one offline key.
 if(PHP_SAPI!=='cli')exit(1);
 try{
     if(!extension_loaded('sodium'))throw new RuntimeException('PHP sodium required (Windows: php -d extension=sodium).');
@@ -15,7 +15,7 @@ try{
         file_put_contents($public,base64_encode(sodium_crypto_sign_publickey($pair)).PHP_EOL);sodium_memzero($pair);
         echo "Signing key created. Back it up offline; never publish it.\n";exit;
     }
-    if($command!=='publish')throw new RuntimeException('Usage: php bin/publish-release.php init-key | publish');
+    if(!in_array($command,['publish','publish-blog'],true))throw new RuntimeException('Usage: php bin/publish-release.php init-key | publish | publish-blog');
     $version=trim(file_get_contents($root.'/VERSION'));
     if(!preg_match('/^\d+\.\d+\.\d+$/D',$version))throw new RuntimeException('Invalid version.');
     $zip=$root.'/dist/PULSE-Dietikon-Linux-Mint-'.$version.'.zip';
@@ -36,15 +36,25 @@ try{
         'size'=>filesize($target),'sha256'=>hash_file('sha256',$target),'notes'=>$notes
     ];
     $json=json_encode($manifest,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;
-    $sig=sodium_crypto_sign_detached($json,$secret);sodium_memzero($secret);
+    $sig=sodium_crypto_sign_detached($json,$secret);
     if(!sodium_crypto_sign_verify_detached($sig,$json,$key))throw new RuntimeException('Signature self-check failed.');
     file_put_contents($dir.'/stable.json',$json);file_put_contents($dir.'/stable.json.sig',base64_encode($sig).PHP_EOL);
-    $text="# PULSE ".$version."\n\nRepository privata: gli aggiornamenti richiedono una credenziale di sola lettura sul Mint.\n\n";
-    $text.="Per passare dal blog a GitHub, scarica **pulse-".$version.".zip**, estrailo e segui PUBBLICAZIONE_GITHUB.txt. Dalla cartella estratta esegui:\n\n```bash\nsudo python3 deploy/configure-github-mint.py\nsudo bash deploy/upgrade-mint.sh\n```\n\n";
+    // The installed v1 service stays pinned to the blog. Sign a second manifest,
+    // without changing its trusted code or distributing the private signing key.
+    $blogManifest=$manifest;
+    $blogManifest['min_updater']=1;
+    $blogManifest['url']='https://www.luigipranzo.com/myfile/Pulse/pulse-'.$version.'.zip';
+    $blogJson=json_encode($blogManifest,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;
+    $blogSig=base64_encode(sodium_crypto_sign_detached($blogJson,$secret)).PHP_EOL;
+    sodium_memzero($secret);
+    file_put_contents($dir.'/blog-stable.json',$blogJson);
+    file_put_contents($dir.'/blog-stable.json.sig',$blogSig);
+    $text="# PULSE ".$version."\n\nRepository privata: credenziale di sola lettura sul hosting per il relay, oppure sul Mint per il canale diretto.\n\n";
+    $text.="Canale esistente via blog: il relay hosting usa gli allegati blog-stable.json e blog-stable.json.sig con lo stesso ZIP, senza configurare il Mint. Vedi docs/RELAY_BLOG.txt.\n\nPer passare direttamente dal blog a GitHub, scarica **pulse-".$version.".zip**, estrailo e segui docs/PUBBLICAZIONE_GITHUB.txt. Dalla cartella estratta esegui:\n\n```bash\nsudo python3 deploy/configure-github-mint.py\nsudo bash deploy/upgrade-mint.sh\n```\n\n";
     $text.="Il primo comando richiede un fine-grained token limitato a Pulse con Contents: Read-only. Il secondo aggiorna una volta anche il servizio, crea il backup e conserva dati, utenti e foto. Non ripetere l’installer iniziale. Usa l’allegato **pulse-".$version.".zip**: gli archivi Source code di GitHub non sono pacchetti installabili.\n\n";
     foreach(['en'=>'English','de'=>'Deutsch','fr'=>'Français'] as $lang=>$title)$text.='## '.$title."\n\n".$notes[$lang]."\n\n";
     file_put_contents($dir.'/release-notes.md',$text);
-    // The blog package deliberately contains only the public help pages.
+    // This separate guide archive contains only public help pages.
     $out=$root.'/dist/PULSE-Guida-Blog-'.$version.'.zip';$archive=new ZipArchive();
     if($archive->open($out,ZipArchive::CREATE|ZipArchive::OVERWRITE)!==true)throw new RuntimeException('Cannot build guide archive.');
     $guide=$root.'/public/guide';
@@ -54,5 +64,25 @@ try{
         $archive->addFile($file->getPathname(),'Pulse/guide/'.$relative);
     }
     $archive->close();file_put_contents($out.'.sha256',hash_file('sha256',$out).'  '.basename($out).PHP_EOL);
-    echo "Signed private GitHub assets: dist/GitHub/v".$version."\nPublic guide only: ".basename($out)."\nNo runtime data or private signing key packaged.\n";
+    $relay=$root.'/dist/PULSE-Relay-Hosting-'.$version.'.zip';$relayArchive=new ZipArchive();
+    if($relayArchive->open($relay,ZipArchive::CREATE|ZipArchive::OVERWRITE)!==true)throw new RuntimeException('Cannot build hosting relay archive.');
+    foreach(['blog-sync.php','blog-relay-config.example.php','blog-relay-cron.php','release-public.key'] as $file)$relayArchive->addFile($root.'/deploy/'.$file,'privata/'.$file);
+    $relayArchive->addFile($root.'/docs/RELAY_BLOG.txt','RELAY_BLOG.txt');
+    $relayArchive->close();file_put_contents($relay.'.sha256',hash_file('sha256',$relay).'  '.basename($relay).PHP_EOL);
+    if($command==='publish-blog'){
+        $out=$root.'/dist/PULSE-Blog-'.$version.'.zip';$archive=new ZipArchive();
+        if($archive->open($out,ZipArchive::CREATE|ZipArchive::OVERWRITE)!==true)throw new RuntimeException('Cannot build blog archive.');
+        $archive->addFile($target,'Pulse/pulse-'.$version.'.zip');
+        $archive->addFromString('Pulse/stable.json',$blogJson);
+        $archive->addFromString('Pulse/stable.json.sig',$blogSig);
+        foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($guide,FilesystemIterator::SKIP_DOTS)) as $file){
+            if($file->isLink()||!$file->isFile())throw new RuntimeException('Unexpected guide entry.');
+            $relative=str_replace('\\','/',substr($file->getPathname(),strlen($guide)+1));
+            $archive->addFile($file->getPathname(),'Pulse/guide/'.$relative);
+        }
+        $archive->addFile($root.'/PUBBLICAZIONE_BLOG.txt','LEGGIMI_PRIMA.txt');
+        $archive->close();file_put_contents($out.'.sha256',hash_file('sha256',$out).'  '.basename($out).PHP_EOL);
+        echo "Blog upload archive: ".basename($out)." (program ZIP is accessible by URL after upload).\n";
+    }
+    echo "Signed private GitHub assets: dist/GitHub/v".$version."\nGuide: PULSE-Guida-Blog-".$version.".zip\nHosting relay: ".basename($relay)."\nNo runtime data or private signing key packaged.\n";
 }catch(Throwable $e){fwrite(STDERR,$e->getMessage().PHP_EOL);exit(1);}

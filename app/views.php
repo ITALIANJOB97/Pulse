@@ -3,7 +3,8 @@ declare(strict_types=1);
 function pageStart(string $title,string $class=''): void {
     echo '<!doctype html><html lang="'.e(language()).'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.e($title).' · PULSE</title><link rel="stylesheet" href="/assets/app.css?v='.e(version()).'"></head><body class="'.e($class).'">';
 }
-function pageEnd(): void { echo '<script src="/assets/admin.js?v='.e(version()).'" defer></script></body></html>'; }
+function authorCredit(): string { return '<a class="author-credit" href="https://www.luigipranzo.com/" target="_blank" rel="noopener noreferrer">By Luigi Juan Pranzo</a>'; }
+function pageEnd(): void { echo '<footer class="app-footer">'.authorCredit().'</footer><script src="/assets/admin.js?v='.e(version()).'" defer></script></body></html>'; }
 function brand(): void { echo '<a class="brand" href="/">PULSE<span></span></a>'; }
 function languagePicker(): void {
     echo '<form class="languages" method="post" action="/action">'.csrf().'<input type="hidden" name="action" value="language"><input type="hidden" name="return" value="'.e($_SERVER['REQUEST_URI']).'">';
@@ -71,7 +72,7 @@ function renderLogin(): void {
 function renderDisplay(array $data,bool $archive=false): void {
     $data['labels']=dictionary($data['language']);$data['archive']=$archive;
     echo '<!doctype html><html lang="'.e($data['language']).'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.e($data['store']).'</title><link rel="stylesheet" href="/assets/screen.css?v='.e(version()).'"></head><body>';
-    echo '<div id="screen"><header><div class="brand">PULSE<span></span></div><div class="store" id="store"></div><div class="clock" id="clock"></div></header><main id="slide"></main><footer><span id="period"></span><nav id="pages" aria-label="Pages"></nav><span id="page-count"></span></footer><div class="timeline"><div id="timeline"></div></div><aside id="update-notice" role="status" hidden></aside><aside id="offline" role="status" hidden></aside></div>';
+    echo '<div id="screen"><header><div class="brand">PULSE<span></span></div><div class="store" id="store"></div><div class="clock" id="clock"></div></header><main id="slide"></main><footer><span id="period"></span><nav id="pages" aria-label="Pages"></nav><div class="screen-footer-right"><span id="page-count"></span>'.authorCredit().'</div></footer><div class="timeline"><div id="timeline"></div></div><aside id="update-notice" role="status" hidden></aside><aside id="offline" role="status" hidden></aside></div>';
     echo '<script id="screen-data" type="application/json">'.json_encode($data,JSON_THROW_ON_ERROR|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT).'</script><script src="/assets/screen.js?v='.e(version()).'" defer></script></body></html>';
 }
 function renderAdmin(): void {

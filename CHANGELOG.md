@@ -1,3 +1,10 @@
+## 0.2.3 — 2026-10-18
+- Firma “By Luigi Juan Pranzo” con link al blog su TV, amministrazione, accesso, setup e guida.
+- Pacchetto e manifest firmato compatibili con il servizio blog v1 già installato.
+- Relay PHP CLI per pubblicare sul blog le release GitHub private, configurabile sul hosting senza interventi sul Mint.
+- Indicazione della fonte aggiornamenti in base al servizio realmente configurato.
+- Nessuna modifica allo schema SQLite o alla chiave di firma; dati e valori manuali conservati.
+
 ## 0.2.2 — 2026-10-18
 - Aggiornamenti dalla repository privata ITALIANJOB97/Pulse tramite GitHub Releases.
 - Credenziale di sola lettura su Mint, configurazione guidata e nessuna credenziale inviata al CDN.

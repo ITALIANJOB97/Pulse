@@ -88,6 +88,16 @@ function updaterPath(string $file): string {
     return rtrim($GLOBALS['pulse_config']['updater_state'],'/\\').'/'.$file;
 }
 function updaterManaged(): bool { return is_file($GLOBALS['pulse_config']['updater_config']); }
+function updaterSourceLabel(): string {
+    $path=$GLOBALS['pulse_config']['updater_config'];
+    try {
+        if(!is_file($path)||filesize($path)>4096)return 'update_source_unknown';
+        $config=json_decode((string)file_get_contents($path),true,8,JSON_THROW_ON_ERROR);
+        if(($config['schema']??null)===1&&($config['origin']??'')==='https://www.luigipranzo.com/myfile/Pulse/')return 'update_source_blog';
+        if(($config['schema']??null)===2&&($config['repository']??'')==='ITALIANJOB97/Pulse')return 'update_source_github';
+    }catch(Throwable){}
+    return 'update_source_unknown';
+}
 function managedUpdateState(): array {
     $file=updaterPath('status.json');
     if(!is_file($file)||filesize($file)>131072)return [];

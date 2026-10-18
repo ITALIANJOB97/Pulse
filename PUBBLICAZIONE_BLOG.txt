@@ -1,18 +1,54 @@
-PULSE 0.2.2 — GUIDA ONLINE SUL BLOG
-=================================
-Il codice e gli aggiornamenti di PULSE sono nella repository privata GitHub.
-Seguire PUBBLICAZIONE_GITHUB.txt per pubblicare una release del programma.
+PULSE 0.2.3 — PACCHETTO DA CARICARE SUL BLOG
+================================================
+Questo pacchetto aggiorna le installazioni Mint che hanno già il servizio
+notturno 0.2.0/0.2.1 configurato sul blog. Non richiede comandi sul Mint.
+Non può aggiungere da remoto il servizio a una vecchia installazione 0.1.x.
 
-Per il blog usare soltanto PULSE-Guida-Blog-0.2.2.zip:
-1. Estrarre lo ZIP.
-2. Caricare la cartella Pulse/guide in /myfile/Pulse/guide/ sull’hosting.
-3. Aprire https://www.luigipranzo.com/myfile/Pulse/guide/index.html.
+PER QUESTA NOTTE
+1. Estrai PULSE-Blog-0.2.3.zip sul tuo computer.
+2. Nel pannello file/FTP del blog apri /myfile/Pulse/.
+3. Carica prima pulse-0.2.3.zip e la cartella guide (aggiornando i file esistenti).
+   Il file pulse-0.2.3.zip deve restare compresso: NON estrarlo sul sito.
+4. Carica stable.json.sig, poi stable.json PER ULTIMO, sovrascrivendo i precedenti.
+   Non creare per errore /myfile/Pulse/Pulse/. Non caricare lo ZIP esterno
+   PULSE-Blog-0.2.3.zip al posto dei suoi contenuti.
+5. Apri https://www.luigipranzo.com/myfile/Pulse/stable.json:
+   deve mostrare "version": "0.2.3" e "min_updater": 1.
+   Se usi una cache/CDN, svuotala per stable.json e stable.json.sig e disabilita
+   la cache su questi due file. Non aggiungere redirect o pagine di login.
+6. Il Mint controlla circa ogni 30 minuti. Se acceso, online, con installazione
+   automatica attiva e non rinviata, installa nella finestra configurata
+   (predefinita: 03:00–04:00, ora svizzera). Se perde la finestra, riprova la successiva.
 
-Questa guida è separata dagli articoli del blog e non contiene database,
-foto del negozio, account, token, chiavi private o il programma installabile.
-La stessa guida è disponibile offline nella Dashboard in EN/DE/FR.
+URL FINALI
+https://www.luigipranzo.com/myfile/Pulse/pulse-0.2.3.zip
+https://www.luigipranzo.com/myfile/Pulse/stable.json
+https://www.luigipranzo.com/myfile/Pulse/stable.json.sig
+https://www.luigipranzo.com/myfile/Pulse/guide/index.html
+Devono rispondere direttamente, senza cambiare dominio www/non-www.
 
-Non pubblicare sul blog il pacchetto del programma o gli ZIP PULSE-Blog
-creati nelle versioni precedenti: contengono il codice che ora vuoi riservato.
-Il vecchio canale del blog non abilita GitHub da solo: sul Mint serve il
-passaggio manuale una tantum descritto in PUBBLICAZIONE_GITHUB.txt.
+DATI ESISTENTI
+Il servizio verifica firma, dimensione e SHA-256; crea e verifica un backup
+prima delle modifiche. Database, account, immagini, impostazioni e archivi
+restano in /var/lib/pulse. Non viene ripetuta la configurazione iniziale.
+In caso di errore è previsto il ripristino della versione e dei dati precedenti.
+Il risultato Service/Ticket del team è manuale: se prima usavi 0.2.0 e non
+avevi un valore manuale, resta vuoto finché non viene compilato.
+
+PROSSIME VERSIONI DA GITHUB SENZA TOCCARE IL MINT
+Percorso: GitHub privato -> relay sul tuo hosting -> blog -> Mint.
+È disponibile PULSE-Relay-Hosting-0.2.3.zip con istruzioni RELAY_BLOG.txt.
+Il relay richiede una configurazione iniziale sul pannello hosting: token
+GitHub Contents: Read-only e un cron. Finché non viene configurato, ogni
+versione va caricata sul blog come sopra. Il solo upload di questo ZIP non
+attiva il collegamento a GitHub, e non cambia il servizio root del Mint.
+Il passaggio DIRETTO Mint -> GitHub resta un’alternativa manuale una tantum,
+descritta in docs/PUBBLICAZIONE_GITHUB.txt.
+
+RISERVATEZZA
+La repository resta privata, ma il pacchetto servito dal blog è scaricabile
+tramite URL e contiene il codice del programma. Non contiene foto, account,
+database reali, credenziali GitHub o la chiave privata di firma.
+Se vuoi mantenere riservato anche il pacchetto, usa il canale GitHub diretto
+quando potrai configurare il Mint. Non basta rendere privato GitHub per
+rendere privato un file caricato sul blog.

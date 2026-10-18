@@ -163,7 +163,6 @@
     "update_auto": "Install updates automatically at night",
     "update_hour": "Start hour (0–23, Europe/Zurich)",
     "update_window_hint": "Updates start only within the hour selected here, in Swiss local time. Default: 03:00–04:00. Checks continue while automatic installation is paused.",
-    "update_source_managed": "Signed releases from the private GitHub repository ITALIANJOB97/Pulse. Mint needs a read-only GitHub token configured with deploy/configure-github-mint.py.",
     "update_detail_auto": "Pulse checks for signed releases every 30 minutes and creates a safety backup before installation.",
     "update_queued": "Check requested. The service will process it within five minutes.",
     "update_auto_on": "Automatic night installation is enabled.",
@@ -190,7 +189,10 @@
     "service_team": "Service/Ticket · Team",
     "service_target": "Service/Ticket team target (month)",
     "service_total": "Service/Ticket current team result (month)",
-    "service_total_hint": "Enter the team target and current result manually for this month. These values are independent of the individual podium counts. Leave unknown values blank."
+    "service_total_hint": "Enter the team target and current result manually for this month. These values are independent of the individual podium counts. Leave unknown values blank.",
+    "update_source_blog": "Signed updates via luigipranzo.com. The blog can relay published GitHub releases. No GitHub credential is needed on this Mint PC.",
+    "update_source_github": "Signed updates directly from the private GitHub repository ITALIANJOB97/Pulse. A read-only credential is configured on this Mint PC.",
+    "update_source_unknown": "Updates are managed by the installed system service."
   },
   "de": {
     "setup": "Ersteinrichtung",
@@ -356,7 +358,6 @@
     "update_auto": "Updates nachts automatisch installieren",
     "update_hour": "Startstunde (0–23, Europe/Zurich)",
     "update_window_hint": "Updates starten nur innerhalb der ausgewählten Stunde (Schweizer Ortszeit). Standard: 03:00–04:00. Auch bei pausierter Installation wird weiter nach Updates gesucht.",
-    "update_source_managed": "Signierte Releases aus dem privaten GitHub-Repository ITALIANJOB97/Pulse. Mint benötigt einen GitHub-Token mit Lesezugriff, eingerichtet mit deploy/configure-github-mint.py.",
     "update_detail_auto": "Pulse sucht alle 30 Minuten nach signierten Versionen und erstellt vor der Installation eine Sicherung.",
     "update_queued": "Prüfung angefordert. Der Dienst verarbeitet sie innerhalb von fünf Minuten.",
     "update_auto_on": "Automatische Installation in der Nacht ist aktiviert.",
@@ -383,7 +384,10 @@
     "service_team": "Service/Ticket · Team",
     "service_target": "Service/Ticket Teamziel (Monat)",
     "service_total": "Service/Ticket aktueller Teamwert (Monat)",
-    "service_total_hint": "Teamziel und aktuellen Teamwert für diesen Monat manuell eingeben. Diese Werte sind unabhängig von den individuellen Podium-Zahlen. Unbekannte Werte leer lassen."
+    "service_total_hint": "Teamziel und aktuellen Teamwert für diesen Monat manuell eingeben. Diese Werte sind unabhängig von den individuellen Podium-Zahlen. Unbekannte Werte leer lassen.",
+    "update_source_blog": "Signierte Updates über luigipranzo.com. Der Blog kann veröffentlichte GitHub-Releases bereitstellen. Auf diesem Mint-PC ist kein GitHub-Token erforderlich.",
+    "update_source_github": "Signierte Updates direkt aus dem privaten GitHub-Repository ITALIANJOB97/Pulse. Auf diesem Mint-PC ist ein Token mit Lesezugriff eingerichtet.",
+    "update_source_unknown": "Updates werden vom installierten Systemdienst verwaltet."
   },
   "fr": {
     "setup": "Configuration initiale",
@@ -549,7 +553,6 @@
     "update_auto": "Installer automatiquement les mises à jour la nuit",
     "update_hour": "Heure de début (0–23, Europe/Zurich)",
     "update_window_hint": "Les installations démarrent uniquement pendant l’heure choisie, en heure suisse. Par défaut : 03:00–04:00. La recherche continue lorsque l’installation automatique est en pause.",
-    "update_source_managed": "Versions signées depuis le dépôt GitHub privé ITALIANJOB97/Pulse. Mint nécessite un jeton GitHub en lecture seule, configuré avec deploy/configure-github-mint.py.",
     "update_detail_auto": "Pulse recherche une version signée toutes les 30 minutes et crée une sauvegarde avant l’installation.",
     "update_queued": "Vérification demandée. Le service la traitera dans les cinq minutes.",
     "update_auto_on": "L’installation automatique de nuit est activée.",
@@ -576,6 +579,9 @@
     "service_team": "Service/Ticket · Équipe",
     "service_target": "Objectif Service/Ticket de l’équipe (mois)",
     "service_total": "Résultat actuel Service/Ticket de l’équipe (mois)",
-    "service_total_hint": "Saisissez manuellement l’objectif et le résultat actuel de l’équipe pour ce mois. Ces valeurs sont indépendantes des résultats individuels du podium. Laissez les valeurs inconnues vides."
+    "service_total_hint": "Saisissez manuellement l’objectif et le résultat actuel de l’équipe pour ce mois. Ces valeurs sont indépendantes des résultats individuels du podium. Laissez les valeurs inconnues vides.",
+    "update_source_blog": "Mises à jour signées via luigipranzo.com. Le blog peut relayer les versions publiées sur GitHub. Aucun jeton GitHub n’est nécessaire sur ce PC Mint.",
+    "update_source_github": "Mises à jour signées directement depuis le dépôt GitHub privé ITALIANJOB97/Pulse. Un jeton en lecture seule est configuré sur ce PC Mint.",
+    "update_source_unknown": "Les mises à jour sont gérées par le service système installé."
   }
 }

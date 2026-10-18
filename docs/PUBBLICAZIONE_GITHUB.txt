@@ -1,0 +1,88 @@
+PULSE 0.2.3 — GITHUB PRIVATO
+============================
+Repository: https://github.com/ITALIANJOB97/Pulse
+La repository resta privata. Per leggerla/scaricarla dal browser serve un account autorizzato.
+Git contiene il codice; Releases contiene i pacchetti pronti. I commit da soli non attivano aggiornamenti.
+
+DUE MODALITÀ
+Per Mint già configurato sul blog, puoi evitare comandi sul PC usando il relay
+hosting: docs/RELAY_BLOG.txt. La credenziale resta sull’hosting.
+I passi seguenti servono SOLO per il passaggio DIRETTO Mint -> GitHub.
+
+PRIMO PASSAGGIO DIRETTO SU MINT (ANCHE DA 0.1.1 / 0.2.0 / 0.2.1)
+1. Scarica l'allegato pulse-0.2.3.zip dalla release v0.2.3 sul tuo PC autorizzato.
+   Puoi copiarlo sul Mint via USB. Non usare gli archivi Source code di GitHub.
+2. Crea dalla Dashboard un backup manuale e scaricalo su USB.
+3. Crea su GitHub un fine-grained personal access token:
+   Settings > Developer settings > Personal access tokens > Fine-grained tokens.
+   Resource owner: ITALIANJOB97.
+   Repository access: Only select repositories > Pulse.
+   Repository permissions > Contents: Read-only (Metadata resta Read-only).
+   Scegli una scadenza e annota quando rinnovarlo. Non servono permessi di scrittura.
+4. Estrai il pacchetto sul Mint e apri un terminale nella cartella estratta.
+5. Esegui:
+       sudo python3 deploy/configure-github-mint.py
+   Incolla il token quando richiesto; non viene mostrato né salvato nella cronologia.
+   La connessione viene verificata prima di salvare /etc/pulse/github-token, root:root 600.
+   Se la verifica fallisce, la credenziale precedente non viene modificata.
+6. Esegui:
+       sudo bash deploy/upgrade-mint.sh
+   Aggiorna una volta anche il servizio di sistema. Backup prima delle modifiche,
+   conservazione di database, utenti, foto e impostazioni; recupero se la verifica fallisce.
+   Non eseguire install-mint.sh e non ripetere il setup.
+7. Apri http://127.0.0.1:8080/admin > Aggiornamenti > Controlla ora.
+   Il controllo viene elaborato entro cinque minuti. La versione appena installata
+   viene indicata come aggiornata; una versione futura superiore verrà proposta.
+
+NUOVA INSTALLAZIONE
+Seguire INSTALLAZIONE_LINUX_MINT.txt; configurare anche il token con il comando del punto 5.
+PULSE continua a funzionare se GitHub è irraggiungibile o il token manca/scade.
+
+FUNZIONAMENTO
+- Controllo della release stabile più recente ogni 30 minuti, oppure su richiesta.
+- Manifest e firma prelevati dalla stessa release/tag vX.Y.Z; verifica Ed25519.
+- Download del pacchetto tramite API GitHub e controllo SHA-256/dimensione.
+- Il token viene inviato soltanto all'API della repository, mai al CDN di download.
+- Avviso con le novità, download e installazione nella finestra configurata
+  (inizialmente 03:00–04:00 Europe/Zurich) dopo backup verificato.
+- Pausa/rinvio/riprova e recupero dopo un'interruzione restano disponibili.
+- Una release incompleta, non firmata o non compatibile non viene installata.
+
+RINNOVARE IL TOKEN
+Eseguire di nuovo sudo python3 deploy/configure-github-mint.py da un pacchetto recente.
+Revocare su GitHub il vecchio token dopo la verifica del nuovo.
+Non copiare il token nella repository, negli ZIP, nel blog o nei rapporti di supporto.
+Il backup applicativo contiene database e immagini, non il token di sistema:
+per un nuovo PC Mint è necessario configurare una nuova credenziale.
+
+PUBBLICARE UNA VERSIONE FUTURA (COMPUTER DI SVILUPPO)
+1. Modificare il codice, testarlo, incrementare VERSION e aggiornare le note DE/EN/FR.
+2. Creare il commit e caricarlo su GitHub.
+3. Eseguire dalla cartella del progetto:
+       python bin/build-linux-mint-zip.py
+       php -d extension=sodium bin/publish-release.php publish
+   Su PHP con sodium già attivo l'opzione -d non serve.
+4. In GitHub Releases creare una bozza con tag vX.Y.Z sul commit verificato.
+   Copiare il testo da dist/GitHub/vX.Y.Z/release-notes.md.
+5. Allegare dalla stessa cartella tutti e cinque i file:
+       pulse-X.Y.Z.zip
+       stable.json
+       stable.json.sig
+       blog-stable.json
+       blog-stable.json.sig
+6. Pubblicare soltanto quando tutti gli allegati sono presenti, come release stabile Latest.
+   Non usare prerelease/draft per una versione destinata ai PC del negozio.
+   Non sostituire il pacchetto di una versione pubblicata: incrementare VERSION.
+7. I Mint con updater v2 e token valido rilevano la nuova versione automaticamente.
+
+Il servizio root non viene sostituito dagli aggiornamenti automatici. Se una versione
+futura cambia il servizio privilegiato, incrementare min_updater e fornire un upgrade manuale.
+La chiave .release-private/signing.key resta soltanto sul computer di sviluppo:
+conservare una copia protetta offline. Non rigenerarla a ogni release.
+
+BLOG
+Il pacchetto PULSE-Blog-0.2.3.zip aggiorna il vecchio canale senza comandi sul
+Mint. Per i successivi aggiornamenti automatici via GitHub configurare il
+relay sul hosting. Vedere PUBBLICAZIONE_BLOG.txt e docs/RELAY_BLOG.txt.
+La repository resta privata ma il pacchetto sul blog è accessibile tramite URL.
+Per mantenere riservato anche il programma, usare il canale GitHub diretto.

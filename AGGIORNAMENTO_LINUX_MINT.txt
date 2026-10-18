@@ -1,4 +1,10 @@
-PULSE 0.2.2 — AGGIORNARE L'INSTALLAZIONE ESISTENTE SU LINUX MINT 22.x
+AGGIORNAMENTO DA REMOTO VIA BLOG (GIÀ INSTALLATO 0.2.0/0.2.1)
+Per questa modalità leggere PUBBLICAZIONE_BLOG.txt: non eseguire i comandi
+qui sotto e non configurare un token sul Mint. Il relay sul hosting può
+collegare GitHub al canale esistente; vedere docs/RELAY_BLOG.txt.
+
+PROCEDURA ALTERNATIVA: AGGIORNAMENTO MANUALE E GITHUB DIRETTO
+PULSE 0.2.3 — AGGIORNARE L'INSTALLAZIONE ESISTENTE SU LINUX MINT 22.x
 ============================================================================
 
 Il passaggio dal blog a GitHub richiede questo comando manuale una sola volta.
@@ -13,17 +19,17 @@ PRIMA DI INIZIARE
 1. Da PULSE > Backups crea una copia manuale e scaricala su USB.
    È una copia aggiuntiva: l'aggiornamento crea comunque il proprio backup
    verificato e si ferma se non riesce.
-2. Scarica pulse-0.2.2.zip dalla release GitHub privata oppure copialo
+2. Scarica pulse-0.2.3.zip dalla release GitHub privata oppure copialo
    dalla USB al PC Mint. Estrailo in una cartella normale (es. Downloads).
 3. Non copiare file dentro /var/lib/pulse e non cancellare /opt/pulse.
 4. Chiudi i form di modifica aperti. La prima installazione dell'aggiornamento
    parte subito, quando esegui il comando: scegli un momento tranquillo.
 
 COMANDO
-Apri la cartella estratta PULSE-Dietikon-Linux-Mint-0.2.2.
+Apri la cartella estratta PULSE-Dietikon-Linux-Mint-0.2.3.
 Con il tasto destro scegli "Apri nel terminale" / "Im Terminal öffnen".
 
-Prima configura la credenziale GitHub di sola lettura (vedi PUBBLICAZIONE_GITHUB.txt):
+Prima configura la credenziale GitHub di sola lettura (vedi docs/PUBBLICAZIONE_GITHUB.txt):
     sudo python3 deploy/configure-github-mint.py
 
 Poi aggiorna:
@@ -35,7 +41,7 @@ Se sei già dentro la sottocartella deploy, usa:
 Inserisci la password del PC Mint quando sudo la richiede.
 I caratteri della password non vengono mostrati: è normale.
 Non viene richiesta la vecchia chiave di prima installazione.
-Attendi il messaggio "PULSE 0.2.2 installato".
+Attendi il messaggio "PULSE 0.2.3 installato".
 Non spegnere intenzionalmente il PC durante l'operazione.
 
 DOPO
@@ -57,7 +63,7 @@ COSA FA LO SCRIPT
 - Verifica Mint 22.x amd64, PHP 8.3 e i componenti richiesti.
 - Rifiuta pacchetti incompleti, reinstallazioni della stessa versione e downgrade.
 - Verifica tutti i file tramite CONTENTS.sha256.
-- Prepara la nuova cartella /opt/pulse/releases/0.2.2.
+- Prepara la nuova cartella /opt/pulse/releases/0.2.3.
 - Installa il servizio locale degli aggiornamenti con la chiave pubblica.
 - Ferma temporaneamente i processi PHP e coordina i backup automatici.
 - Crea una copia coerente di database e immagini con il vecchio programma.

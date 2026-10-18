@@ -1,15 +1,18 @@
-# PULSE 0.2.2
+# PULSE 0.2.3
 
-Linux Mint 22.x: per aggiornare un'installazione esistente leggere AGGIORNAMENTO_LINUX_MINT.txt ed eseguire `sudo bash deploy/upgrade-mint.sh` dalla cartella estratta. Non usare l'installer di prima installazione. Distribuzione privata tramite GitHub Releases: PUBBLICAZIONE_GITHUB.txt. Guida online facoltativa sul blog: PUBBLICAZIONE_BLOG.txt.
+Linux Mint 22.x: per aggiornare un'installazione esistente leggere AGGIORNAMENTO_LINUX_MINT.txt ed eseguire `sudo bash deploy/upgrade-mint.sh` dalla cartella estratta. Non usare l'installer di prima installazione. Distribuzione privata tramite GitHub Releases: docs/PUBBLICAZIONE_GITHUB.txt. Aggiornamento remoto per Mint già configurato sul blog: PUBBLICAZIONE_BLOG.txt. Relay GitHub → blog senza comandi sul Mint: docs/RELAY_BLOG.txt.
 
 Novità: guida DE/EN/FR, domenica opzionale, aggiornamenti notturni firmati con backup e recupero, foto intere, team su una pagina, blu Digitec/bianco, didascalie complete e nuovo target mensile Service/Ticket di squadra con obiettivo e risultato corrente inseriti manualmente, indipendenti dal podio.
 
 # PULSE · Dietikon
 
-Applicazione PHP 0.2.2 per TV orizzontale Full HD, con gestione da browser.
+Applicazione PHP 0.2.3 per TV orizzontale Full HD, con gestione da browser.
 Linux Mint 22.x amd64 con PHP 8.3; Raspberry Pi OS 64 bit con PHP 8.4+.
 
 ## Aggiornamenti da GitHub privato
+
+Sono disponibili due percorsi: diretto dal Mint (token e bootstrap manuale del servizio v2) oppure tramite il relay hosting che mantiene compatibile il canale blog v1 già installato. Il solo aggiornamento dell’app non cambia il servizio root. I pacchetti del canale blog sono accessibili tramite URL, anche se la repository è privata.
+
 
 Repository: https://github.com/ITALIANJOB97/Pulse. Pubblicare una Release `vX.Y.Z` con il pacchetto installabile, `stable.json` e la firma. I commit da soli non installano aggiornamenti. Su Mint configurare un token limitato a questa repository con Contents: Read-only tramite `sudo python3 deploy/configure-github-mint.py`, poi eseguire l’aggiornamento manuale iniziale. Il token resta in `/etc/pulse/github-token`, root:root 600, e non viene inviato al CDN. Le verifiche avvengono ogni 30 minuti; installazione nella finestra notturna con backup e recupero.
 
@@ -108,7 +111,7 @@ la verifica sul dispositivo reale.
 
 ## Pacchetto Linux Mint
 
-Versione 0.2.2, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
+Versione 0.2.3, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
 
     python bin/build-linux-mint-zip.py
 

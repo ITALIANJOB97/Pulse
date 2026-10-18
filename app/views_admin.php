@@ -46,7 +46,7 @@ function adminSettings(): void {
     echo '</div><h3>'.e(t('schedule_settings')).'</h3><label class="check"><input type="checkbox" name="show_sunday"'.(setting('show_sunday',true)?' checked':'').'>'.e(t('show_sunday')).'</label><p class="help">'.e(t('sunday_preserved')).'</p><h3>'.e(t('updates')).'</h3><label class="check"><input type="checkbox" name="update_auto"'.(setting('update_auto',true)?' checked':'').'>'.e(t('update_auto')).'</label>';
     field('update_hour',t('update_hour'),setting('update_hour',3),'number','required min="0" max="23" step="1"');
     echo '<p class="help">'.e(t('update_window_hint')).'</p>';
-    if(updaterManaged())echo '<p class="help">'.e(t('update_source_managed')).'</p>';
+    if(updaterManaged())echo '<p class="help">'.e(t(updaterSourceLabel())).'</p>';
     else field('update_url',t('update_source'),setting('update_url',''),'url','maxlength="2000" placeholder="https://…"');
     if(!updaterManaged())echo '<p class="help">'.e(t('update_source_hint')).'</p>';saveButton();echo '</section><section class="panel"><h2>'.e(t('screen_access')).'</h2><p class="muted">'.e(t('screen_hint')).'</p>';
     echo '<a class="button" href="/display?key='.e(setting('screen_key')).'" target="_blank" rel="noopener">'.e(t('open_tv')).' ↗</a>';
