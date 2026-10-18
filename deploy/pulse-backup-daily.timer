@@ -1,0 +1,9 @@
+[Unit]
+Description=PULSE daily archive and backup
+[Timer]
+OnCalendar=*-*-* 23:55:00 Europe/Zurich
+Persistent=true
+Unit=pulse-backup@daily.service
+[Install]
+WantedBy=timers.target
+

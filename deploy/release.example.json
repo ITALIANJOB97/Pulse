@@ -1,0 +1,11 @@
+{
+  "app": "pulse-dietikon",
+  "version": "0.1.0",
+  "release_url": "",
+  "notes": {
+    "en": "Initial release: setup, administration and TV display.",
+    "de": "Erste Version: Einrichtung, Verwaltung und TV-Anzeige.",
+    "fr": "Première version : configuration, administration et affichage TV."
+  }
+}
+

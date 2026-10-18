@@ -1,0 +1,40 @@
+PULSE GIA INSTALLATO?
+Eseguire sudo bash deploy/upgrade-mint.sh dalla cartella estratta.
+Leggere AGGIORNAMENTO_LINUX_MINT.txt. Non ripetere il setup.
+
+PAGINA BIANCA SU UN PC GIA INSTALLATO?
+Usare il pacchetto PULSE-Diagnosi-Linux-Mint-0.2.2.zip oppure, da questa cartella:
+    sudo bash deploy/diagnose-mint.sh
+Copiare il file nella cartella diagnostica sulla USB e allegarlo alla chat.
+Non occorre reinstallare. I dettagli sono in DIAGNOSI_LINUX_MINT.txt.
+PULSE · DIETIKON 0.2.2 — LINUX MINT 22.x
+
+PRIMA INSTALLAZIONE SU UN PC SENZA PULSE
+1. Estrarre completamente lo ZIP.
+2. Aprire il terminale nella cartella estratta.
+3. Eseguire:
+       sudo bash deploy/install-mint.sh
+4. Aprire http://127.0.0.1:8080/setup
+   e usare il codice che appare alla fine dell'installazione.
+5. Completare la configurazione e inserire i contenuti.
+6. Dal proprio utente desktop, senza sudo:
+       pulse-enable-kiosk
+       pulse-kiosk
+
+Per fermare la TV:
+       pulse-kiosk --stop
+
+Per tutti i dettagli, backup, aggiornamenti, autologin e schermo:
+       INSTALLAZIONE_LINUX_MINT.txt
+
+Non e necessario installare PHP manualmente: lo fa l'installer.
+Serve Internet durante l'installazione, un account sudo e Mint 22.x a 64 bit.
+Il pacchetto non contiene dati o credenziali. Il primo amministratore si
+crea durante il setup. Non eseguire l'installer su un server PULSE esistente.
+
+Il server riparte automaticamente al riavvio. La TV parte all'accesso
+al desktop: per un'accensione senza intervento configurare l'autologin
+e il risparmio energetico come spiegato nella guida.
+
+Dalla versione 0.2.0 l'installer salva anche un rapporto in diagnostica/,
+con output, errori e verifiche finali. Il codice setup e oscurato nel file.

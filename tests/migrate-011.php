@@ -1,0 +1,25 @@
+<?php
+declare(strict_types=1);
+if(PHP_SAPI!=='cli'||empty($argv[1]))exit(1);
+$old=$argv[1];$oldVersion=trim(file_get_contents($old.'/VERSION'));$dir=sys_get_temp_dir().'/pulse-migration-011-'.bin2hex(random_bytes(5));
+putenv('PULSE_STORAGE='.$dir);
+require $old.'/app/bootstrap.php';boot();
+initialize(['token'=>setupToken(),'name'=>'Existing Admin','email'=>'existing@example.invalid','password'=>'existing-account-123','store'=>'Existing Store','language'=>'fr','duration'=>35]);
+setSetting('effects',false);$pages=array_fill_keys(moduleKeys(),true);$pages['daily']=false;setSetting('pages',$pages);
+db()->exec("INSERT INTO employees(name,role,active) VALUES('Existing Employee','manager',1)");
+$file=str_repeat('c',40).'.jpg';$image=imagecreatetruecolor(100,200);imagejpeg($image,storage('media/'.$file));
+db()->prepare('INSERT INTO media(filename,label,kind,created_at) VALUES(?,?,?,?)')->execute([$file,'Existing image','gallery',gmdate('c')]);
+saveContent('transfers',periodFor('transfers'),['days'=>[11,22,33,44,55,66,77],'pending'=>88]);
+saveContent('tasks','all',['fr'=>['Tâche existante']]);createBackup('weekly');
+$before=[];
+foreach(['admins','employees','media','content','snapshots'] as $table)$before[$table]=db()->query('SELECT * FROM '.$table)->fetchAll();
+$hash=hash_file('sha256',storage('media/'.$file));$screenKey=setting('screen_key');
+$pipes=[];$process=proc_open([PHP_BINARY,dirname(__DIR__).'/bin/console.php','migrate'],[0=>['pipe','r'],1=>['pipe','w'],2=>['pipe','w']],$pipes,null,array_replace(getenv(),['PULSE_STORAGE'=>$dir]));
+fclose($pipes[0]);$out=stream_get_contents($pipes[1]);$err=stream_get_contents($pipes[2]);fclose($pipes[1]);fclose($pipes[2]);$status=proc_close($process);
+if($status!==0)throw new RuntimeException($err);
+foreach($before as $table=>$rows)if(db()->query('SELECT * FROM '.$table)->fetchAll()!==$rows)throw new RuntimeException('Changed existing data in '.$table);
+if(setting('installed_version')!==trim(file_get_contents(dirname(__DIR__).'/VERSION'))||setting('version_event')['from']!==$oldVersion)throw new RuntimeException('Version migration failed.');
+if(setting('language')!=='fr'||setting('duration')!==35||setting('effects')!==false||setting('pages')!==$pages||setting('screen_key')!==$screenKey)throw new RuntimeException('Existing settings changed.');
+if(hash_file('sha256',storage('media/'.$file))!==$hash)throw new RuntimeException('Existing image changed.');
+if(!password_verify('existing-account-123',db()->query('SELECT password_hash FROM admins')->fetchColumn()))throw new RuntimeException('Login changed.');
+echo "Real {$oldVersion} to current release PHP migration passed: all business tables, accounts/passwords, images, archives, settings and TV key preserved.\n";

@@ -1,0 +1,18 @@
+PULSE 0.2.2 — GUIDA ONLINE SUL BLOG
+=================================
+Il codice e gli aggiornamenti di PULSE sono nella repository privata GitHub.
+Seguire PUBBLICAZIONE_GITHUB.txt per pubblicare una release del programma.
+
+Per il blog usare soltanto PULSE-Guida-Blog-0.2.2.zip:
+1. Estrarre lo ZIP.
+2. Caricare la cartella Pulse/guide in /myfile/Pulse/guide/ sull’hosting.
+3. Aprire https://www.luigipranzo.com/myfile/Pulse/guide/index.html.
+
+Questa guida è separata dagli articoli del blog e non contiene database,
+foto del negozio, account, token, chiavi private o il programma installabile.
+La stessa guida è disponibile offline nella Dashboard in EN/DE/FR.
+
+Non pubblicare sul blog il pacchetto del programma o gli ZIP PULSE-Blog
+creati nelle versioni precedenti: contengono il codice che ora vuoi riservato.
+Il vecchio canale del blog non abilita GitHub da solo: sul Mint serve il
+passaggio manuale una tantum descritto in PUBBLICAZIONE_GITHUB.txt.

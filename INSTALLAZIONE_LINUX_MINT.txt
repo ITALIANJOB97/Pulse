@@ -1,0 +1,278 @@
+GIA INSTALLATO? Leggere AGGIORNAMENTO_LINUX_MINT.txt. Questa guida inizia dalla prima installazione.
+
+PULSE · DIETIKON — LINUX MINT
+Versione 0.2.2 | PC Linux Mint 22.x a 64 bit | Schermo orizzontale
+Cinnamon, MATE o Xfce. Non usare questo installer su Mint 21 o LMDE.
+
+AVVIO RAPIDO
+------------
+1. Copiare PULSE-Dietikon-Linux-Mint-0.2.2.zip sul PC e decomprimerlo
+   nella cartella personale. Aprire un terminale nella cartella estratta.
+2. Installare server e componenti:
+       sudo bash deploy/install-mint.sh
+3. Annotare il codice di prima installazione mostrato alla fine.
+4. Aprire nel browser:
+       http://127.0.0.1:8080/setup
+5. Completare il setup e inserire i contenuti.
+6. Dal terminale dello stesso utente desktop, SENZA sudo:
+       pulse-enable-kiosk
+       pulse-kiosk
+7. Configurare accesso automatico al desktop, schermo e risparmio
+   energetico come descritto nella sezione 4, poi provare un riavvio.
+
+Per fermare la TV: Ctrl+Alt+T per aprire un terminale, poi:
+    pulse-kiosk --stop
+Oppure aprire "Ferma PULSE TV" dal menu delle applicazioni.
+Alt+F4 da solo chiude il browser, che viene riaperto dal supervisore.
+
+1. REQUISITI E CONTENUTO
+-----------------------
+Controllare:
+    cat /etc/os-release
+    dpkg --print-architecture
+
+Attesi: ID=linuxmint, VERSION_ID=22 oppure 22.x, UBUNTU_CODENAME=noble,
+architettura amd64. Il programma di installazione controlla questi valori.
+Serve un account Linux abilitato a sudo e Internet durante l'installazione.
+La dashboard usa PHP 8.3, Nginx, SQLite e Chromium dai repository.
+Non occorrono PPA, Snap, Node.js, Composer o MySQL.
+Il funzionamento normale resta locale. Internet serve per aggiornare i
+pacchetti del sistema e, se configurato, controllare il feed delle release.
+
+Il pacchetto comprende il progetto completo: nove pagine TV, amministrazione,
+EN/DE/FR, foto Mitarbeiter, galleria, backup e avvisi aggiornamenti.
+Non contiene account, password o dati dimostrativi.
+Sono mantenuti anche i file Raspberry, ma su questo PC usare SOLO
+deploy/install-mint.sh e questa guida.
+
+Prima dell'installazione lo script rifiuta un'installazione PULSE esistente
+o la porta 8080 gia occupata. Non sovrascrive database o release esistenti.
+Il firewall non viene modificato. L'applicazione e disponibile sulla porta
+8080 del PC; l'accesso dalla rete dipende dal firewall e dalle regole aziendali.
+Il collegamento locale funziona senza aprire porte per altri dispositivi.
+
+2. INSTALLAZIONE DEL SERVER
+--------------------------
+Aprire un terminale NELLA cartella estratta, dove si trova VERSION:
+    sudo bash deploy/install-mint.sh
+
+Lo script esegue apt-get update e installa:
+nginx, php8.3-fpm, php8.3-cli, php8.3-sqlite3, php8.3-gd,
+php8.3-intl, php8.3-mbstring, php8.3-curl, php8.3-zip,
+php8.3-xml, php8.3-common, php8.3-opcache, chromium,
+curl, rsync, unzip, ca-certificates e util-linux.
+
+Crea:
+    /opt/pulse/releases/0.2.2       Codice della release
+    /opt/pulse/current              Collegamento alla release attiva
+    /var/lib/pulse                  Database, foto, sessioni e backup
+    /usr/local/bin/pulse-kiosk      Supervisore della TV
+    /usr/local/bin/pulse-enable-kiosk   Gestione autostart del desktop
+    /etc/nginx/sites-available/pulse   Server sulla porta 8080
+    /etc/php/8.3/fpm/pool.d/pulse.conf  Pool PHP dedicato
+    /etc/systemd/system/pulse-*     Backup e controllo aggiornamenti
+
+Nginx e PHP-FPM vengono abilitati all'avvio del PC. I timer partono
+automaticamente. Il browser parte dopo l'accesso alla sessione grafica.
+
+Solo public/ e esposto dal server; il codice e root:www-data.
+Database e immagini sono scrivibili da www-data, fuori dalla release.
+Gli altri siti Nginx rimangono configurati. Il caricamento della nuova
+configurazione ricarica i servizi Nginx e PHP-FPM del PC.
+
+Se lo script si interrompe, leggere il messaggio prima di ripeterlo:
+potrebbero gia esserci componenti o cartelle installati.
+Non cancellare /var/lib/pulse per aggirare un errore.
+Il database deve risiedere sul disco locale del PC, non su una condivisione SMB.
+
+3. CONFIGURAZIONE INIZIALE E ACCESSO
+----------------------------------
+Aprire:
+    http://127.0.0.1:8080/setup
+
+Inserire il codice stampato dall'installer, store, lingua, durata pagine
+e primo amministratore. Password di almeno 12 caratteri, massimo 72 byte.
+Il setup viene bloccato dopo la creazione dell'amministratore.
+
+Per rileggere il codice prima del completamento:
+    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php8.3 /opt/pulse/current/bin/console.php setup-token
+
+Accessi successivi:
+    http://127.0.0.1:8080/login
+
+Aggiungere Mitarbeiter e foto, poi compilare le pagine. I contenuti sono
+inseriti manualmente: nessun collegamento automatico ai sistemi Galaxus.
+I Daily Tasks hanno sei righe. Gli Store Tasks possono essere inseriti
+successivamente. I testi liberi hanno campi EN/DE/FR.
+Un KPI non compilato resta mancante e non viene trasformato in zero.
+
+Dal PC stesso, la TV:
+    http://127.0.0.1:8080/display
+
+Un altro dispositivo richiede il link TV privato delle Impostazioni
+oppure una sessione amministratore. La chiave TV puo essere revocata.
+L'HTTP fornito e per la rete interna; per reti non fidate usare HTTPS
+tramite la propria infrastruttura.
+
+4. SCHERMO GRANDE E AVVIO AUTOMATICO
+----------------------------------
+Dal desktop dell'utente che usera la TV, senza sudo:
+    pulse-enable-kiosk
+
+Il comando aggiunge solo i file PULSE:
+    ~/.config/autostart/pulse-tv.desktop
+    ~/.local/share/applications/pulse-tv.desktop
+    ~/.local/share/applications/pulse-tv-stop.desktop
+Se si usano percorsi XDG personalizzati, vengono rispettati.
+
+Avvio immediato:
+    pulse-kiosk
+
+Il browser usa un profilo dedicato. Aspetta che server e setup siano
+pronti, evita istanze duplicate e si riapre se viene chiuso o termina.
+I file di log si trovano in ~/.local/state/pulse/kiosk.log.
+
+Per una TV che riparte dopo un riavvio senza intervento:
+- Nelle impostazioni di Mint, aprire "Finestra di accesso" / "Login Window"
+  e impostare l'accesso automatico per l'utente destinato alla TV.
+- Nelle impostazioni schermo, scegliere lo schermo grande come principale,
+  orientamento orizzontale e, per iniziare, 1920x1080.
+- Se ci sono due monitor, portare lo schermo TV nella posizione principale
+  a sinistra oppure usare solo lo schermo TV. Il kiosk parte a posizione 0,0.
+- Nelle impostazioni di alimentazione e salvaschermo, disattivare sospensione,
+  spegnimento dello schermo e blocco automatico per l'utente TV, secondo
+  le regole aziendali.
+- Provare un riavvio completo e un intero ciclo delle nove pagine.
+
+I nomi dei pannelli possono variare fra Cinnamon, MATE e Xfce.
+Autologin e risparmio energetico non vengono cambiati dallo script.
+Se il disco e cifrato, l'eventuale sblocco prima del desktop resta necessario.
+La dashboard si adatta anche a uno schermo 4K; Full HD e il riferimento
+del layout. Lo zoom del browser deve essere al 100%.
+
+Manutenzione:
+    pulse-kiosk --stop
+    pulse-kiosk
+
+Il primo comando ferma solo il kiosk di questo utente. Il secondo lo riavvia.
+Per disabilitare l'avvio automatico e fermarlo:
+    pulse-enable-kiosk --disable
+Per riabilitarlo:
+    pulse-enable-kiosk
+
+Server e timer continuano a funzionare anche quando la TV e fermata.
+
+5. BACKUP, ARCHIVIO E TRASFERIMENTO DAL RASPBERRY
+----------------------------------------------
+Dati:
+    /var/lib/pulse/pulse.sqlite
+    /var/lib/pulse/media
+    /var/lib/pulse/backups
+
+Backup automatici in Europe/Zurich:
+- Giornaliero alle 23:55, conserva 30 ZIP.
+- Settimanale la domenica alle 23:58, conserva 12 ZIP.
+- Manuali dal pannello o terminale, conserva 10 ZIP.
+
+Ogni ZIP contiene database consistente e immagini. Lo storico consultabile
+e conservato nel database; non viene eliminato automaticamente.
+Le foto rimosse dai contenuti restano disponibili per lo storico.
+I timer recuperano un'esecuzione mancata quando il PC torna acceso:
+lo snapshot descrive il momento dell'esecuzione, non ricostruisce i giorni spenti.
+
+Backup manuale:
+    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php8.3 /opt/pulse/current/bin/console.php backup manual
+
+Scaricare una copia su un altro dispositivo dal pannello Backup.
+La copia automatica su NAS non e configurata in questa versione.
+
+Se sul Raspberry esistono gia dati PULSE, creare e scaricare un backup
+PULSE dal Raspberry, poi usare la procedura di ripristino sul PC Mint.
+Il backup 0.1.0 e compatibile con 0.2.2. Non trasferire i file di sessione
+o un database aperto copiandoli a mano.
+
+RIPRISTINO (sostituisce dati, account e impostazioni):
+Copiare lo ZIP in una posizione leggibile da www-data, per esempio:
+    sudo install -o www-data -g www-data -m 0640 /PERCORSO/backup.zip /var/lib/pulse/import-backup.zip
+
+Dal terminale dell'utente TV:
+    pulse-kiosk --stop
+Poi:
+    sudo systemctl stop pulse-backup-daily.timer pulse-backup-weekly.timer pulse-updates.timer
+    sudo systemctl stop pulse-backup@daily.service pulse-backup@weekly.service pulse-updates.service
+    sudo systemctl stop nginx php8.3-fpm
+    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php8.3 /opt/pulse/current/bin/restore.php /var/lib/pulse/import-backup.zip --confirm
+
+Solo dopo un ripristino riuscito:
+    sudo systemctl start php8.3-fpm nginx
+    sudo systemctl start pulse-backup-daily.timer pulse-backup-weekly.timer pulse-updates.timer
+    pulse-kiosk
+
+Il comando verifica struttura, checksum, SQLite, versione e immagini.
+Limite ZIP ripristinato: 2 GiB di contenuti. Crea prima un backup di sicurezza
+se esiste un'installazione configurata. Le sessioni vengono invalidate.
+Accedere con le credenziali contenute nel backup.
+Se fallisce, lasciare i servizi fermi e risolvere il problema indicato.
+Stop/start di Nginx/PHP-FPM riguarda anche eventuali altri siti del PC.
+
+6. AGGIORNAMENTI
+---------------
+Per un PC con PULSE gia installato usare AGGIORNAMENTO_LINUX_MINT.txt.
+Dalla cartella estratta:
+    sudo bash deploy/upgrade-mint.sh
+Non rilanciare l'installer iniziale e non copiare file sopra /var/lib/pulse.
+Il comando conserva dati e immagini e richiede un backup verificato prima
+che il codice venga attivato. In caso di errore ripristina la versione precedente.
+
+Da 0.2.2 Mint usa GitHub Releases privato, controllato ogni 30 minuti.
+Configurare la credenziale: sudo python3 deploy/configure-github-mint.py
+Istruzioni complete: PUBBLICAZIONE_GITHUB.txt.
+Finestra iniziale: 03:00-04:00 Europe/Zurich, configurabile nelle impostazioni.
+Sono disponibili pausa, rinvio di almeno 24 ore, nuovo tentativo e note release.
+Il servizio crea cinque backup protetti separati in /var/lib/pulse-updater/backups.
+Per i pacchetti privati leggere PUBBLICAZIONE_GITHUB.txt.
+Per la sola guida online leggere PUBBLICAZIONE_BLOG.txt.
+Restano entrambi gli avvisi TV: disponibilita di una versione e installazione.
+Le nuove versioni del servizio privilegiato richiedono un bootstrap manuale.
+
+7. CONTROLLI E LOG
+-----------------
+    systemctl status nginx php8.3-fpm
+    systemctl list-timers 'pulse-*'
+    sudo nginx -t
+    sudo php-fpm8.3 -t
+    journalctl -u pulse-backup@daily.service -n 50
+    journalctl -u pulse-updates.service -n 50
+
+Log:
+    /var/lib/pulse/logs/php.log
+    /var/log/nginx/pulse-error.log
+    ~/.local/state/pulse/kiosk.log
+
+Se la TV non compare:
+- Aprire http://127.0.0.1:8080/setup oppure /login e controllare il server.
+- Completare la configurazione iniziale.
+- Eseguire pulse-kiosk dal terminale dell'utente grafico.
+- Controllare i log e l'autostart dell'utente corretto.
+
+La compatibilita PHP e gli script sono verificati in ambiente di sviluppo.
+Avvio grafico, driver video, riavvio e prestazioni devono essere provati
+sul PC Linux Mint reale prima dell'uso in negozio.
+
+Riferimenti ufficiali:
+https://linuxmint.com/rel_wilma.php
+https://packages.ubuntu.com/noble/php8.3-fpm
+https://specifications.freedesktop.org/autostart-spec/latest/
+
+8. SUPPORTO OFFLINE TRAMITE USB
+-------------------------------
+Seguire DIAGNOSI_LINUX_MINT.txt. Sul PC gia installato:
+    sudo bash deploy/diagnose-mint.sh
+Il rapporto e nella cartella diagnostica della directory corrente.
+Non richiede Internet o accesso a ChatGPT. Copiare il .txt su USB e allegarlo
+alla chat da un altro PC. Non sostituisce dati e non riavvia servizi.
+
+L'installer dalla versione 0.2.0 usa Python 3 (gia incluso in Mint Desktop)
+e salva automaticamente un rapporto PULSE-INSTALLAZIONE-*.txt, anche in
+caso di errore. Il codice setup viene mostrato nel terminale ma oscurato nel log.
+Avviare sempre install-mint.sh; install-mint-server.sh e un componente interno.

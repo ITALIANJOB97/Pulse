@@ -1,0 +1,9 @@
+[Unit]
+Description=PULSE scheduler (release check every 30 minutes)
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=5min
+AccuracySec=10s
+Unit=pulse-updates.service
+[Install]
+WantedBy=timers.target

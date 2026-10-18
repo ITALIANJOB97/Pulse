@@ -1,0 +1,14 @@
+[Unit]
+Description=Recover interrupted PULSE deployment before PHP starts
+After=local-fs.target
+Before=php8.3-fpm.service
+[Service]
+Type=oneshot
+RemainAfterExit=true
+User=root
+Group=www-data
+ExecStart=/usr/bin/python3 /usr/local/lib/pulse/updater.py recover
+TimeoutStartSec=15min
+UMask=0027
+PrivateTmp=true
+ProtectHome=true

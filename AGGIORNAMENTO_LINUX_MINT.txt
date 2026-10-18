@@ -1,0 +1,107 @@
+PULSE 0.2.2 — AGGIORNARE L'INSTALLAZIONE ESISTENTE SU LINUX MINT 22.x
+============================================================================
+
+Il passaggio dal blog a GitHub richiede questo comando manuale una sola volta.
+Aggiorna anche il servizio di sistema; i successivi aggiornamenti ordinari sono automatici.
+
+Questa procedura aggiorna PULSE 0.1.1, 0.1.2, 0.2.0 o 0.2.1 già installato.
+Mantiene database, utenti, password, contenuti, foto, impostazioni e archivi.
+Il codice nuovo viene aggiunto in una cartella di versione separata.
+Non usare deploy/install-mint.sh su un PC dove PULSE è già installato.
+
+PRIMA DI INIZIARE
+1. Da PULSE > Backups crea una copia manuale e scaricala su USB.
+   È una copia aggiuntiva: l'aggiornamento crea comunque il proprio backup
+   verificato e si ferma se non riesce.
+2. Scarica pulse-0.2.2.zip dalla release GitHub privata oppure copialo
+   dalla USB al PC Mint. Estrailo in una cartella normale (es. Downloads).
+3. Non copiare file dentro /var/lib/pulse e non cancellare /opt/pulse.
+4. Chiudi i form di modifica aperti. La prima installazione dell'aggiornamento
+   parte subito, quando esegui il comando: scegli un momento tranquillo.
+
+COMANDO
+Apri la cartella estratta PULSE-Dietikon-Linux-Mint-0.2.2.
+Con il tasto destro scegli "Apri nel terminale" / "Im Terminal öffnen".
+
+Prima configura la credenziale GitHub di sola lettura (vedi PUBBLICAZIONE_GITHUB.txt):
+    sudo python3 deploy/configure-github-mint.py
+
+Poi aggiorna:
+    sudo bash deploy/upgrade-mint.sh
+
+Se sei già dentro la sottocartella deploy, usa:
+    sudo bash ./upgrade-mint.sh
+
+Inserisci la password del PC Mint quando sudo la richiede.
+I caratteri della password non vengono mostrati: è normale.
+Non viene richiesta la vecchia chiave di prima installazione.
+Attendi il messaggio "PULSE 0.2.2 installato".
+Non spegnere intenzionalmente il PC durante l'operazione.
+
+DOPO
+Apri:
+    http://127.0.0.1:8080/admin
+
+Attenzione: la porta è 8080.
+Accedi con lo stesso account di prima. NON ripetere il setup.
+Controlla dipendenti, foto, contenuti e impostazioni.
+La pagina TV si ricarica automaticamente alla prima lettura della nuova versione.
+In Team Targets inserisci manualmente sia l’obiettivo mensile Service/Ticket
+sia il risultato attuale del team. Sono indipendenti dai conteggi del podio.
+Se aggiorni da 0.2.0, il risultato attuale rimane vuoto finché lo inserisci;
+l’obiettivo già salvato viene conservato. Lo storico esistente non cambia.
+La domenica rimane visibile finché non la disattivi nelle impostazioni.
+Il nuovo aspetto blu/bianco si applica subito; le scelte delle pagine restano.
+
+COSA FA LO SCRIPT
+- Verifica Mint 22.x amd64, PHP 8.3 e i componenti richiesti.
+- Rifiuta pacchetti incompleti, reinstallazioni della stessa versione e downgrade.
+- Verifica tutti i file tramite CONTENTS.sha256.
+- Prepara la nuova cartella /opt/pulse/releases/0.2.2.
+- Installa il servizio locale degli aggiornamenti con la chiave pubblica.
+- Ferma temporaneamente i processi PHP e coordina i backup automatici.
+- Crea una copia coerente di database e immagini con il vecchio programma.
+- Conserva una copia protetta in /var/lib/pulse-updater/backups.
+- Verifica ZIP, database e riferimenti alle immagini prima di aggiornare.
+- Esegue eventuali migrazioni come www-data, cambia il collegamento current
+  e controlla database, risposta HTTP e risorse della TV.
+- Se i controlli falliscono ripristina codice precedente e database.
+- Un registro persistente permette di recuperare un'interruzione al riavvio,
+  prima che PHP riapra la dashboard.
+
+I dati restano in /var/lib/pulse. Non vengono sostituiti con dati di esempio.
+Sono mantenute cinque copie protette prima degli aggiornamenti.
+Le vecchie cartelle di codice restano disponibili; non cancellarle a mano
+durante un aggiornamento o un recupero.
+
+SE QUALCOSA NON FUNZIONA
+Il comando crea un rapporto .txt nella cartella diagnostica, vicino al pacchetto.
+Copia quel file su USB e passalo al supporto. Non contiene foto o database.
+Per un nuovo rapporto:
+    sudo bash deploy/diagnose-mint.sh
+
+Se compare "versione già installata", non è necessario ripetere l'aggiornamento.
+Se manca una dipendenza, lo script si ferma: non reinstalla il database.
+Se il recupero non termina, il servizio mantiene la manutenzione per impedire
+nuove scritture. Lascia i file al loro posto e invia il rapporto.
+Non cancellare /var/lib/pulse, /var/lib/pulse-updater o le release precedenti.
+
+AGGIORNAMENTI SUCCESSIVI
+Il PC verifica le release firmate nella repository privata GitHub ogni 30 minuti.
+Repository: ITALIANJOB97/Pulse. Serve il token Contents: Read-only configurato
+in /etc/pulse/github-token. Per rinnovarlo usa configure-github-mint.py. Il pianificatore lavora ogni cinque minuti; "Controlla ora" viene gestito al prossimo passaggio.
+La prima finestra è 03:00–04:00, fuso Europe/Zurich, anche al cambio ora legale.
+Nelle impostazioni puoi cambiare l'ora o mettere in pausa l'installazione.
+In Aggiornamenti trovi le novità, il rinvio di almeno 24 ore e il nuovo tentativo.
+Il PC deve restare acceso. Una finestra persa viene rinviata; nessun recupero
+imprevisto in orario diurno. Senza Internet la dashboard continua a funzionare.
+Gli aggiornamenti automatici riguardano PULSE; non aggiornano Mint o PHP.
+
+CONTROLLO FACOLTATIVO
+    systemctl status pulse-updates.timer --no-pager
+    systemctl status pulse-update-recover.service --no-pager
+    sudo journalctl -u pulse-updates.service -n 50 --no-pager
+
+GUIDA
+Disponibile nel pulsante "Hilfe & Anleitung / Help & guide / Aide et guide".
+Funziona anche senza Internet. È tradotta in DE, EN e FR.

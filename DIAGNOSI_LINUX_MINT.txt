@@ -1,0 +1,72 @@
+PULSE — DIAGNOSI OFFLINE PER LINUX MINT
+Strumento 0.1.2. Funziona anche con PULSE 0.1.0/0.1.1 gia installato.
+
+PER IL PC CHE MOSTRA LA PAGINA BIANCA
+-----------------------------------
+1. Copiare PULSE-Diagnosi-Linux-Mint-0.1.2.zip sul PC Mint tramite USB.
+2. Estrarre lo ZIP, per esempio sul Desktop.
+3. Aprire la cartella estratta, fare clic destro e scegliere
+   "Apri nel terminale".
+4. Eseguire questo unico comando:
+
+       sudo bash deploy/diagnose-mint.sh
+
+5. Inserire la password dell'utente Linux. Mentre la si scrive non compaiono
+   caratteri: e normale. Attendere il messaggio "File pronto da copiare".
+6. Nella cartella estratta si trova una nuova cartella "diagnostica".
+   Aprirla e copiare sulla USB il file:
+
+       PULSE-DIAGNOSI-DATA-ORA-....txt
+
+7. Dal Mac o da un altro PC con accesso alla chat, allegare quel file.
+
+Non serve collegarsi a ChatGPT sul Mint. Non serve SSH e non serve Internet.
+Lo strumento non reinstalla PULSE, non cambia configurazioni e non riavvia
+servizi. Esegue richieste solo a http://127.0.0.1:8080 sullo stesso PC.
+Non segue redirect verso altri indirizzi e non usa il proxy aziendale.
+
+E normale che il rapporto contenga "inactive", "file mancante", "comando non
+disponibile" o errori: sono proprio le informazioni utili alla diagnosi.
+La creazione del rapporto non significa che il problema sia gia risolto.
+
+CONTENUTO DEL RAPPORTO
+---------------------
+- Versione del sistema e architettura.
+- Stato di Nginx, PHP-FPM e timer PULSE.
+- Test di configurazione dei servizi.
+- Porta 8080, socket PHP e permessi dei percorsi PULSE.
+- Versione, estensioni e controllo sintassi PHP.
+- Risposta HTTP di setup/login/CSS: stato, dimensione e indicatori della pagina.
+- Ultime righe dei log di errore PULSE e dei servizi web.
+
+Non vengono copiati database, foto, sessioni o il corpo delle pagine HTML.
+I cookie, i codici setup, le chiavi riconoscibili e le query degli URL
+vengono oscurati nel rapporto. Non viene esportato l'ambiente del PC.
+Il file resta locale e non viene inviato automaticamente.
+
+Il rapporto viene intestato all'utente che esegue sudo, per consentire
+la copia con il file manager. Ogni esecuzione crea un file nuovo.
+Su supporti FAT/exFAT i permessi dipendono dal montaggio della chiavetta.
+
+SE IL COMANDO NON PARTE
+----------------------
+Controllare di essere nella cartella estratta, non dentro lo ZIP.
+La cartella deve contenere deploy/diagnose-mint.sh e deploy/support-mint.py.
+Python 3 e normalmente gia incluso in Linux Mint Desktop.
+Se compare "Python 3 non trovato", riportare questo messaggio.
+Non serve reinstallare la dashboard per usare la diagnosi.
+
+LOG DELL'INSTALLER COMPLETO (DALLA VERSIONE 0.1.2)
+-------------------------------------------------
+Nel pacchetto completo, il normale comando:
+
+    sudo bash deploy/install-mint.sh
+
+crea anche diagnostica/PULSE-INSTALLAZIONE-DATA-ORA-....txt.
+Registra output ed errori, e aggiunge le verifiche finali anche se
+l'installazione si interrompe. Il codice setup rimane visibile a terminale,
+ma viene oscurato nel file di rapporto.
+L'esito di errore dell'installer viene mantenuto; il log non nasconde il fallimento.
+
+Su un PC dove PULSE e gia presente, usare la DIAGNOSI. L'installer completo
+resta riservato alla prima installazione.
