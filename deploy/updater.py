@@ -25,14 +25,15 @@ import urllib.request
 import zipfile
 from zoneinfo import ZoneInfo
 
-UPDATER_VERSION = 2
+UPDATER_VERSION = 3
 MAX_ZIP = 100 * 1024 * 1024
 MAX_EXPANDED = 300 * 1024 * 1024
 REPOSITORY = "ITALIANJOB97/Pulse"
 ORIGIN = "https://github.com/" + REPOSITORY + "/releases/download/"
 LATEST_URL = "https://api.github.com/repos/" + REPOSITORY + "/releases/latest"
 LEGACY_CONFIG = {"schema": 1, "origin": "https://www.luigipranzo.com/myfile/Pulse/"}
-GITHUB_CONFIG = {"schema": 2, "repository": REPOSITORY, "private": True}
+PRIVATE_GITHUB_CONFIG = {"schema": 2, "repository": REPOSITORY, "private": True}
+GITHUB_CONFIG = {"schema": 2, "repository": REPOSITORY, "private": False}
 TZ = ZoneInfo("Europe/Zurich")
 VERSION_RE = r"\d+\.\d+\.\d+"
 BACKUP_RE = r"(?:manual|preupdate)-\d{8}-\d{6}-[a-f0-9]{6}\.zip"
@@ -106,7 +107,7 @@ def download(url, target, limit, origin=ORIGIN, token=None):
     if url != LATEST_URL and not github_api_asset(url) and not allowed_url(url, origin):
         raise ValueError("Release URL is outside the trusted repository")
     opener = urllib.request.build_opener(TrustedRedirect)
-    request = urllib.request.Request(url, headers={"User-Agent": "PULSE-Updater/2", "Cache-Control": "no-cache",
+    request = urllib.request.Request(url, headers={"User-Agent": "PULSE-Updater/3", "Cache-Control": "no-cache",
         "Accept": "application/vnd.github+json" if url == LATEST_URL else "application/octet-stream"})
     if token is not None:
         if url != LATEST_URL and not github_api_asset(url):
@@ -325,13 +326,16 @@ class Updater:
                 raise ValueError("Untrusted updater configuration")
         config = read_json(self.config)
         # Repository changes require an operator-run upgrade of the trusted service.
-        if config != GITHUB_CONFIG:
+        if config not in (GITHUB_CONFIG, PRIVATE_GITHUB_CONFIG):
             raise ValueError("Unsupported trusted update source")
         return config
     def github_token(self):
+        # Public mode must ignore any stale token left by a private installation.
+        if self.configuration() == GITHUB_CONFIG:
+            return None
         path = self.config.parent / "github-token"
         if not path.exists():
-            raise ValueError("GitHub credential missing. Run deploy/configure-github-mint.sh with sudo.")
+            raise ValueError("GitHub credential missing. Run deploy/configure-github-mint.py with sudo.")
         info = path.stat()
         if path.is_symlink() or not stat.S_ISREG(info.st_mode) or info.st_uid != 0 or info.st_mode & 0o077 or info.st_size > 256:
             raise ValueError("GitHub credential must be a root-owned regular file with mode 600")
@@ -633,7 +637,7 @@ def bootstrap(updater, source):
         info = updater.config.stat()
         if updater.config.is_symlink() or info.st_uid != 0 or info.st_mode & 0o022:
             raise ValueError("Untrusted updater configuration")
-        if read_json(updater.config) not in (LEGACY_CONFIG, GITHUB_CONFIG):
+        if read_json(updater.config) not in (LEGACY_CONFIG, PRIVATE_GITHUB_CONFIG, GITHUB_CONFIG):
             raise ValueError("Unknown update source; configuration was not replaced")
     updater.control.mkdir(parents=True, exist_ok=True, mode=0o755)
     os.chown(updater.control,0,0)

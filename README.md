@@ -1,20 +1,21 @@
-# PULSE 0.2.3
+# PULSE 0.2.4
 
-Linux Mint 22.x: per aggiornare un'installazione esistente leggere AGGIORNAMENTO_LINUX_MINT.txt ed eseguire `sudo bash deploy/upgrade-mint.sh` dalla cartella estratta. Non usare l'installer di prima installazione. Distribuzione privata tramite GitHub Releases: docs/PUBBLICAZIONE_GITHUB.txt. Aggiornamento remoto per Mint già configurato sul blog: PUBBLICAZIONE_BLOG.txt. Relay GitHub → blog senza comandi sul Mint: docs/RELAY_BLOG.txt.
+Linux Mint 22.x: per aggiornare un'installazione esistente leggere AGGIORNAMENTO_LINUX_MINT.txt ed eseguire `sudo bash deploy/upgrade-mint.sh` dalla cartella estratta. Non usare l'installer di prima installazione. Distribuzione pubblica tramite GitHub Releases: docs/PUBBLICAZIONE_GITHUB.txt. Aggiornamento remoto per Mint già configurato sul blog: PUBBLICAZIONE_BLOG.txt. Relay GitHub → blog senza comandi sul Mint: docs/RELAY_BLOG.txt.
 
 Novità: guida DE/EN/FR, domenica opzionale, aggiornamenti notturni firmati con backup e recupero, foto intere, team su una pagina, blu Digitec/bianco, didascalie complete e nuovo target mensile Service/Ticket di squadra con obiettivo e risultato corrente inseriti manualmente, indipendenti dal podio.
 
 # PULSE · Dietikon
 
-Applicazione PHP 0.2.3 per TV orizzontale Full HD, con gestione da browser.
+Applicazione PHP 0.2.4 per TV orizzontale Full HD, con gestione da browser.
 Linux Mint 22.x amd64 con PHP 8.3; Raspberry Pi OS 64 bit con PHP 8.4+.
 
-## Aggiornamenti da GitHub privato
+## Aggiornamenti da GitHub pubblico
 
-Sono disponibili due percorsi: diretto dal Mint (token e bootstrap manuale del servizio v2) oppure tramite il relay hosting che mantiene compatibile il canale blog v1 già installato. Il solo aggiornamento dell’app non cambia il servizio root. I pacchetti del canale blog sono accessibili tramite URL, anche se la repository è privata.
+Il servizio v3 scarica release firmate da ITALIANJOB97/Pulse senza credenziali. Per migrare direttamente dal vecchio servizio, eseguire una sola volta `sudo bash deploy/upgrade-mint.sh` sul Mint. Il servizio root non viene sostituito da un normale ZIP automatico.
 
+I Mint ancora collegati al blog possono ricevere le nuove versioni tramite il relay pubblico su Aruba, senza interventi sul PC. Il relay richiede una configurazione iniziale sul hosting; non occorre un token. Istruzioni in docs/RELAY_BLOG.txt.
 
-Repository: https://github.com/ITALIANJOB97/Pulse. Pubblicare una Release `vX.Y.Z` con il pacchetto installabile, `stable.json` e la firma. I commit da soli non installano aggiornamenti. Su Mint configurare un token limitato a questa repository con Contents: Read-only tramite `sudo python3 deploy/configure-github-mint.py`, poi eseguire l’aggiornamento manuale iniziale. Il token resta in `/etc/pulse/github-token`, root:root 600, e non viene inviato al CDN. Le verifiche avvengono ogni 30 minuti; installazione nella finestra notturna con backup e recupero.
+Dopo un commit verificato su main, `python bin/release-github.py --php PERCORSO_PHP --gh PERCORSO_GH` esegue i test applicativi, crea e firma i pacchetti, carica il codice e pubblica una Release completa. La chiave di firma resta locale. I commit da soli non attivano l’installazione sui PC.
 
 Foto, database, backup, credenziali locali e chiave privata di firma sono esclusi da Git e dai pacchetti.
 
@@ -111,7 +112,7 @@ la verifica sul dispositivo reale.
 
 ## Pacchetto Linux Mint
 
-Versione 0.2.3, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
+Versione 0.2.4, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
 
     python bin/build-linux-mint-zip.py
 

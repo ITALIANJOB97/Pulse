@@ -191,8 +191,10 @@
     "service_total": "Service/Ticket current team result (month)",
     "service_total_hint": "Enter the team target and current result manually for this month. These values are independent of the individual podium counts. Leave unknown values blank.",
     "update_source_blog": "Signed updates via luigipranzo.com. The blog can relay published GitHub releases. No GitHub credential is needed on this Mint PC.",
-    "update_source_github": "Signed updates directly from the private GitHub repository ITALIANJOB97/Pulse. A read-only credential is configured on this Mint PC.",
-    "update_source_unknown": "Updates are managed by the installed system service."
+    "update_source_github": "Signed updates directly from the public GitHub repository ITALIANJOB97/Pulse. No GitHub token is required.",
+    "update_source_unknown": "Updates are managed by the installed system service.",
+    "podium_decimal_hint": "Decimals below 1 are accepted, for example 0.6, 0.8 or 1.25. Use a dot or comma as the decimal separator; do not use thousands separators.",
+    "update_source_github_private": "Signed updates directly from the private GitHub repository ITALIANJOB97/Pulse. A read-only credential is configured on this Mint PC."
   },
   "de": {
     "setup": "Ersteinrichtung",
@@ -386,8 +388,10 @@
     "service_total": "Service/Ticket aktueller Teamwert (Monat)",
     "service_total_hint": "Teamziel und aktuellen Teamwert für diesen Monat manuell eingeben. Diese Werte sind unabhängig von den individuellen Podium-Zahlen. Unbekannte Werte leer lassen.",
     "update_source_blog": "Signierte Updates über luigipranzo.com. Der Blog kann veröffentlichte GitHub-Releases bereitstellen. Auf diesem Mint-PC ist kein GitHub-Token erforderlich.",
-    "update_source_github": "Signierte Updates direkt aus dem privaten GitHub-Repository ITALIANJOB97/Pulse. Auf diesem Mint-PC ist ein Token mit Lesezugriff eingerichtet.",
-    "update_source_unknown": "Updates werden vom installierten Systemdienst verwaltet."
+    "update_source_github": "Signierte Updates direkt aus dem öffentlichen GitHub-Repository ITALIANJOB97/Pulse. Kein GitHub-Token erforderlich.",
+    "update_source_unknown": "Updates werden vom installierten Systemdienst verwaltet.",
+    "podium_decimal_hint": "Dezimalwerte unter 1 sind erlaubt, zum Beispiel 0,6, 0,8 oder 1,25. Punkt oder Komma als Dezimaltrennzeichen verwenden, ohne Tausendertrennzeichen.",
+    "update_source_github_private": "Signierte Updates direkt aus dem privaten GitHub-Repository ITALIANJOB97/Pulse. Auf diesem Mint-PC ist ein Token mit Lesezugriff eingerichtet."
   },
   "fr": {
     "setup": "Configuration initiale",
@@ -581,7 +585,9 @@
     "service_total": "Résultat actuel Service/Ticket de l’équipe (mois)",
     "service_total_hint": "Saisissez manuellement l’objectif et le résultat actuel de l’équipe pour ce mois. Ces valeurs sont indépendantes des résultats individuels du podium. Laissez les valeurs inconnues vides.",
     "update_source_blog": "Mises à jour signées via luigipranzo.com. Le blog peut relayer les versions publiées sur GitHub. Aucun jeton GitHub n’est nécessaire sur ce PC Mint.",
-    "update_source_github": "Mises à jour signées directement depuis le dépôt GitHub privé ITALIANJOB97/Pulse. Un jeton en lecture seule est configuré sur ce PC Mint.",
-    "update_source_unknown": "Les mises à jour sont gérées par le service système installé."
+    "update_source_github": "Mises à jour signées directement depuis le dépôt GitHub public ITALIANJOB97/Pulse. Aucun jeton GitHub nécessaire.",
+    "update_source_unknown": "Les mises à jour sont gérées par le service système installé.",
+    "podium_decimal_hint": "Les décimales inférieures à 1 sont acceptées, par exemple 0,6, 0,8 ou 1,25. Utilisez un point ou une virgule décimale, sans séparateur de milliers.",
+    "update_source_github_private": "Mises à jour signées directement depuis le dépôt GitHub privé ITALIANJOB97/Pulse. Un jeton en lecture seule est configuré sur ce PC Mint."
   }
 }

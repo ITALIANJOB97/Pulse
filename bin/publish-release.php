@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 declare(strict_types=1);
-// Workstation publisher: sign private GitHub and legacy blog channels with one offline key.
+// Workstation publisher: sign public GitHub and legacy blog channels with one offline key.
 if(PHP_SAPI!=='cli')exit(1);
 try{
     if(!extension_loaded('sodium'))throw new RuntimeException('PHP sodium required (Windows: php -d extension=sodium).');
@@ -31,7 +31,7 @@ try{
     $manifest=[
         'app'=>'pulse-dietikon','schema'=>1,'channel'=>'stable','version'=>$version,
         'published_at'=>gmdate('c'),'expires_at'=>gmdate('c',time()+366*86400),
-        'min_from'=>'0.2.0','min_updater'=>2,'platform'=>'linuxmint22-amd64','php_min'=>'8.3.0','db_schema'=>1,
+        'min_from'=>'0.2.0','min_updater'=>3,'platform'=>'linuxmint22-amd64','php_min'=>'8.3.0','db_schema'=>1,
         'url'=>'https://github.com/ITALIANJOB97/Pulse/releases/download/v'.$version.'/pulse-'.$version.'.zip',
         'size'=>filesize($target),'sha256'=>hash_file('sha256',$target),'notes'=>$notes
     ];
@@ -49,9 +49,9 @@ try{
     sodium_memzero($secret);
     file_put_contents($dir.'/blog-stable.json',$blogJson);
     file_put_contents($dir.'/blog-stable.json.sig',$blogSig);
-    $text="# PULSE ".$version."\n\nRepository privata: credenziale di sola lettura sul hosting per il relay, oppure sul Mint per il canale diretto.\n\n";
-    $text.="Canale esistente via blog: il relay hosting usa gli allegati blog-stable.json e blog-stable.json.sig con lo stesso ZIP, senza configurare il Mint. Vedi docs/RELAY_BLOG.txt.\n\nPer passare direttamente dal blog a GitHub, scarica **pulse-".$version.".zip**, estrailo e segui docs/PUBBLICAZIONE_GITHUB.txt. Dalla cartella estratta esegui:\n\n```bash\nsudo python3 deploy/configure-github-mint.py\nsudo bash deploy/upgrade-mint.sh\n```\n\n";
-    $text.="Il primo comando richiede un fine-grained token limitato a Pulse con Contents: Read-only. Il secondo aggiorna una volta anche il servizio, crea il backup e conserva dati, utenti e foto. Non ripetere l’installer iniziale. Usa l’allegato **pulse-".$version.".zip**: gli archivi Source code di GitHub non sono pacchetti installabili.\n\n";
+    $text="# PULSE ".$version."\n\nAggiornamenti pubblici da ITALIANJOB97/Pulse: nessun token necessario sul Mint.\n\n";
+    $text.="Mint con servizio blog v1: continuare tramite il blog usando blog-stable.json e relativa firma (relay pubblico: docs/RELAY_BLOG.txt). Il pacchetto automatico non sostituisce il servizio root.\n\nPer il passaggio DIRETTO a GitHub, estrarre **pulse-".$version.".zip** sul Mint ed eseguire una sola volta:\n\n```bash\nsudo bash deploy/upgrade-mint.sh\n```\n\n";
+    $text.="Il comando aggiorna il servizio a v3, crea il backup e conserva dati, utenti e foto. Non ripetere l’installer iniziale. I successivi rilasci firmati saranno scaricati senza credenziali e installati nella finestra notturna. Gli archivi Source code generati da GitHub non sono pacchetti installabili.\n\n";
     foreach(['en'=>'English','de'=>'Deutsch','fr'=>'Français'] as $lang=>$title)$text.='## '.$title."\n\n".$notes[$lang]."\n\n";
     file_put_contents($dir.'/release-notes.md',$text);
     // This separate guide archive contains only public help pages.
@@ -84,5 +84,5 @@ try{
         $archive->close();file_put_contents($out.'.sha256',hash_file('sha256',$out).'  '.basename($out).PHP_EOL);
         echo "Blog upload archive: ".basename($out)." (program ZIP is accessible by URL after upload).\n";
     }
-    echo "Signed private GitHub assets: dist/GitHub/v".$version."\nGuide: PULSE-Guida-Blog-".$version.".zip\nHosting relay: ".basename($relay)."\nNo runtime data or private signing key packaged.\n";
+    echo "Signed public GitHub assets: dist/GitHub/v".$version."\nGuide: PULSE-Guida-Blog-".$version.".zip\nHosting relay: ".basename($relay)."\nNo runtime data or private signing key packaged.\n";
 }catch(Throwable $e){fwrite(STDERR,$e->getMessage().PHP_EOL);exit(1);}

@@ -127,7 +127,7 @@ function adminContent(): void {
         echo '<div class="form-grid thirds">';foreach(['de','en','fr'] as $lang)area('message_'.$lang,t('message').' · '.strtoupper($lang),$data['message'][$lang]??'');echo '</div>';
     }elseif($module==='podium'){
         $counts=[];foreach($data as $row)$counts[$row['employee_id']]=$row['count'];
-        echo '<div class="form-grid">';foreach(employees(true) as $person)field('counts['.$person['id'].']',$person['name'].' · '.t('count'),$counts[$person['id']]??0,'number','required min="0" max="1000000" step="1"');echo '</div>';
+        echo '<div class="form-grid">';foreach(employees(true) as $person)field('counts['.$person['id'].']',$person['name'].' · '.t('count'),$counts[$person['id']]??0,'text','required inputmode="decimal" maxlength="32"');echo '</div><p class="help">'.e(t('podium_decimal_hint')).'</p>';
         if(!employees(true))echo '<p>'.e(t('no_employees')).'</p>';
     }elseif($module==='roles'){
         for($i=0;$i<8;$i++){

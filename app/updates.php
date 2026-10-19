@@ -94,7 +94,7 @@ function updaterSourceLabel(): string {
         if(!is_file($path)||filesize($path)>4096)return 'update_source_unknown';
         $config=json_decode((string)file_get_contents($path),true,8,JSON_THROW_ON_ERROR);
         if(($config['schema']??null)===1&&($config['origin']??'')==='https://www.luigipranzo.com/myfile/Pulse/')return 'update_source_blog';
-        if(($config['schema']??null)===2&&($config['repository']??'')==='ITALIANJOB97/Pulse')return 'update_source_github';
+        if(($config['schema']??null)===2&&($config['repository']??'')==='ITALIANJOB97/Pulse')return ($config['private']??true)?'update_source_github_private':'update_source_github';
     }catch(Throwable){}
     return 'update_source_unknown';
 }

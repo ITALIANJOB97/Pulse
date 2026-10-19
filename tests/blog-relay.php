@@ -43,6 +43,7 @@ try{
     $bad=$release;$bad['assets'][]=$bad['assets'][0];rejects(fn()=>pulseRelayAssets($bad),'Duplicate asset rejected');
     $bad=$release;$bad['assets'][0]['url']='https://api.github.com/repos/other/repo/releases/assets/1';rejects(fn()=>pulseRelayAssets($bad),'Wrong repository rejected');
     check(in_array('Authorization: Bearer secret',pulseRelayHeaders(PULSE_REPO_API.'/releases/assets/1','secret'),true),'API authorization');
+    check(!str_contains(implode(' ',pulseRelayHeaders(PULSE_REPO_API.'/releases/latest')),'Authorization'),'Public API needs no credential');
     $cdn='https://release-assets.githubusercontent.com/github-production-release-asset/1/2?sig=abc';
     check(!str_contains(implode(' ',pulseRelayHeaders($cdn,'secret')),'secret'),'CDN receives no token');
     foreach(['https://example.com/x','https://release-assets.githubusercontent.com.evil.test/github-production-release-asset/x','https://user@release-assets.githubusercontent.com/github-production-release-asset/x','https://release-assets.githubusercontent.com:444/github-production-release-asset/x'] as $url)rejects(fn()=>pulseRelayHeaders($url,'secret'),'Untrusted host rejected');
@@ -53,7 +54,7 @@ try{
     require dirname(__DIR__).'/app/updates.php';
     $GLOBALS['pulse_config']['updater_config']=$root.'/config.json';
     file_put_contents($root.'/config.json',json_encode(['schema'=>1,'origin'=>PULSE_BLOG_ORIGIN]));check(updaterSourceLabel()==='update_source_blog','Legacy label');
-    file_put_contents($root.'/config.json',json_encode(['schema'=>2,'repository'=>'ITALIANJOB97/Pulse']));check(updaterSourceLabel()==='update_source_github','Direct GitHub label');
+    file_put_contents($root.'/config.json',json_encode(['schema'=>2,'repository'=>'ITALIANJOB97/Pulse','private'=>false]));check(updaterSourceLabel()==='update_source_github','Direct GitHub label');
     file_put_contents($root.'/config.json','bad');check(updaterSourceLabel()==='update_source_unknown','Invalid config label');
     echo $checks." relay and source checks passed.\n";
 }finally{

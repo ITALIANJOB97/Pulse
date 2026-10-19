@@ -1,3 +1,10 @@
+## 0.2.4 — 2026-10-19
+- Service Podium: decimali sotto 1 accettati, conservati e visualizzati; separatore punto o virgola.
+- Servizio v3 per aggiornamenti GitHub pubblici senza token, con backup, verifica firme e finestra notturna.
+- Relay pubblico per il vecchio canale blog, senza credenziali sul hosting.
+- Comando di rilascio per test, pacchetti firmati, push normale e pubblicazione di Release complete.
+- Dati esistenti conservati. I valori già troncati da vecchie versioni richiedono reinserimento.
+
 ## 0.2.3 — 2026-10-18
 - Firma “By Luigi Juan Pranzo” con link al blog su TV, amministrazione, accesso, setup e guida.
 - Pacchetto e manifest firmato compatibili con il servizio blog v1 già installato.

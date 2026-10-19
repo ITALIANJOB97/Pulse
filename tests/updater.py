@@ -320,6 +320,9 @@ class Deployment(unittest.TestCase):
         self.assert_existing()
         self.assertEqual(self.agent.current().name,"0.2.0")
     def test_credential_permissions_and_symlinks(self):
+        with patch.object(self.agent,"configuration",return_value=u.PRIVATE_GITHUB_CONFIG):
+            self.check_private_credential_permissions()
+    def check_private_credential_permissions(self):
         token=self.agent.config.parent / "github-token"
         with self.assertRaises(ValueError):self.agent.github_token()
         token.write_text("github_pat_"+"x"*30+"\n");token.chmod(0o600)
@@ -328,6 +331,14 @@ class Deployment(unittest.TestCase):
         with self.assertRaises(ValueError):self.agent.github_token()
         token.unlink();token.symlink_to(self.data / "pulse.sqlite")
         with self.assertRaises(ValueError):self.agent.github_token()
+    def test_public_mode_ignores_missing_expired_or_unsafe_token(self):
+        with patch.object(self.agent,"configuration",return_value=u.GITHUB_CONFIG):
+            self.assertIsNone(self.agent.github_token())
+            token=self.agent.config.parent / "github-token"
+            token.write_text("expired-invalid-token");token.chmod(0o644)
+            self.assertIsNone(self.agent.github_token())
+            token.unlink();token.symlink_to(self.data / "pulse.sqlite")
+            self.assertIsNone(self.agent.github_token())
     def test_download_package_bound_to_signed_version(self):
         metadata={"tag_name":"v0.2.0","draft":False,"prerelease":False,"assets":[
             {"name":name,"state":"uploaded","url":"https://api.github.com/repos/ITALIANJOB97/Pulse/releases/assets/"+str(i+1),"browser_download_url":u.ORIGIN+"v0.2.0/"+name}

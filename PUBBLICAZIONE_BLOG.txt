@@ -1,19 +1,19 @@
-PULSE 0.2.3 — PACCHETTO DA CARICARE SUL BLOG
+PULSE 0.2.4 — PACCHETTO DA CARICARE SUL BLOG
 ================================================
 Questo pacchetto aggiorna le installazioni Mint che hanno già il servizio
 notturno 0.2.0/0.2.1 configurato sul blog. Non richiede comandi sul Mint.
 Non può aggiungere da remoto il servizio a una vecchia installazione 0.1.x.
 
 PER QUESTA NOTTE
-1. Estrai PULSE-Blog-0.2.3.zip sul tuo computer.
+1. Estrai PULSE-Blog-0.2.4.zip sul tuo computer.
 2. Nel pannello file/FTP del blog apri /myfile/Pulse/.
-3. Carica prima pulse-0.2.3.zip e la cartella guide (aggiornando i file esistenti).
-   Il file pulse-0.2.3.zip deve restare compresso: NON estrarlo sul sito.
+3. Carica prima pulse-0.2.4.zip e la cartella guide (aggiornando i file esistenti).
+   Il file pulse-0.2.4.zip deve restare compresso: NON estrarlo sul sito.
 4. Carica stable.json.sig, poi stable.json PER ULTIMO, sovrascrivendo i precedenti.
    Non creare per errore /myfile/Pulse/Pulse/. Non caricare lo ZIP esterno
-   PULSE-Blog-0.2.3.zip al posto dei suoi contenuti.
+   PULSE-Blog-0.2.4.zip al posto dei suoi contenuti.
 5. Apri https://www.luigipranzo.com/myfile/Pulse/stable.json:
-   deve mostrare "version": "0.2.3" e "min_updater": 1.
+   deve mostrare "version": "0.2.4" e "min_updater": 1.
    Se usi una cache/CDN, svuotala per stable.json e stable.json.sig e disabilita
    la cache su questi due file. Non aggiungere redirect o pagine di login.
 6. Il Mint controlla circa ogni 30 minuti. Se acceso, online, con installazione
@@ -21,7 +21,7 @@ PER QUESTA NOTTE
    (predefinita: 03:00–04:00, ora svizzera). Se perde la finestra, riprova la successiva.
 
 URL FINALI
-https://www.luigipranzo.com/myfile/Pulse/pulse-0.2.3.zip
+https://www.luigipranzo.com/myfile/Pulse/pulse-0.2.4.zip
 https://www.luigipranzo.com/myfile/Pulse/stable.json
 https://www.luigipranzo.com/myfile/Pulse/stable.json.sig
 https://www.luigipranzo.com/myfile/Pulse/guide/index.html
@@ -36,19 +36,15 @@ Il risultato Service/Ticket del team è manuale: se prima usavi 0.2.0 e non
 avevi un valore manuale, resta vuoto finché non viene compilato.
 
 PROSSIME VERSIONI DA GITHUB SENZA TOCCARE IL MINT
-Percorso: GitHub privato -> relay sul tuo hosting -> blog -> Mint.
-È disponibile PULSE-Relay-Hosting-0.2.3.zip con istruzioni RELAY_BLOG.txt.
-Il relay richiede una configurazione iniziale sul pannello hosting: token
-GitHub Contents: Read-only e un cron. Finché non viene configurato, ogni
+Percorso: GitHub pubblico -> relay sul tuo hosting -> blog -> Mint.
+È disponibile PULSE-Relay-Hosting-0.2.4.zip con istruzioni RELAY_BLOG.txt.
+Il relay richiede una configurazione iniziale sul pannello hosting: un cron PHP. Nessuna credenziale GitHub richiesta. Finché non viene configurato, ogni
 versione va caricata sul blog come sopra. Il solo upload di questo ZIP non
 attiva il collegamento a GitHub, e non cambia il servizio root del Mint.
 Il passaggio DIRETTO Mint -> GitHub resta un’alternativa manuale una tantum,
 descritta in docs/PUBBLICAZIONE_GITHUB.txt.
 
-RISERVATEZZA
-La repository resta privata, ma il pacchetto servito dal blog è scaricabile
-tramite URL e contiene il codice del programma. Non contiene foto, account,
-database reali, credenziali GitHub o la chiave privata di firma.
-Se vuoi mantenere riservato anche il pacchetto, usa il canale GitHub diretto
-quando potrai configurare il Mint. Non basta rendere privato GitHub per
-rendere privato un file caricato sul blog.
+CONTENUTO PUBBLICO
+Repository e pacchetto del programma sono destinati alla distribuzione pubblica.
+Non contengono foto, account, database reali, credenziali GitHub o la chiave
+privata di firma. I dati del negozio restano sul Mint.

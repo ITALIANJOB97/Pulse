@@ -20,14 +20,14 @@ function pulseRelayCdn(string $url): bool {
         &&str_starts_with($p['path']??'','/github-production-release-asset/')
         &&!isset($p['port'])&&!isset($p['user'])&&!isset($p['pass'])&&!isset($p['fragment']);
 }
-function pulseRelayHeaders(string $url,string $token): array {
-    if(pulseRelayApi($url))return ['Authorization: Bearer '.$token,
+function pulseRelayHeaders(string $url,?string $token=null): array {
+    if(pulseRelayApi($url))return array_merge($token!==null?['Authorization: Bearer '.$token]:[],[
         'Accept: '.(str_ends_with($url,'/latest')?'application/vnd.github+json':'application/octet-stream'),
-        'X-GitHub-Api-Version: 2022-11-28'];
+        'X-GitHub-Api-Version: 2022-11-28']);
     pulseRelayAssert(pulseRelayCdn($url),'Untrusted download host.');
     return ['Accept: application/octet-stream']; // Never forward GitHub credentials to the CDN.
 }
-function pulseRelayDownload(string $url,int $limit,string $token): string {
+function pulseRelayDownload(string $url,int $limit,?string $token=null): string {
     pulseRelayAssert(pulseRelayApi($url),'Download must start at the repository API.');
     for($redirect=0;$redirect<4;$redirect++){
         $body='';$location='';$curl=curl_init($url);
@@ -148,8 +148,8 @@ function pulseRelayMain(array $args): void {
     pulseRelayAssert(!$inside($configPath)&&!$inside((string)realpath(__FILE__)),'Relay and token configuration must be outside the public web root.');
     pulseRelayAssert($directory===$webroot.DIRECTORY_SEPARATOR.'myfile'.DIRECTORY_SEPARATOR.'Pulse','public_dir must be web_root/myfile/Pulse.');
     if(PHP_OS_FAMILY!=='Windows')pulseRelayAssert((fileperms($configPath)&0077)===0,'Set config.php permissions to 600.');
-    $token=$config['github_token']??getenv('PULSE_GITHUB_TOKEN');
-    pulseRelayAssert(is_string($token)&&preg_match('/^[A-Za-z0-9_]{20,255}$/D',$token)===1,'Configure a repository-only Contents: Read-only token.');
+    // Public repository: never load/send a previously configured GitHub token.
+    $token=null;
     $key=file_get_contents(__DIR__.'/release-public.key');
     $lock=fopen(dirname($configPath).'/sync.lock','c');pulseRelayAssert($lock!==false,'Cannot open relay lock.');
     if(!flock($lock,LOCK_EX|LOCK_NB)){fclose($lock);return;}

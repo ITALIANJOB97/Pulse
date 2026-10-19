@@ -112,7 +112,7 @@ function saveContentForm(): void {
     } elseif($module==='podium') {
         $counts=$_POST['counts']??[];
         if(!is_array($counts)) throw new DomainException(t('invalid_input'));
-        foreach($counts as $id=>$count) $payload[]=['employee_id'=>employeeId($id),'count'=>(int)numberValue($count,0,1000000)];
+        foreach($counts as $id=>$count) $payload[]=['employee_id'=>employeeId($id),'count'=>numberValue(is_string($count)?str_replace(',','.',trim($count)):$count,0,1000000)];
         // Retain recorded contributions when a person is later made inactive or deleted.
         foreach(content('podium',$period) as $row)if(!array_key_exists((string)$row['employee_id'],$counts))$payload[]=$row;
     } elseif($module==='roles') {

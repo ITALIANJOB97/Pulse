@@ -18,6 +18,7 @@
     return '<div class="'+cls+'">'+image+'</div>';
   }
   function number(v,digits){return v==null?'—':new Intl.NumberFormat(data.language,{maximumFractionDigits:digits==null?1:digits}).format(v);}
+  function serviceNumber(v){return new Intl.NumberFormat(data.language,{maximumSignificantDigits:15}).format(v);}
   function chunks(list,size){const result=[];for(let i=0;i<list.length;i+=size)result.push(list.slice(i,i+size));return result.length?result:[[]];}
   function buildSlides(){
     const out=[];
@@ -55,7 +56,7 @@
       return '<div class="podium"'+(ranked.length===1?' style="grid-template-columns:1fr;max-width:850px;margin:auto"':'')+'>'+ordered.map(function(r){
         const p=person(r.employee_id),position=ranked.indexOf(r)+1;
         const tie=all.some(function(other){return other.employee_id!==r.employee_id&&other.count===r.count;});
-        return '<section class="person '+(position===1?'first':position===3?'third':'second')+'">'+photo(p,'avatar')+'<h2>'+esc(p.name)+'</h2><div class="service-total">'+number(r.count,0)+'</div><div class="service-label">'+esc(label('count'))+'</div>'+(tie?'<div class="tie">'+esc(label('tied'))+'</div>':'')+'<div class="step"><span class="rank">'+String(r.rank).padStart(2,'0')+'</span></div></section>';
+        return '<section class="person '+(position===1?'first':position===3?'third':'second')+'">'+photo(p,'avatar')+'<h2>'+esc(p.name)+'</h2><div class="service-total">'+serviceNumber(r.count)+'</div><div class="service-label">'+esc(label('count'))+'</div>'+(tie?'<div class="tie">'+esc(label('tied'))+'</div>':'')+'<div class="step"><span class="rank">'+String(r.rank).padStart(2,'0')+'</span></div></section>';
       }).join('')+'</div>';
     }
     if(key==='team'){
