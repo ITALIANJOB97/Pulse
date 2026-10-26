@@ -3,9 +3,9 @@
   let data=JSON.parse(document.getElementById('screen-data').textContent);
   const root=document.getElementById('screen'),main=document.getElementById('slide');
   const ticker=document.getElementById('timeline'),pageNav=document.getElementById('pages');
-  const updateBox=document.getElementById('update-notice'),offline=document.getElementById('offline');
+  const offline=document.getElementById('offline');
   const keys=['spotlight','podium','team','roles','transfers','targets','daily','gallery','tasks'];
-  let slides=[],index=0,timer=null,fxTimer=null,pollTimer=null,paused=false,noticeTimer=null,installedShown=false;
+  let slides=[],index=0,timer=null,fxTimer=null,pollTimer=null,paused=false;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function label(key){return data.labels[key]||key;}
@@ -165,34 +165,18 @@
   function clock(){
     document.getElementById('clock').textContent=new Intl.DateTimeFormat(data.language,{hour:'2-digit',minute:'2-digit',timeZone:data.timezone}).format(new Date());
   }
-  function notifications(){
-    if(installedShown)return;
-    const updates=data.updates||{};
-    if(updates.available){updateBox.textContent=label('update_available')+' · v'+updates.version;updateBox.hidden=false;}
-    else updateBox.hidden=true;
-  }
-  function installedNotice(){
-    if(data.archive)return;
-    const event=data.updates&&data.updates.installed;if(!event)return;
-    let seen='';try{seen=sessionStorage.getItem('pulse-notice-version');}catch(e){}
-    if(seen===event.version)return;
-    try{sessionStorage.setItem('pulse-notice-version',event.version);}catch(e){}
-    installedShown=true;updateBox.textContent=label('installed_notice')+' · v'+event.version;updateBox.hidden=false;
-    clearTimeout(noticeTimer);noticeTimer=setTimeout(function(){installedShown=false;notifications();},15000);
-  }
   async function poll(){
     try{
       const response=await fetch('/api/screen',{cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(10000)});
       if(!response.ok)throw new Error('screen');
       const fresh=await response.json();offline.hidden=true;
       if(fresh.version!==data.version){
-        installedShown=true;updateBox.textContent=label('installed_notice')+' · v'+fresh.version;updateBox.hidden=false;
-        setTimeout(function(){location.reload();},2500);return;
+        location.reload();return;
       }
       const changed=fresh.revision!==data.revision||fresh.date!==data.date;
       data=fresh;
       if(changed){const previous=slides[index];slides=buildSlides();const next=slides.findIndex(function(s){return s.key===previous.key&&s.part===previous.part;});index=next>=0?next:0;show();}
-      notifications();installedNotice();
+
     }catch(error){offline.textContent=label('offline');offline.hidden=false;}
     pollTimer=setTimeout(poll,30000);
   }
@@ -208,6 +192,6 @@
   });
   document.addEventListener('visibilitychange',function(){if(document.hidden){clearTimeout(timer);clearTimeout(pollTimer);}else{schedule();if(!data.archive)poll();}});
   addEventListener('resize',fit);reduced.addEventListener('change',show);
-  slides=buildSlides();fit();show();notifications();installedNotice();setInterval(clock,30000);
+  slides=buildSlides();fit();show();setInterval(clock,30000);
   if(!data.archive)pollTimer=setTimeout(poll,30000);
 })();

@@ -18,7 +18,7 @@ try{
         echo createBackup($argv[2]??'manual').PHP_EOL;
     }elseif($command==='check-updates'){
         if(!installed()){echo "Setup not completed; no update check.\n";exit(0);}
-        $result=checkUpdates();echo jsonValue($result).PHP_EOL;
+        $result=checkUpdates(in_array('--automatic',$argv,true));echo jsonValue($result).PHP_EOL;
         if(!empty($result['error']))exit(1);
     }elseif($command==='snapshot'){
         if(!installed())throw new RuntimeException('Complete initial setup first.');

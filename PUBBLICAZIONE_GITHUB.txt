@@ -1,3 +1,7 @@
+NOTA SORGENTI IN SVILUPPO: il servizio v4 usa update.json come default.
+Per mantenere GitHub specificare --channel github. Vedere docs/PROTOCOLLO_AGGIORNAMENTI.md.
+Le release già pubblicate non sono state sostituite.
+
 PULSE 0.2.4 — GITHUB PUBBLICO
 ============================
 Repository prevista: https://github.com/ITALIANJOB97/Pulse
@@ -16,15 +20,15 @@ PASSAGGIO DIRETTO MINT -> GITHUB (UNA SOLA VOLTA)
 1. Scarica pulse-0.2.4.zip dalla Release e decomprimilo sul Mint.
    Non usare gli archivi Source code generati da GitHub.
 2. Apri un terminale nella cartella estratta ed esegui:
-       sudo bash deploy/upgrade-mint.sh
+       sudo bash deploy/upgrade-mint.sh --channel github
 3. Attendi il messaggio di riuscita. Il comando crea e verifica il backup,
-   aggiorna il servizio a v3 e conserva dati, utenti, foto e impostazioni.
+   aggiorna il servizio a v4 e conserva dati, utenti, foto e impostazioni.
 4. Non ripetere setup o install-mint.sh. Non serve configure-github-mint.py,
    né un token sul Mint: la nuova configurazione pubblica ignora eventuali
    vecchie credenziali rimaste dalla modalità privata.
 
 DOPO IL PASSAGGIO
-- Controllo delle GitHub Releases stabili circa ogni 30 minuti.
+- Controllo delle GitHub Releases stabili ogni 6 ore (servizio v4; il v3 esistente usa 30 minuti).
 - Verifica Ed25519, dimensione e SHA-256 prima dell’installazione.
 - Avviso con le novità e installazione notturna dopo backup verificato.
 - Finestra iniziale 03:00–04:00 Europe/Zurich, modificabile nelle impostazioni.
@@ -42,7 +46,7 @@ PUBBLICAZIONE DAL COMPUTER DI SVILUPPO
    e crea una bozza di Release. Pubblica solo dopo che i cinque allegati sono
    presenti con le dimensioni corrette. Non esegue force push e non sovrascrive
    release esistenti; un errore può lasciare una bozza da controllare.
-4. I Mint con servizio v3 scaricano automaticamente. Quelli ancora sul blog
+4. I Mint con servizio v3/v4 scaricano automaticamente. Quelli ancora sul blog
    ricevono la release tramite il relay Aruba, se configurato.
 
 ALLEGATI DELLA RELEASE vX.Y.Z

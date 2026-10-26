@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/update_protocol.php';
 
 function syncVersion(): void {
     $previous = setting('installed_version', version());
@@ -36,51 +37,25 @@ function validateRelease(array $release): array {
     }
     return ['version' => $release['version'], 'release_url' => $url, 'notes' => $clean];
 }
-function checkUpdates(): array {
+function checkUpdates(bool $automatic=false): array {
     if(updaterManaged()){
-        setSetting('update_requested',bin2hex(random_bytes(12)));
+        $state=managedUpdateState();
+        if(!$automatic||time()-(int)($state['checked_epoch']??0)>=21600)setSetting('update_requested',bin2hex(random_bytes(12)));
         return ['error'=>null,'queued'=>true];
     }
-    $url = setting('update_url', '');
-    if ($url === '') {
-        $state = ['checked_at' => gmdate('c'), 'release' => null, 'error' => null, 'configured' => false];
-        setSetting('update_state',$state); return $state;
-    }
-    $state = setting('update_state', ['release'=>null]);
-    try {
-        if (!httpsUrl($url)) throw new RuntimeException('Update source must use HTTPS.');
-        $body = '';
-        $curl = curl_init($url);
-        curl_setopt_array($curl, [
-            CURLOPT_CONNECTTIMEOUT => 4, CURLOPT_TIMEOUT => 10, CURLOPT_FOLLOWLOCATION => false,
-            CURLOPT_PROTOCOLS => CURLPROTO_HTTPS, CURLOPT_USERAGENT => 'PULSE/' . version(),
-            CURLOPT_HTTPHEADER => ['Accept: application/json'],
-            CURLOPT_WRITEFUNCTION => static function($handle,string $chunk) use (&$body): int {
-                if (strlen($body)+strlen($chunk)>65536) return 0;
-                $body .= $chunk; return strlen($chunk);
-            },
-        ]);
-        $ok = curl_exec($curl); $code = curl_getinfo($curl,CURLINFO_RESPONSE_CODE);
-        if ($ok === false || $code !== 200) throw new RuntimeException('Release source unavailable (HTTP ' . $code . ').');
-        $data = json_decode($body,true,32,JSON_THROW_ON_ERROR);
-        if (!is_array($data)) throw new RuntimeException('Invalid release manifest.');
-        $state['release'] = validateRelease($data); $state['error'] = null;
-    } catch (Throwable $ex) {
-        $state['error'] = 'check_failed';
-        error_log('[PULSE update] ' . $ex->getMessage());
-    }
-    $state['checked_at'] = gmdate('c'); $state['configured'] = true;
-    setSetting('update_state',$state); return $state;
+    return notificationUpdateCheck($automatic);
 }
-function publicUpdateState(): array {
+function publicUpdateState(bool $admin=true): array {
+    if(!$admin)return ['available'=>false,'version'=>null,'notes'=>null,'installed'=>null];
     $state = updaterManaged()?managedUpdateState():setting('update_state', []);
     $release = $state['release'] ?? null;
-    $available = is_array($release) && version_compare($release['version'],version(),'>');
+    $available = is_array($release) && updateVersionValid($release['version']??null) && version_compare($release['version'],version(),'>');
+    if($available&&empty($release['mandatory'])&&setting('update_skip','')===$release['version'])$available=false;
     $event = setting('version_event');
     if ($event && time()-strtotime($event['at'])>86400) $event = null;
     return [
         'available' => $available, 'version' => $available ? $release['version'] : null,
-        'notes' => $available ? $release['notes'] : null, 'installed' => $event,
+        'notes' => $available ? ($release['notes']??[]) : null, 'installed' => $event,
     ];
 }
 
@@ -93,14 +68,15 @@ function updaterSourceLabel(): string {
     try {
         if(!is_file($path)||filesize($path)>4096)return 'update_source_unknown';
         $config=json_decode((string)file_get_contents($path),true,8,JSON_THROW_ON_ERROR);
-        if(($config['schema']??null)===1&&($config['origin']??'')==='https://www.luigipranzo.com/myfile/Pulse/')return 'update_source_blog';
-        if(($config['schema']??null)===2&&($config['repository']??'')==='ITALIANJOB97/Pulse')return ($config['private']??true)?'update_source_github_private':'update_source_github';
+        if(($config['schema']??null)===1&&($config['origin']??'')===updateSource()['baseUrl'])return 'update_source_blog';
+        if(($config['schema']??null)===3&&($config['manifest']??'')===updateManifestUrl())return 'update_source_protocol';
+        if(($config['schema']??null)===2&&($config['repository']??'')===updateSource()['repository'])return ($config['private']??true)?'update_source_github_private':'update_source_github';
     }catch(Throwable){}
     return 'update_source_unknown';
 }
 function managedUpdateState(): array {
     $file=updaterPath('status.json');
-    if(!is_file($file)||filesize($file)>131072)return [];
+    if(!is_file($file)||filesize($file)>1048576)return [];
     try{$data=json_decode((string)file_get_contents($file),true,32,JSON_THROW_ON_ERROR);return is_array($data)?$data:[];}
     catch(Throwable){return [];}
 }

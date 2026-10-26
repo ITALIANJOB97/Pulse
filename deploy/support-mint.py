@@ -281,10 +281,10 @@ def diagnose(report: Report):
     report.write("Nessuna installazione, riparazione, modifica di configurazione o riavvio eseguiti.")
 
 
-def record_installer(report: Report, worker: Path) -> int:
+def record_installer(report: Report, worker: Path, arguments=()) -> int:
     """Mirror original console output, but persist only sanitized output."""
     report.section("Output installer")
-    process = subprocess.Popen(["bash", str(worker)], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+    process = subprocess.Popen(["bash", str(worker), *arguments], stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
                                text=True, errors="replace", bufsize=1)
     try:
         for line in process.stdout:
@@ -309,6 +309,7 @@ def main() -> int:
     parser.add_argument("mode", choices=["diagnose", "install", "upgrade"])
     parser.add_argument("--source", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--output-dir", type=Path, default=Path.cwd() / "diagnostica")
+    parser.add_argument("--channel", choices=["blog", "github"], default="blog")
     args = parser.parse_args()
     try:
         report = Report(args.output_dir, "AGGIORNAMENTO" if args.mode == "upgrade" else ("INSTALLAZIONE" if args.mode == "install" else "DIAGNOSI"))
@@ -325,7 +326,7 @@ def main() -> int:
                 status = 1
             else:
                 worker = args.source.resolve() / ("deploy/upgrade-mint-server.sh" if args.mode == "upgrade" else "deploy/install-mint-server.sh")
-                status = record_installer(report, worker)
+                status = record_installer(report, worker, ["--channel", args.channel]) if args.mode == "upgrade" else record_installer(report, worker)
                 report.write(f"Esito installer: {status}")
                 print("\nRaccolta verifiche finali; attendere il rapporto...", flush=True)
                 diagnose(report)

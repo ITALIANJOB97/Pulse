@@ -7,7 +7,7 @@ Type=oneshot
 User=www-data
 Group=www-data
 Environment=PULSE_STORAGE=/var/lib/pulse
-ExecStart=/usr/bin/php /opt/pulse/current/bin/console.php check-updates
+ExecStart=/usr/bin/php /opt/pulse/current/bin/console.php check-updates --automatic
 UMask=0027
 NoNewPrivileges=true
 PrivateTmp=true

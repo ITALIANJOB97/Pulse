@@ -50,8 +50,8 @@ function handleAction(string $action): void {
         db()->prepare("UPDATE media SET kind='archived' WHERE id=? AND kind='gallery'")->execute([(int)inputNumber('id',1,PHP_INT_MAX)]);
         touchRevision();
     } elseif ($action==='settings') {
-        $name=inputText('store',100); $lang=inputText('language',2); $url=updaterManaged()?setting('update_url',''):inputText('update_url',2000);
-        if($name==='' || !in_array($lang,['en','de','fr'],true) || ($url!==''&&!httpsUrl($url))) throw new DomainException(t('invalid_input'));
+        $name=inputText('store',100); $lang=inputText('language',2); $url=setting('update_url','');
+        if($name==='' || !in_array($lang,['en','de','fr'],true)) throw new DomainException(t('invalid_input'));
         $pages=[]; foreach(moduleKeys() as $key) $pages[$key]=isset($_POST['pages'][$key]);
         if(!in_array(true,$pages,true)) throw new DomainException(t('invalid_input'));
         $duration=(int)inputNumber('duration',10,120,20);
@@ -91,8 +91,10 @@ function handleAction(string $action): void {
         createBackup();flash(t('backup_done'));return;
     } elseif ($action==='check_updates') {
         $state=checkUpdates();flash(t($state['error']??(!empty($state['queued'])?'update_queued':'check_done')),isset($state['error'])?'error':'success');return;
+    } elseif (in_array($action,['install_update','skip_update','cancel_update'],true)) {
+        updateAction($action);flash(t('update_queued'));return;
     } elseif ($action==='postpone_update') {
-        setSetting('update_postpone_until',time()+86400); flash(t('update_postponed')); return;
+        setSetting('update_postpone_until',time()+86400);setSetting('update_install',[]); flash(t('update_postponed')); return;
     } elseif ($action==='retry_update') {
         setSetting('update_retry',bin2hex(random_bytes(12))); setSetting('update_requested',bin2hex(random_bytes(12))); flash(t('update_queued')); return;
     } elseif ($action==='content') {

@@ -4,7 +4,7 @@ declare(strict_types=1);
  * It mirrors already signed assets; it never holds the private signing key.
  */
 const PULSE_REPO_API='https://api.github.com/repos/ITALIANJOB97/Pulse';
-const PULSE_BLOG_ORIGIN='https://www.luigipranzo.com/myfile/Pulse/';
+define('PULSE_BLOG_ORIGIN',json_decode((string)file_get_contents(__DIR__.'/update-source.json'),true,8,JSON_THROW_ON_ERROR)['baseUrl']);
 const PULSE_MAX_PACKAGE=104857600;
 
 function pulseRelayAssert(bool $ok,string $message): void {

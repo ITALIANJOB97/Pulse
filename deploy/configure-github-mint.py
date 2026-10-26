@@ -58,7 +58,7 @@ def main():
     if config.is_file() and json.loads(config.read_text()).get("schema") == 2:
         subprocess.run(["/usr/bin/systemctl", "start", "--no-block", "pulse-updates.service"], check=False)
     else:
-        print("Ora esegui sudo bash deploy/upgrade-mint.sh dalla stessa cartella.")
+        print("Ora esegui sudo bash deploy/upgrade-mint.sh --channel github dalla stessa cartella.")
 
 if __name__ == "__main__":
     main()

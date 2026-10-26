@@ -19,6 +19,21 @@ try {
     boot();startSession();
     if(!installed()&&!in_array($path,['/setup','/action'],true))redirect('/setup');
     if($path==='/')redirect(installed()?'/admin':'/setup');
+    if($path==='/api/updates'||$path==='/api/updates/check'){
+        requireAdmin();
+        if($path==='/api/updates/check'){
+            if($_SERVER['REQUEST_METHOD']!=='POST'){http_response_code(405);header('Allow: POST');exit;}
+            verifyCsrf();session_write_close();checkUpdates(true);
+        }else session_write_close();
+        require PULSE_ROOT.'/app/views.php';require PULSE_ROOT.'/app/views_admin.php';
+        $state=updaterManaged()?managedUpdateState():setting('update_state',[]);
+        $progress=$state['progress']??null;
+        ob_start();adminUpdatePanel();$html=ob_get_clean();
+        unset($state['progress'],$state['updated_at']);
+        $key=hash('sha256',jsonValue([$state,setting('update_skip',''),setting('update_postpone_until',0),setting('update_install',[]),setting('update_auto',true)]));
+        header('Content-Type: application/json; charset=utf-8');
+        echo jsonValue(['html'=>$html,'key'=>$key,'progress'=>$progress,'progressText'=>$progress?updateProgressText($progress):'']);exit;
+    }
     if($path==='/action'){
         if($_SERVER['REQUEST_METHOD']!=='POST'){http_response_code(405);header('Allow: POST');exit;}
         require PULSE_ROOT.'/app/actions.php';
@@ -28,6 +43,10 @@ try {
             handleAction(inputText('action',30));
         }catch(DomainException $ex){flash($ex->getMessage(),'error');}
         catch(Throwable $ex){error_log('[PULSE] '.$ex);flash(t('operation_failed'),'error');}
+        if(($_SERVER['HTTP_ACCEPT']??'')==='application/json'&&in_array($_POST['action']??'', ['check_updates','install_update','skip_update','cancel_update','postpone_update','retry_update'],true)){
+            $notice=$_SESSION['flash']??['message'=>t('operation_failed'),'type'=>'error'];unset($_SESSION['flash']);
+            header('Content-Type: application/json; charset=utf-8');echo jsonValue($notice);exit;
+        }
         redirect($return);
     }
     if($path==='/setup'){if(installed())redirect('/login');require PULSE_ROOT.'/app/views.php';renderSetup();exit;}

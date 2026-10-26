@@ -6,6 +6,7 @@ if(PHP_SAPI!=='cli')exit(1);
 try{
     if(!extension_loaded('sodium'))throw new RuntimeException('PHP sodium required (Windows: php -d extension=sodium).');
     $root=dirname(__DIR__);$command=$argv[1]??'';
+    $updateSource=json_decode((string)file_get_contents($root.'/deploy/update-source.json'),true,8,JSON_THROW_ON_ERROR);
     $private=$root.'/.release-private/signing.key';$public=$root.'/deploy/release-public.key';
     if($command==='init-key'){
         if(is_file($private)||is_file($public))throw new RuntimeException('Key already exists. Never replace a deployed signing key without a rotation plan.');
@@ -43,15 +44,15 @@ try{
     // without changing its trusted code or distributing the private signing key.
     $blogManifest=$manifest;
     $blogManifest['min_updater']=1;
-    $blogManifest['url']='https://www.luigipranzo.com/myfile/Pulse/pulse-'.$version.'.zip';
+    $blogManifest['url']=$updateSource['baseUrl'].'pulse-'.$version.'.zip';
     $blogJson=json_encode($blogManifest,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;
     $blogSig=base64_encode(sodium_crypto_sign_detached($blogJson,$secret)).PHP_EOL;
     sodium_memzero($secret);
     file_put_contents($dir.'/blog-stable.json',$blogJson);
     file_put_contents($dir.'/blog-stable.json.sig',$blogSig);
     $text="# PULSE ".$version."\n\nAggiornamenti pubblici da ITALIANJOB97/Pulse: nessun token necessario sul Mint.\n\n";
-    $text.="Mint con servizio blog v1: continuare tramite il blog usando blog-stable.json e relativa firma (relay pubblico: docs/RELAY_BLOG.txt). Il pacchetto automatico non sostituisce il servizio root.\n\nPer il passaggio DIRETTO a GitHub, estrarre **pulse-".$version.".zip** sul Mint ed eseguire una sola volta:\n\n```bash\nsudo bash deploy/upgrade-mint.sh\n```\n\n";
-    $text.="Il comando aggiorna il servizio a v3, crea il backup e conserva dati, utenti e foto. Non ripetere l’installer iniziale. I successivi rilasci firmati saranno scaricati senza credenziali e installati nella finestra notturna. Gli archivi Source code generati da GitHub non sono pacchetti installabili.\n\n";
+    $text.="Mint con servizio blog v1: continuare tramite il blog usando blog-stable.json e relativa firma (relay pubblico: docs/RELAY_BLOG.txt). Il pacchetto automatico non sostituisce il servizio root.\n\nPer il passaggio DIRETTO a GitHub, estrarre **pulse-".$version.".zip** sul Mint ed eseguire una sola volta:\n\n```bash\nsudo bash deploy/upgrade-mint.sh --channel github\n```\n\n";
+    $text.="Il comando aggiorna il servizio a v4, crea il backup e conserva dati, utenti e foto. Non ripetere l’installer iniziale. I successivi rilasci firmati saranno scaricati senza credenziali e installati nella finestra notturna. Gli archivi Source code generati da GitHub non sono pacchetti installabili.\n\n";
     foreach(['en'=>'English','de'=>'Deutsch','fr'=>'Français'] as $lang=>$title)$text.='## '.$title."\n\n".$notes[$lang]."\n\n";
     file_put_contents($dir.'/release-notes.md',$text);
     // This separate guide archive contains only public help pages.
@@ -66,7 +67,7 @@ try{
     $archive->close();file_put_contents($out.'.sha256',hash_file('sha256',$out).'  '.basename($out).PHP_EOL);
     $relay=$root.'/dist/PULSE-Relay-Hosting-'.$version.'.zip';$relayArchive=new ZipArchive();
     if($relayArchive->open($relay,ZipArchive::CREATE|ZipArchive::OVERWRITE)!==true)throw new RuntimeException('Cannot build hosting relay archive.');
-    foreach(['blog-sync.php','blog-relay-config.example.php','blog-relay-cron.php','release-public.key'] as $file)$relayArchive->addFile($root.'/deploy/'.$file,'privata/'.$file);
+    foreach(['blog-sync.php','blog-relay-config.example.php','blog-relay-cron.php','release-public.key','update-source.json'] as $file)$relayArchive->addFile($root.'/deploy/'.$file,'privata/'.$file);
     $relayArchive->addFile($root.'/docs/RELAY_BLOG.txt','RELAY_BLOG.txt');
     $relayArchive->close();file_put_contents($relay.'.sha256',hash_file('sha256',$relay).'  '.basename($relay).PHP_EOL);
     if($command==='publish-blog'){

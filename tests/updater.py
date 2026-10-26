@@ -113,6 +113,8 @@ class Deployment(unittest.TestCase):
         shutil.copyfile(ROOT / "deploy/restore-update.py", self.control / "restore-update.py")
         self.agent = Fake(self.root / "state", self.base, self.data, self.root / "config.json", self.control)
         self.agent.calls = []
+        self.agent.config.write_text(json.dumps(u.GITHUB_CONFIG))
+        shutil.copyfile(ROOT / "deploy/release-public.key", self.control / "release-public.key")
         for path in [self.data, *self.data.rglob("*")]:
             os.chown(path, self.agent.account.pw_uid, self.agent.account.pw_gid)
             path.chmod(0o770 if path.is_dir() else 0o660)
@@ -279,7 +281,7 @@ class Deployment(unittest.TestCase):
     def test_bootstrap_permissions_with_production_umask(self):
         shutil.rmtree(self.control)
         (self.source / "deploy").mkdir()
-        for name in ("updater.py","restore-update.py","verify-release.php","release-public.key","pulse-updates.service","pulse-updates.timer","pulse-update-recover.service","pulse-backup@.service"):
+        for name in ("updater.py","update_protocol.py","update-source.json","restore-update.py","verify-release.php","release-public.key","pulse-updates.service","pulse-updates.timer","pulse-update-recover.service","pulse-backup@.service"):
             shutil.copyfile(ROOT / "deploy" / name,self.source / "deploy" / name)
         etc=self.root / "etc"
         (etc / "systemd/system").mkdir(parents=True)
@@ -300,7 +302,7 @@ class Deployment(unittest.TestCase):
         self.assertEqual(self.agent.config.parent.stat().st_mode & 0o777,0o755)
         self.agent.run(["/usr/bin/test","-r",self.agent.config],as_web=True)
         self.assertTrue(self.agent.preferences()["auto"])
-        self.assertEqual(u.read_json(self.agent.config),u.GITHUB_CONFIG)
+        self.assertEqual(u.read_json(self.agent.config),u.BLOG_CONFIG)
         self.assertFalse((self.agent.state / "downloads/stable.json").exists())
     def test_first_bootstrap_works_before_helper_is_installed(self):
         (self.control / "restore-update.py").unlink()
@@ -345,14 +347,14 @@ class Deployment(unittest.TestCase):
             for i,name in enumerate(("stable.json","stable.json.sig","pulse-0.2.0.zip"))]}
         u.atomic_json(self.agent.state / "downloads/github-release.json",metadata)
         release=self.channel()
-        with patch.object(self.agent,"github_token",return_value="test-token"),patch.object(u,"download") as download:
+        with patch.object(self.agent,"github_token",return_value="test-token"),patch.object(u,"download",side_effect=lambda url,target,*args,**kwargs:target.write_bytes(b"package")) as download:
             self.agent.download_package(release,self.root/"download.zip")
             self.assertEqual(download.call_args.kwargs["token"],"test-token")
             self.assertTrue(u.github_api_asset(download.call_args.args[0]))
             with self.assertRaises(ValueError):self.agent.download_package({**release,"version":"0.2.1"},self.root/"download.zip")
     def test_bootstrap_rejects_unknown_configuration_before_changes(self):
         (self.source/"deploy").mkdir()
-        for name in ("updater.py","restore-update.py","verify-release.php","release-public.key"):
+        for name in ("updater.py","update_protocol.py","update-source.json","restore-update.py","verify-release.php","release-public.key"):
             shutil.copyfile(ROOT/"deploy"/name,self.source/"deploy"/name)
         self.agent.config.write_text('{"schema":99}');self.agent.config.chmod(0o600)
         with self.assertRaises(ValueError):u.bootstrap(self.agent,self.source)

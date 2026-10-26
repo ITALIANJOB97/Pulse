@@ -86,7 +86,7 @@ def preferences(data):
         if db.execute("SELECT COUNT(*) FROM admins").fetchone()[0] == 0:
             print("null")
             return
-        keys = ("update_auto", "update_hour", "update_postpone_until", "update_requested", "update_retry")
+        keys = ("update_auto", "update_hour", "update_postpone_until", "update_requested", "update_retry", "update_cancel", "update_skip", "update_install")
         result = {}
         for key in keys:
             row = db.execute("SELECT value FROM settings WHERE key=?", (key,)).fetchone()

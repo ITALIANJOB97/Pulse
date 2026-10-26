@@ -5,6 +5,10 @@ import hashlib
 import re
 import stat
 import zipfile
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("--review", action="store_true", help="Build a separate source review archive without replacing a published version")
+REVIEW = parser.parse_args().review
 
 ROOT = Path(__file__).resolve().parent.parent
 VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
@@ -62,6 +66,8 @@ def build(prefix: str, files: list[str]):
                     raise RuntimeError("Runtime data must not be packaged")
                 if relative in ("config/local.php", ".env") or "diagnostica/" in relative:
                     raise RuntimeError("Local secrets/reports must not be packaged")
+        if archive_path.exists() and not REVIEW and hashlib.sha256(archive_path.read_bytes()).digest() != hashlib.sha256(temporary.read_bytes()).digest():
+            raise RuntimeError("This version already has a different archive. Use --review or choose a new VERSION explicitly; published files were not overwritten.")
         temporary.replace(archive_path)
         digest = hashlib.sha256(archive_path.read_bytes()).hexdigest()
         archive_path.with_suffix(".zip.sha256").write_text(
@@ -73,7 +79,8 @@ def build(prefix: str, files: list[str]):
         temporary.unlink(missing_ok=True)
 
 
-build(f"PULSE-Dietikon-Linux-Mint-{VERSION}", FILES)
-build(f"PULSE-Diagnosi-Linux-Mint-{VERSION}", [
+build("PULSE-Update-Protocol-Review" if REVIEW else f"PULSE-Dietikon-Linux-Mint-{VERSION}", FILES)
+if not REVIEW:
+    build(f"PULSE-Diagnosi-Linux-Mint-{VERSION}", [
     "VERSION", "DIAGNOSI_LINUX_MINT.txt", "deploy/diagnose-mint.sh", "deploy/support-mint.py",
 ])

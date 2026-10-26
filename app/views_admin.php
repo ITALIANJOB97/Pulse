@@ -47,7 +47,7 @@ function adminSettings(): void {
     field('update_hour',t('update_hour'),setting('update_hour',3),'number','required min="0" max="23" step="1"');
     echo '<p class="help">'.e(t('update_window_hint')).'</p>';
     if(updaterManaged())echo '<p class="help">'.e(t(updaterSourceLabel())).'</p>';
-    else field('update_url',t('update_source'),setting('update_url',''),'url','maxlength="2000" placeholder="https://…"');
+    else echo '<p class="help">'.e(updateManifestUrl()).'</p>';
     if(!updaterManaged())echo '<p class="help">'.e(t('update_source_hint')).'</p>';saveButton();echo '</section><section class="panel"><h2>'.e(t('screen_access')).'</h2><p class="muted">'.e(t('screen_hint')).'</p>';
     echo '<a class="button" href="/display?key='.e(setting('screen_key')).'" target="_blank" rel="noopener">'.e(t('open_tv')).' ↗</a>';
     formStart('screen_key','/admin?tab=settings');echo '<button class="subtle" data-confirm="'.e(t('replace_key_confirm')).'">'.e(t('reset_screen_key')).'</button></form></section>';
@@ -70,29 +70,62 @@ function adminAccounts(): void {
     echo '</div>';saveButton();echo '</section>';
 }
 function adminUpdates(): void {
-    $managed=updaterManaged();$state=$managed?managedUpdateState():setting('update_state',[]);$public=publicUpdateState();
-    echo '<section class="welcome-banner"><span class="eyebrow">'.e(t('current_version')).'</span><h2>v'.e(version()).'</h2><p>'.e(t($managed?'update_detail_auto':'update_detail')).'</p></section><section class="panel">';
-    $status=$managed?'update_state_'.($state['phase']??'waiting'):(!setting('update_url','')?'no_update_source':(!empty($state['error'])?'check_failed':($public['available']?'update_available':(isset($state['checked_at'])?'up_to_date':'not_checked'))));
-    echo '<h2>'.e(t($status)).'</h2>';
-    if($public['available']){
-        echo '<p class="release-version">v'.e($public['version']).'</p><p class="preserve">'.e($state['release']['notes'][language()]?:$state['release']['notes']['en']).'</p>';
+    echo '<div id="update-panel" aria-live="polite">';adminUpdatePanel();echo '</div>';
+}
+function adminUpdatePanel(): void {
+    $managed=updaterManaged();$state=$managed?managedUpdateState():setting('update_state',[]);
+    $release=$state['release']??null;
+    $available=is_array($release)&&updateVersionValid($release['version']??null)&&version_compare($release['version'],version(),'>');
+    $phase=$state['phase']??'waiting';
+    if(!$managed&&$available&&empty($release['mandatory'])&&setting('update_skip','')===$release['version'])$phase='skipped';
+    $controls=updaterControlsAvailable();
+    echo '<section class="welcome-banner"><span class="eyebrow">'.e(t('current_version')).'</span><h2>v'.e(version()).'</h2><p>'.e(t($managed?'update_detail_auto':'update_detail')).'</p></section><section class="panel update-panel">';
+    echo '<h2>'.e(t('update_state_'.$phase)).'</h2><p class="help">'.e(t($managed?updaterSourceLabel():'update_source_protocol')).'</p>';
+    if($available){
+        echo '<div class="update-release-heading"><p class="release-version">v'.e($release['version']).'</p><span class="update-badge">'.e(t(!empty($release['mandatory'])?'update_mandatory':'update_optional')).'</span></div>';
+        echo '<dl class="update-facts"><div><dt>'.e(t('update_published')).'</dt><dd>'.e($release['published_at']??'—').'</dd></div><div><dt>'.e(t('update_size')).'</dt><dd>'.e(isset($release['size'])?number_format($release['size']/1048576,2).' MB':'—').'</dd></div></dl>';
+        $categories=$release['release_notes']??[];
+        foreach(['features','improvements','fixes'] as $category){
+            if(empty($categories[$category])||!is_array($categories[$category]))continue;
+            echo '<h3>'.e(t('update_'.$category)).'</h3><ul class="update-notes">';
+            foreach($categories[$category] as $line)if(is_string($line))echo '<li>'.e($line).'</li>';
+            echo '</ul>';
+        }
+        $legacy=$release['notes'][language()]??$release['notes']['en']??'';
+        if($legacy!=='')echo '<p class="preserve">'.e($legacy).'</p>';
+        $url=$release['url']??$release['release_url']??'';
+        if(updatePackageUrl($url))echo '<p><a href="'.e($url).'" target="_blank" rel="noopener noreferrer">'.e(t('update_package_link')).' ↗</a></p>';
     }
+    if(!empty($state['error']))echo '<div class="notice error">'.e(t('update_error_'.$state['error'])).'</div>';
     if($managed){
         echo '<p>'.e(t(setting('update_auto',true)?'update_auto_on':'update_auto_off')).'</p>';
-        if(!empty($state['scheduled_for'])&&setting('update_auto',true)){
-            $date=(new DateTimeImmutable($state['scheduled_for']))->setTimezone(new DateTimeZone('Europe/Zurich'));
-            echo '<p><strong>'.e(t('update_scheduled')).': '.e($date->format('d.m.Y H:i')).' · Europe/Zurich</strong></p>';
-        }
-        if(!empty($state['error']))echo '<div class="notice error">'.e(t('update_error_help')).' <code>'.e($state['error']).'</code></div>';
-        echo '<p class="help">'.e(t('update_backup_hint')).'</p><a href="/admin?tab=settings">'.e(t('settings')).' →</a>';
-    }
-    echo '<p class="muted">'.e(t('last_check')).': '.e($state['checked_at']??'—').'</p>';
+        if(!$controls)echo '<div class="notice">'.e(t('update_service_upgrade')).'</div>';
+        if(!empty($state['scheduled_for']))echo '<p><strong>'.e(t('update_scheduled')).': '.e((new DateTimeImmutable($state['scheduled_for']))->setTimezone(new DateTimeZone('Europe/Zurich'))->format('d.m.Y H:i')).' · Europe/Zurich</strong></p>';
+        echo '<p class="help">'.e(t('update_backup_hint')).'</p>';
+    }else echo '<p class="help">'.e(t('update_manual_web')).'</p>';
+    $progress=$state['progress']??null;
+    echo '<div class="update-progress" data-download-progress'.(!$progress?' hidden':'').'><label>'.e(t('update_download_progress')).' <span data-progress-percent>'.e(isset($progress['percent'])?$progress['percent'].'%':'—').'</span><progress max="100"'.(isset($progress['percent'])?' value="'.(float)$progress['percent'].'"':'').'></progress></label><p data-progress-detail>';
+    if($progress)echo e(updateProgressText($progress));
+    echo '</p></div><p class="muted">'.e(t('last_check')).': '.e($state['checked_at']??'—').'</p><div class="update-actions">';
     formStart('check_updates','/admin?tab=updates');saveButton('check_now');
-    if($managed&&$public['available']){formStart('postpone_update','/admin?tab=updates');saveButton('postpone_update');}
-    if($managed&&in_array($state['phase']??'',['failed','rolled_back'],true)){formStart('retry_update','/admin?tab=updates');saveButton('retry_update');}
-    echo '</section>';
+    if($available){
+        if($controls&&!in_array($phase,['downloading','installing','incompatible','offline','checking'],true)){
+            formStart('install_update','/admin?tab=updates');
+            echo '<button class="primary" data-update-confirm="'.e(t('update_install_confirm')).'">'.e(t('update_install')).'</button></form>';
+        }
+        if($managed&&!in_array($phase,['installing','downloading'],true)){formStart('postpone_update','/admin?tab=updates');saveButton('postpone_update');}
+        if((!$managed||$controls)&&empty($release['mandatory'])&&!in_array($phase,['installing','skipped'],true)){formStart('skip_update','/admin?tab=updates');saveButton('update_skip');}
+    }
+    if($controls&&$phase==='downloading'){formStart('cancel_update','/admin?tab=updates');saveButton('update_cancel');}
+    if($managed&&in_array($phase,['failed','rolled_back','cancelled'],true)){formStart('retry_update','/admin?tab=updates');saveButton('retry_update');}
+    echo '</div><p><a href="/admin?tab=settings">'.e(t('settings')).' →</a></p><p class="notice" data-update-action-result hidden></p><p class="notice error" data-update-client-error hidden>'.e(t('update_connection_lost')).'</p></section>';
     $event=setting('version_event');
     if($event)echo '<div class="notice">'.e(t('installed_notice')).' · v'.e($event['version']).' · '.e($event['at']).'</div>';
+}
+function updateProgressText(array $progress): string {
+    $downloaded=number_format(($progress['bytes']??0)/1048576,2);
+    $total=isset($progress['total'])?number_format($progress['total']/1048576,2):'—';
+    return $downloaded.' / '.$total.' MB · '.number_format(($progress['speed']??0)/1024,0).' KB/s · '.t('update_files').': '.(int)($progress['files']??0).' / 1';
 }
 function adminBackups(): void {
     echo '<section class="panel"><h2>'.e(t('backups')).'</h2><p class="muted">'.e(t('backup_hint')).'</p>';

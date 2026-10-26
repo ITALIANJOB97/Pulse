@@ -25,17 +25,23 @@ import urllib.request
 import zipfile
 from zoneinfo import ZoneInfo
 
-UPDATER_VERSION = 3
+sys.dont_write_bytecode = True # Preserve source manifest during operator-run installation.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import update_protocol as protocol
+from update_protocol import NoRedirect
+
+UPDATER_VERSION = 4
 MAX_ZIP = 100 * 1024 * 1024
 MAX_EXPANDED = 300 * 1024 * 1024
-REPOSITORY = "ITALIANJOB97/Pulse"
+REPOSITORY = protocol.SOURCE["repository"]
 ORIGIN = "https://github.com/" + REPOSITORY + "/releases/download/"
 LATEST_URL = "https://api.github.com/repos/" + REPOSITORY + "/releases/latest"
-LEGACY_CONFIG = {"schema": 1, "origin": "https://www.luigipranzo.com/myfile/Pulse/"}
+LEGACY_CONFIG = {"schema": 1, "origin": protocol.BASE_URL}
+BLOG_CONFIG = {"schema": 3, "program": protocol.SOURCE["program"], "manifest": protocol.MANIFEST_URL}
 PRIVATE_GITHUB_CONFIG = {"schema": 2, "repository": REPOSITORY, "private": True}
 GITHUB_CONFIG = {"schema": 2, "repository": REPOSITORY, "private": False}
 TZ = ZoneInfo("Europe/Zurich")
-VERSION_RE = r"\d+\.\d+\.\d+"
+VERSION_RE = protocol.VERSION_PATTERN
 BACKUP_RE = r"(?:manual|preupdate)-\d{8}-\d{6}-[a-f0-9]{6}\.zip"
 APP_FILES = {"VERSION", "README.md", "CHANGELOG.md", ".gitignore", "CONTENTS.sha256",
              "LEGGIMI_LINUX_MINT.txt", "INSTALLAZIONE_LINUX_MINT.txt",
@@ -67,9 +73,9 @@ def atomic_json(path, data):
         os.fsync(fd)
     finally:
         os.close(fd)
-def read_json(path, default=None):
+def read_json(path, default=None, limit=131072):
     try:
-        if Path(path).stat().st_size > 131072:
+        if Path(path).stat().st_size > limit:
             raise ValueError("JSON too large")
         return json.loads(Path(path).read_text(encoding="utf-8"))
     except FileNotFoundError:
@@ -103,11 +109,11 @@ class TrustedRedirect(urllib.request.HTTPRedirectHandler):
             redirected.remove_header("Cookie")
         return redirected
 
-def download(url, target, limit, origin=ORIGIN, token=None):
+def download(url, target, limit, origin=ORIGIN, token=None, cancelled=None, progress=None):
     if url != LATEST_URL and not github_api_asset(url) and not allowed_url(url, origin):
         raise ValueError("Release URL is outside the trusted repository")
     opener = urllib.request.build_opener(TrustedRedirect)
-    request = urllib.request.Request(url, headers={"User-Agent": "PULSE-Updater/3", "Cache-Control": "no-cache",
+    request = urllib.request.Request(url, headers={"User-Agent": "PULSE-Updater/4", "Cache-Control": "no-cache",
         "Accept": "application/vnd.github+json" if url == LATEST_URL else "application/octet-stream"})
     if token is not None:
         if url != LATEST_URL and not github_api_asset(url):
@@ -119,10 +125,14 @@ def download(url, target, limit, origin=ORIGIN, token=None):
             raise ValueError("Unexpected HTTP response")
         count = 0
         while chunk := response.read(65536):
+            if cancelled and cancelled():
+                raise protocol.DownloadCancelled("Download cancelled")
             count += len(chunk)
             if count > limit or time.monotonic() - start > 300:
                 raise ValueError("Download exceeds size/time limit")
             out.write(chunk)
+            if progress:
+                progress(count, limit, count / max(time.monotonic() - start, 0.001))
         out.flush()
         os.fsync(out.fileno())
     return count
@@ -292,9 +302,10 @@ class Updater:
             if parent.is_symlink() or parent.stat().st_uid != 0 or parent.stat().st_mode & 0o022:
                 raise ValueError("Release directories must be root-owned and not writable by other users")
     def save_status(self, **changes):
-        state = read_json(self.status_file, {})
+        state = read_json(self.status_file, {}, limit=protocol.MAX_MANIFEST)
         state.update(changes)
         state["updated_at"] = stamp()
+        state["updater_version"] = UPDATER_VERSION
         atomic_json(self.status_file, state)
         os.chown(self.status_file, 0, self.account.pw_gid)
         return state
@@ -318,7 +329,10 @@ class Updater:
         return {"auto": out["update_auto"] is not False, "hour": hour if type(hour) is int and 0 <= hour <= 23 else 3,
                 "postpone": out["update_postpone_until"] if type(out["update_postpone_until"]) is int and 0 <= out["update_postpone_until"] < 4102444800 else 0,
                 "request": out["update_requested"] if isinstance(out["update_requested"], str) and len(out["update_requested"]) <= 64 else "",
-                "retry": out["update_retry"] if isinstance(out["update_retry"], str) and len(out["update_retry"]) <= 64 else ""}
+                "retry": out["update_retry"] if isinstance(out["update_retry"], str) and len(out["update_retry"]) <= 64 else "",
+                "cancel": out.get("update_cancel") if isinstance(out.get("update_cancel"), str) and len(out["update_cancel"]) <= 64 else "",
+                "skip": out.get("update_skip") if isinstance(out.get("update_skip"), str) and re.fullmatch(VERSION_RE, out["update_skip"]) else "",
+                "install": out.get("update_install") if isinstance(out.get("update_install"), dict) and set(out["update_install"]) == {"version", "nonce"} and isinstance(out["update_install"]["version"], str) and re.fullmatch(VERSION_RE, out["update_install"]["version"]) and isinstance(out["update_install"]["nonce"], str) and re.fullmatch(r"[a-f0-9]{24}", out["update_install"]["nonce"]) else {}}
     def configuration(self):
         for path in (self.config, self.control / "release-public.key"):
             info = path.stat()
@@ -326,7 +340,7 @@ class Updater:
                 raise ValueError("Untrusted updater configuration")
         config = read_json(self.config)
         # Repository changes require an operator-run upgrade of the trusted service.
-        if config not in (GITHUB_CONFIG, PRIVATE_GITHUB_CONFIG):
+        if config not in (BLOG_CONFIG, GITHUB_CONFIG, PRIVATE_GITHUB_CONFIG):
             raise ValueError("Unsupported trusted update source")
         return config
     def github_token(self):
@@ -343,14 +357,73 @@ class Updater:
         if not re.fullmatch(r"[A-Za-z0-9_]{20,255}", token):
             raise ValueError("Invalid GitHub credential format")
         return token
+    def log(self, event, **fields):
+        # Only fixed event names and explicitly selected non-sensitive fields.
+        print(json.dumps({"event": event, "at": stamp(), **fields}), flush=True)
     def download_package(self, release, target):
-        metadata = read_json(self.state / "downloads/github-release.json")
-        expected_version, assets = release_asset_urls(metadata)
-        if expected_version != release["version"]:
-            raise ValueError("GitHub package version differs from signed manifest")
-        download(assets["pulse-" + expected_version + ".zip"], target, release["size"], token=self.github_token())
+        self.log("download_started", version=release["version"])
+        started_prefs = self.preferences() or {}
+        last_poll = [0.0]
+        def cancelled():
+            if time.monotonic() - last_poll[0] < 0.5:
+                return False
+            last_poll[0] = time.monotonic()
+            current = self.preferences() or {}
+            return (current.get("cancel") != started_prefs.get("cancel") or
+                    current.get("skip") == release["version"] and not release.get("mandatory", False))
+        last_progress = [0.0]
+        def progress(count, total, speed):
+            total = release.get("size") or total
+            if time.monotonic() - last_progress[0] >= 0.5 or count == total:
+                self.save_status(progress={"bytes": count, "total": total, "percent": round(count * 100 / total, 1) if total else None,
+                                           "speed": round(speed), "files": 0, "total_files": 1})
+                last_progress[0] = time.monotonic()
+        if release.get("protocol") == 1:
+            protocol.fetch(release["url"], target, release.get("size") or MAX_ZIP, cancelled=cancelled, progress=progress)
+        else:
+            metadata = read_json(self.state / "downloads/github-release.json")
+            expected_version, assets = release_asset_urls(metadata)
+            if expected_version != release["version"]:
+                raise ValueError("GitHub package version differs from signed manifest")
+            download(assets["pulse-" + expected_version + ".zip"], target, release["size"], token=self.github_token(), cancelled=cancelled, progress=progress)
+        # Honour cancellation even if it arrives at the end of a small download.
+        last_poll[0] = 0
+        if cancelled():
+            raise protocol.DownloadCancelled("Download cancelled")
+        self.log("download_completed", version=release["version"], size=target.stat().st_size)
+    def protocol_manifest(self, fresh):
+        manifest = self.state / "downloads/update.json"
+        signature = self.state / "downloads/update.json.sig"
+        cache_file = self.state / "downloads/update-cache.json"
+        def verify(body, sig):
+            self.run([self.php, self.control / "verify-release.php", body, sig, self.control / "release-public.key"])
+            return protocol.validate_manifest(protocol.parse_json(body.read_bytes()))
+        if not fresh:
+            return verify(manifest, signature)
+        cache = read_json(cache_file, {})
+        etag = cache.get("etag") if manifest.is_file() and signature.is_file() else None
+        temp = manifest.with_suffix(".json.partial")
+        sig_temp = signature.with_suffix(".sig.partial")
+        try:
+            result = protocol.fetch(protocol.MANIFEST_URL, temp, protocol.MAX_MANIFEST, etag=etag)
+            if result["not_modified"]:
+                return verify(manifest, signature)
+            protocol.fetch(protocol.MANIFEST_URL + ".sig", sig_temp, 256)
+            release = verify(temp, sig_temp)
+            os.replace(sig_temp, signature)
+            os.replace(temp, manifest)
+            atomic_json(cache_file, {"etag": result["etag"]})
+            return release
+        except Exception:
+            # A stale or invalid ETag cache must not prevent the next full fetch.
+            cache_file.unlink(missing_ok=True)
+            raise
+        finally:
+            temp.unlink(missing_ok=True)
+            sig_temp.unlink(missing_ok=True)
     def signed_manifest(self, fresh=True):
-        self.configuration()
+        if self.configuration() == BLOG_CONFIG:
+            return self.protocol_manifest(fresh)
         manifest = self.state / "downloads/stable.json"
         signature = self.state / "downloads/stable.json.sig"
         expected_version = None
@@ -368,8 +441,10 @@ class Updater:
             raise ValueError("GitHub tag and signed manifest version differ")
         return release
     def verify_package(self, release, package):
-        if package.is_symlink() or package.stat().st_size != release["size"] or digest(package) != release["sha256"]:
+        if package.is_symlink() or (release.get("size") is not None and package.stat().st_size != release["size"]) or not 0 < package.stat().st_size <= MAX_ZIP or digest(package) != release["sha256"]:
+            self.log("sha256_failed", version=release["version"])
             raise ValueError("Package integrity check failed")
+        self.log("sha256_verified", version=release["version"])
     def make_backup(self, old):
         # Use the installed version's own consistent SQLite/media backup routine.
         result = self.run([self.php, old / "bin/console.php", "backup", "manual"], as_web=True, timeout=600)
@@ -447,6 +522,7 @@ class Updater:
     def install(self, source, release=None):
         old = self.current()
         target_version = validate_tree(source)
+        self.log("installation_started", current=old.name, target=target_version)
         if version(target_version) <= version(old.name):
             raise ValueError("Only newer releases can be installed; existing data was left unchanged")
         if self.journal.exists():
@@ -542,29 +618,40 @@ class Updater:
     def tick(self):
         if self.journal.exists():
             self.recover()
+        # The global lock is held: remove only abandoned downloads in our private directory.
+        for partial in (self.state / "downloads").glob("*.partial"):
+            partial.unlink()
         prefs = self.preferences()
         if prefs is None:
             self.save_status(phase="waiting", error=None, scheduled_for=None)
             return
         old = self.current()
-        state = read_json(self.status_file, {})
+        state = read_json(self.status_file, {}, limit=protocol.MAX_MANIFEST)
         force = prefs["request"] != state.get("request", "")
-        due = time.time() - state.get("checked_epoch", 0) >= 1800
+        due = time.time() - state.get("checked_epoch", 0) >= protocol.CHECK_INTERVAL
         retry = prefs["retry"] != state.get("retry", "")
         if retry:
-            state = self.save_status(failed_version=None, retry=prefs["retry"], error=None)
+            state = self.save_status(failed_version=None, cancelled_version=None, retry=prefs["retry"], error=None)
+        fresh = force or due
         try:
-            release = self.signed_manifest(fresh=(force or due or not (self.state / "downloads/stable.json").is_file()))
-            if force or due:
+            if fresh:
+                source = protocol.MANIFEST_URL if self.configuration() == BLOG_CONFIG else LATEST_URL
+                self.log("check_started", url=source, current=old.name)
+                self.save_status(phase="checking")
+            release = self.signed_manifest(fresh=fresh)
+            if fresh:
                 state = self.save_status(checked_at=stamp(), checked_epoch=time.time(), request=prefs["request"], error=None)
+                self.log("check_completed", current=old.name, remote=release["version"], available=version(release["version"]) > version(old.name))
         except Exception as error:
-            self.save_status(phase="offline", error="source_or_signature_unavailable", checked_at=stamp(),
-                             checked_epoch=time.time(), request=prefs["request"], scheduled_for=None)
-            print("Release check failed: " + str(error), file=sys.stderr)
+            changes = {"phase": "offline", "error": protocol.error_code(error), "scheduled_for": None}
+            if fresh:
+                changes.update(checked_at=stamp(), checked_epoch=time.time(), request=prefs["request"])
+                self.log("check_failed", error=changes["error"])
+            self.save_status(**changes)
             return
-        public_release = {key: release[key] for key in ("version", "notes")}
+        public_release = {key: release.get(key) for key in ("version", "notes", "published_at", "size", "mandatory", "release_notes", "min_from", "url")}
         if version(release["version"]) <= version(old.name):
-            self.save_status(phase="up_to_date", release=public_release, scheduled_for=None, error=None)
+            self.save_status(phase="up_to_date", release=public_release, scheduled_for=None, error=None, progress=None)
             return
         self.save_status(release=public_release)
         if release["min_updater"] > UPDATER_VERSION or version(release["min_from"]) > version(old.name):
@@ -574,36 +661,71 @@ class Updater:
         if version(php_version) < version(release["php_min"]):
             self.save_status(phase="incompatible", error="php_upgrade_required", scheduled_for=None)
             return
-        if state.get("failed_version") == release["version"]:
-            self.save_status(phase=state.get("phase") if state.get("phase") in ("failed","rolled_back") else "failed", scheduled_for=None)
+        intent = prefs.get("install", {})
+        nonce = intent.get("nonce", "")
+        manual = intent.get("version") == release["version"] and nonce != state.get("install_request", "")
+        if prefs.get("skip") == release["version"] and not release.get("mandatory", False) and not manual:
+            self.save_status(phase="skipped", scheduled_for=None, error=None)
+            return
+        if state.get("cancelled_version") == release["version"] and not manual:
+            self.save_status(phase="cancelled", scheduled_for=None)
+            return
+        if state.get("failed_version") == release["version"] and not manual:
+            self.save_status(phase=state.get("phase") if state.get("phase") in ("failed", "rolled_back") else "failed", scheduled_for=None)
+            return
+        if not prefs["auto"] and not manual:
+            self.save_status(phase="paused", scheduled_for=None, error=None)
             return
         package = self.state / "downloads" / (release["version"] + ".zip")
+        partial = package.with_suffix(".zip.partial")
         try:
             if not package.exists() or digest(package) != release["sha256"]:
-                self.save_status(phase="downloading", scheduled_for=None)
-                partial = package.with_suffix(".zip.partial")
+                package.unlink(missing_ok=True)
+                self.save_status(phase="downloading", scheduled_for=None, error=None,
+                                 progress={"bytes": 0, "total": release.get("size"), "percent": 0, "speed": 0, "files": 0, "total_files": 1})
                 self.download_package(release, partial)
                 self.verify_package(release, partial)
                 os.replace(partial, package)
             self.verify_package(release, package)
-        except Exception as error:
-            self.save_status(phase="failed", error="package_download_or_integrity", scheduled_for=None)
-            print("Package check failed: " + str(error), file=sys.stderr)
+            self.save_status(progress={"bytes": package.stat().st_size, "total": package.stat().st_size, "percent": 100, "speed": 0, "files": 1, "total_files": 1})
+        except protocol.DownloadCancelled:
+            self.log("download_cancelled", version=release["version"])
+            self.save_status(phase="cancelled", error=None, cancelled_version=release["version"], install_request=nonce, scheduled_for=None)
             return
-        if not prefs["auto"]:
-            self.save_status(phase="paused", scheduled_for=None, error=None)
+        except Exception as error:
+            code = protocol.error_code(error)
+            if code == "source_or_signature_unavailable":
+                code = "package_download_or_integrity"
+            self.log("download_failed", error=code)
+            self.save_status(phase="failed", error=code, failed_version=release["version"], install_request=nonce, scheduled_for=None)
+            package.unlink(missing_ok=True)
+            return
+        finally:
+            partial.unlink(missing_ok=True)
+        prefs2 = self.preferences()
+        if not prefs2:
+            return
+        if prefs2.get("cancel") != prefs.get("cancel"):
+            self.save_status(phase="cancelled", error=None, cancelled_version=release["version"], install_request=nonce, scheduled_for=None)
+            return
+        if prefs2.get("skip") == release["version"] and not release.get("mandatory", False):
+            self.save_status(phase="skipped", scheduled_for=None)
+            return
+        if manual and prefs2.get("install") != intent:
             return
         clock = now()
-        scheduled = next_window(clock, prefs["hour"], prefs["postpone"])
-        self.save_status(phase="postponed" if prefs["postpone"] > clock.timestamp() else "scheduled",
+        scheduled = clock if manual else next_window(clock, prefs2["hour"], prefs2["postpone"])
+        if not manual and not prefs2["auto"]:
+            self.save_status(phase="paused", scheduled_for=None)
+            return
+        self.save_status(phase="postponed" if not manual and prefs2["postpone"] > clock.timestamp() else "scheduled",
                          scheduled_for=scheduled.isoformat(timespec="seconds"), error=None)
         if scheduled > clock:
             return
-        # Re-read preferences and revalidate signature/package immediately before touching deployment.
-        prefs2 = self.preferences()
-        if not prefs2 or not prefs2["auto"] or next_window(now(), prefs2["hour"], prefs2["postpone"]) > now():
-            return
-        self.signed_manifest(fresh=False)
+        # Signature and checksum are checked again before the transaction begins.
+        confirmed = self.signed_manifest(fresh=False)
+        if confirmed["version"] != release["version"] or confirmed["sha256"] != release["sha256"]:
+            raise ValueError("Manifest changed before installation")
         self.verify_package(release, package)
         staging = self.state / ("extract-" + release["version"])
         if staging.exists():
@@ -613,18 +735,21 @@ class Updater:
             if extracted_version != release["version"]:
                 raise ValueError("Manifest/package version mismatch")
             self.install(staging, release)
-        except Exception as error:
+            self.save_status(install_request=nonce, cancelled_version=None)
+        except Exception:
             if not self.journal.exists() and read_json(self.status_file, {}).get("phase") != "rolled_back":
                 self.save_status(phase="failed", failed_version=release["version"], error="installation_failed", scheduled_for=None)
-            print("Installation failed: " + str(error), file=sys.stderr)
+            self.log("installation_failed", version=release["version"])
             raise
         finally:
             if staging.exists():
                 shutil.rmtree(staging)
 
-def bootstrap(updater, source):
+
+def bootstrap(updater, source, channel="blog"):
+    destination_config = BLOG_CONFIG if channel == "blog" else GITHUB_CONFIG
     # Explicit, operator-run bootstrap only. Automated updates never replace this root code.
-    for name in ("updater.py", "restore-update.py", "verify-release.php", "release-public.key"):
+    for name in ("updater.py", "update_protocol.py", "update-source.json", "restore-update.py", "verify-release.php", "release-public.key"):
         if not (source / "deploy" / name).is_file():
             raise ValueError("Missing deployment component: " + name)
     key = base64.b64decode((source / "deploy/release-public.key").read_text().strip(), validate=True)
@@ -637,12 +762,12 @@ def bootstrap(updater, source):
         info = updater.config.stat()
         if updater.config.is_symlink() or info.st_uid != 0 or info.st_mode & 0o022:
             raise ValueError("Untrusted updater configuration")
-        if read_json(updater.config) not in (LEGACY_CONFIG, PRIVATE_GITHUB_CONFIG, GITHUB_CONFIG):
+        if read_json(updater.config) not in (LEGACY_CONFIG, PRIVATE_GITHUB_CONFIG, GITHUB_CONFIG, BLOG_CONFIG):
             raise ValueError("Unknown update source; configuration was not replaced")
     updater.control.mkdir(parents=True, exist_ok=True, mode=0o755)
     os.chown(updater.control,0,0)
     os.chmod(updater.control,0o755)
-    for name in ("updater.py", "restore-update.py", "verify-release.php", "release-public.key"):
+    for name in ("updater.py", "update_protocol.py", "update-source.json", "restore-update.py", "verify-release.php", "release-public.key"):
         target = updater.control / name
         shutil.copyfile(source / "deploy" / name, target)
         os.chown(target, 0, 0)
@@ -650,10 +775,10 @@ def bootstrap(updater, source):
     updater.config.parent.mkdir(exist_ok=True, mode=0o755)
     os.chown(updater.config.parent,0,0)
     os.chmod(updater.config.parent,0o755)
-    atomic_json(updater.config, GITHUB_CONFIG)
+    atomic_json(updater.config, destination_config)
     os.chmod(updater.config, 0o644)
-    # Drop the old channel cache; the next tick must query GitHub.
-    for name in ("stable.json", "stable.json.sig", "github-release.json"):
+    # Drop old channel caches; never silently fall back to another origin.
+    for name in ("stable.json", "stable.json.sig", "github-release.json", "update.json", "update.json.sig", "update-cache.json"):
         (updater.state / "downloads" / name).unlink(missing_ok=True)
     updater.save_status(checked_epoch=0, release=None, scheduled_for=None, phase="waiting", error=None)
     updater.configuration()
@@ -675,6 +800,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=["tick", "recover", "install", "bootstrap"])
     parser.add_argument("--source", type=Path)
+    parser.add_argument("--channel", choices=["blog", "github"], default="blog")
     args = parser.parse_args()
     if os.geteuid() != 0:
         raise SystemExit("Eseguire con sudo.")
@@ -708,7 +834,10 @@ def main():
             # Start/reload recovery before acquiring a transaction. It also uses the same lock,
             # so bootstrap starts it only after the guard is released below.
             fcntl.flock(lock, fcntl.LOCK_UN)
-            bootstrap(updater, source)
+            if args.channel == "github":
+                bootstrap(updater, source, channel="github")
+            else:
+                bootstrap(updater, source)
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
             if updater.journal.exists():
                 updater.recover()

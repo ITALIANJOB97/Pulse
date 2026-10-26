@@ -1,3 +1,15 @@
+SORGENTI IN SVILUPPO — NUOVO PROTOCOLLO
+Per il nuovo canale update.json leggere docs/PROTOCOLLO_AGGIORNAMENTI.md.
+Il comando --channel blog lo seleziona nel servizio v4. Il normale ZIP automatico
+non modifica il servizio root. VERSION e note di release restano da assegnare
+esplicitamente prima di una nuova pubblicazione; non reinstallare la stessa versione.
+
+ERRORE NoRedirect NELLA 0.2.4 PUBBLICATA
+Usare il kit separato PULSE-Riparazione-0.2.4.zip e il comando
+  sudo bash aggiorna-ora.sh
+Il kit aggiorna immediatamente, con backup, senza attendere il rinvio notturno.
+
+ISTRUZIONI PER UN PACCHETTO RILASCIATO — CANALE GITHUB
 PULSE 0.2.4 — AGGIORNARE SENZA RIPETERE LA CONFIGURAZIONE
 ======================================================
 PER MINT GIÀ CONFIGURATO CON GLI AGGIORNAMENTI NOTTURNI DAL BLOG
@@ -12,7 +24,7 @@ Questo passaggio è manuale una sola volta perché cambia il servizio root.
 2. Scarica pulse-0.2.4.zip dalla Release GitHub oppure usa il pacchetto
    PULSE-Dietikon-Linux-Mint-0.2.4.zip. Decomprimilo sul Mint.
 3. Apri il terminale nella cartella che contiene deploy/ ed esegui:
-       sudo bash deploy/upgrade-mint.sh
+       sudo bash deploy/upgrade-mint.sh --channel github
 4. Attendi il messaggio di installazione riuscita. Apri la Dashboard con
    lo stesso account: http://127.0.0.1:8080/admin.
 Non serve alcun token GitHub sul Mint. Non eseguire install-mint.sh o un
@@ -31,7 +43,7 @@ vecchia versione ha già troncato a interi non possono essere ricostruiti:
 reinserire i risultati corretti. Non vengono inventati o ricalcolati.
 
 PROSSIMI RILASCI
-Dopo il passaggio al servizio v3, il Mint controlla GitHub circa ogni 30 minuti,
+Dopo il passaggio al servizio v4, il Mint controlla GitHub ogni 6 ore,
 scarica la release firmata e la installa nella finestra notturna dopo backup.
 Per impostazione iniziale: 03:00–04:00 Europe/Zurich. Il PC deve restare acceso,
 collegato a Internet e con installazione automatica attiva e non rinviata.

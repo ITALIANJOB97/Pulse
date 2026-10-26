@@ -72,7 +72,7 @@ function renderLogin(): void {
 function renderDisplay(array $data,bool $archive=false): void {
     $data['labels']=dictionary($data['language']);$data['archive']=$archive;
     echo '<!doctype html><html lang="'.e($data['language']).'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.e($data['store']).'</title><link rel="stylesheet" href="/assets/screen.css?v='.e(version()).'"></head><body>';
-    echo '<div id="screen"><header><div class="brand">PULSE<span></span></div><div class="store" id="store"></div><div class="clock" id="clock"></div></header><main id="slide"></main><footer><span id="period"></span><nav id="pages" aria-label="Pages"></nav><div class="screen-footer-right"><span id="page-count"></span>'.authorCredit().'</div></footer><div class="timeline"><div id="timeline"></div></div><aside id="update-notice" role="status" hidden></aside><aside id="offline" role="status" hidden></aside></div>';
+    echo '<div id="screen"><header><div class="brand">PULSE<span></span></div><div class="store" id="store"></div><div class="clock" id="clock"></div></header><main id="slide"></main><footer><span id="period"></span><nav id="pages" aria-label="Pages"></nav><div class="screen-footer-right"><span id="page-count"></span>'.authorCredit().'</div></footer><div class="timeline"><div id="timeline"></div></div><aside id="offline" role="status" hidden></aside></div>';
     echo '<script id="screen-data" type="application/json">'.json_encode($data,JSON_THROW_ON_ERROR|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT).'</script><script src="/assets/screen.js?v='.e(version()).'" defer></script></body></html>';
 }
 function renderAdmin(): void {
@@ -80,6 +80,7 @@ function renderAdmin(): void {
     $tabs=['overview','content','employees','gallery','settings','administrators','backups','updates'];
     $tab=is_string($_GET['tab']??null)?$_GET['tab']:'overview';if(!in_array($tab,$tabs,true))$tab='overview';
     pageStart(t($tab),'admin-page');
+    echo '<div data-update-background data-csrf="'.e($_SESSION['csrf']).'" hidden></div>';
     echo '<aside class="sidebar"><div class="sidebar-brand">';brand();echo '<small>'.e(setting('store_name')).'</small></div><nav>';
     foreach($tabs as $i=>$item)echo '<a href="/admin?tab='.$item.'"'.($item===$tab?' aria-current="page"':'').'><span>'.str_pad((string)($i+1),2,'0',STR_PAD_LEFT).'</span>'.e(t($item)).'</a>';
     echo '</nav><div class="sidebar-bottom"><a href="/guide/'.e(language()).'/index.html" target="_blank" rel="noopener">'.e(t('help_guide')).' ↗</a><a href="/display" target="_blank" rel="noopener">'.e(t('open_tv')).' ↗</a><small>v'.e(version()).'</small></div></aside><div class="workspace"><header class="admin-top"><span>'.e(currentAdmin()['name']).'</span><div class="top-actions">';

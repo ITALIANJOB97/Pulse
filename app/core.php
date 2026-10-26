@@ -248,7 +248,7 @@ function screenData(): array {
         'show_sunday' => setting('show_sunday', true),
         'pages' => setting('pages', array_fill_keys(moduleKeys(), true)),
         'employees' => employees(true), 'content' => $modules, 'gallery' => $photos,
-        'updates' => publicUpdateState(),
+        'updates' => publicUpdateState(false),
     ];
 }
 function uploadImage(string $field, string $kind, string $label): ?int {

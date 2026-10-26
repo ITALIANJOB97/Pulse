@@ -67,7 +67,8 @@ try{
     check(!publicUpdateState()['available'],'Equal version must not be advertised as newer.');
     rejects(fn()=>validateRelease(['app'=>'other','version'=>'1.0.0']),'Wrong app accepted.');
     rejects(fn()=>validateRelease(['app'=>'pulse-dietikon','version'=>'1.0.0','release_url'=>'javascript:alert(1)']),'Unsafe release URL accepted.');
-    setSetting('update_url','');$state=checkUpdates();
-    check($state['configured']===false&&$state['error']===null,'Blank feed must work without network access.');
+    setSetting('update_state',['checked_epoch'=>time(),'error'=>null]);$state=checkUpdates(true);
+    check($state['error']===null,'Automatic check must respect the six-hour interval without network access.');
+    check(!publicUpdateState(false)['available'],'TV must not disclose administrator update notices.');
     echo $checks." core checks passed.\nTemporary test data: ".$dir."\n";
 }catch(Throwable $ex){fwrite(STDERR,$ex->getMessage()."\n");exit(1);}
