@@ -140,6 +140,17 @@ class Deployment(unittest.TestCase):
         self.assertEqual(backups[0].stat().st_mode & 0o777, 0o640)
         self.assertEqual(backups[0].stat().st_uid, 0)
         self.assertIn(("stop", "pulse-backup-daily.timer", "pulse-backup-weekly.timer"), self.agent.calls)
+    def test_retry_preserves_inactive_release_after_failure_status_was_cleared(self):
+        stale = self.base / "releases/0.2.0"
+        shutil.copytree(self.source, stale)
+        self.agent.save_status(phase="available", failed_version=None)
+        self.agent.install(self.source)
+        self.assertEqual(self.agent.current().name, "0.2.0")
+        preserved = list((self.base / "releases").glob("0.2.0.preserved-*"))
+        self.assertEqual(len(preserved), 1)
+        self.assertEqual((preserved[0] / "VERSION").read_text().strip(), "0.2.0")
+        self.assert_existing()
+
     def test_failed_migration_restores_old_database_and_code(self):
         self.agent.migration_fails = True
         with self.assertRaises(RuntimeError):
@@ -281,7 +292,7 @@ class Deployment(unittest.TestCase):
     def test_bootstrap_permissions_with_production_umask(self):
         shutil.rmtree(self.control)
         (self.source / "deploy").mkdir()
-        for name in ("updater.py","update_protocol.py","update-source.json","restore-update.py","verify-release.php","release-public.key","pulse-updates.service","pulse-updates.timer","pulse-update-recover.service","pulse-backup@.service"):
+        for name in ("updater.py","update_protocol.py","recovery_backup.py","update-source.json","restore-update.py","verify-release.php","release-public.key","pulse-updates.service","pulse-updates.timer","pulse-update-recover.service","pulse-backup@.service"):
             shutil.copyfile(ROOT / "deploy" / name,self.source / "deploy" / name)
         etc=self.root / "etc"
         (etc / "systemd/system").mkdir(parents=True)
@@ -354,7 +365,7 @@ class Deployment(unittest.TestCase):
             with self.assertRaises(ValueError):self.agent.download_package({**release,"version":"0.2.1"},self.root/"download.zip")
     def test_bootstrap_rejects_unknown_configuration_before_changes(self):
         (self.source/"deploy").mkdir()
-        for name in ("updater.py","update_protocol.py","update-source.json","restore-update.py","verify-release.php","release-public.key"):
+        for name in ("updater.py","update_protocol.py","recovery_backup.py","update-source.json","restore-update.py","verify-release.php","release-public.key"):
             shutil.copyfile(ROOT/"deploy"/name,self.source/"deploy"/name)
         self.agent.config.write_text('{"schema":99}');self.agent.config.chmod(0o600)
         with self.assertRaises(ValueError):u.bootstrap(self.agent,self.source)

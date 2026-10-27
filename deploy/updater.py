@@ -29,6 +29,7 @@ sys.dont_write_bytecode = True # Preserve source manifest during operator-run in
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import update_protocol as protocol
 from update_protocol import NoRedirect
+from recovery_backup import retire_inactive_release
 
 UPDATER_VERSION = 4
 MAX_ZIP = 100 * 1024 * 1024
@@ -528,13 +529,9 @@ class Updater:
         if self.journal.exists():
             raise ValueError("Recovery must complete before another installation")
         target = self.base / "releases" / target_version
-        if target.exists():
-            # Previous failed attempt: never overwrite a code directory.
-            if read_json(self.status_file, {}).get("failed_version") != target_version:
-                raise ValueError("Release directory already exists")
-            target = self.base / "releases" / target_version
-            previous = self.base / "releases" / (target_version + ".failed-" + str(int(time.time())))
-            target.rename(previous)
+        # Retry may have cleared failed_version. Preserve any protected, inactive
+        # matching release independently of that transient UI status.
+        retire_inactive_release(self, target_version)
         data_size = sum(p.stat().st_size for p in (self.data / "media").glob("*.jpg") if p.is_file()) + (self.data / "pulse.sqlite").stat().st_size
         if shutil.disk_usage(self.state).free < data_size * 3 + 256 * 1024 * 1024:
             raise ValueError("Insufficient free space for verified backup and rollback")
@@ -749,7 +746,7 @@ class Updater:
 def bootstrap(updater, source, channel="blog"):
     destination_config = BLOG_CONFIG if channel == "blog" else GITHUB_CONFIG
     # Explicit, operator-run bootstrap only. Automated updates never replace this root code.
-    for name in ("updater.py", "update_protocol.py", "update-source.json", "restore-update.py", "verify-release.php", "release-public.key"):
+    for name in ("updater.py", "update_protocol.py", "recovery_backup.py", "update-source.json", "restore-update.py", "verify-release.php", "release-public.key"):
         if not (source / "deploy" / name).is_file():
             raise ValueError("Missing deployment component: " + name)
     key = base64.b64decode((source / "deploy/release-public.key").read_text().strip(), validate=True)
@@ -767,7 +764,7 @@ def bootstrap(updater, source, channel="blog"):
     updater.control.mkdir(parents=True, exist_ok=True, mode=0o755)
     os.chown(updater.control,0,0)
     os.chmod(updater.control,0o755)
-    for name in ("updater.py", "update_protocol.py", "update-source.json", "restore-update.py", "verify-release.php", "release-public.key"):
+    for name in ("updater.py", "update_protocol.py", "recovery_backup.py", "update-source.json", "restore-update.py", "verify-release.php", "release-public.key"):
         target = updater.control / name
         shutil.copyfile(source / "deploy" / name, target)
         os.chown(target, 0, 0)

@@ -8,6 +8,8 @@ import sys
 import subprocess
 import tempfile
 import threading
+import shutil
+from unittest.mock import patch
 import urllib.request
 from http.server import HTTPServer, BaseHTTPRequestHandler
 ROOT=Path(__file__).resolve().parent.parent
@@ -47,12 +49,34 @@ with tempfile.TemporaryDirectory(prefix='pulse-repair-proof-') as folder:
         suite=importlib.util.module_from_spec(spec);spec.loader.exec_module(suite)
         test=suite.Deployment();test.setUp()
         try:
+            # Match the version observed on the shop PC.
+            old = test.agent.base/'releases/0.2.3'
+            test.old.rename(old); (old/'VERSION').write_text('0.2.3\n')
+            test.agent.switch(old)
             original_run=test.agent.run
             test.agent.run=lambda args,**kwargs:subprocess.CompletedProcess(args,0,"","") if args[-1]=="health" else original_run(args,**kwargs)
             test.agent.health=lambda release:u.Updater.health(test.agent,release)
-            test.agent.install(source)
+            # Reproduce the actual Mint report: an inactive 0.2.4 exists but
+            # the UI retry already cleared its failed_version marker.
+            stale = test.agent.base / 'releases/0.2.4'
+            shutil.copytree(source, stale)
+            test.agent.save_status(failed_version=None)
+            try:
+                test.agent.install(source)
+                raise AssertionError('The original published updater should reproduce the failure')
+            except ValueError as error:
+                assert str(error) == 'Release directory already exists'
+            real_backup = repair.recovery_backup.create_full_backup
+            def isolated_backup(agent):
+                return real_backup(agent, root/'full-backups', extra_paths=[])
+            with patch.object(repair.recovery_backup, 'create_full_backup', side_effect=isolated_backup), patch.object(repair.recovery_backup, 'export_backup'):
+                u.Updater.install(test.agent, source)
+            assert len(list((test.agent.base/'releases').glob('0.2.4.preserved-*'))) == 1
+            full = list((root/'full-backups').glob('*.tar.gz'))
+            assert len(full) == 1
+            repair.recovery_backup.verify_archive(full[0])
             assert test.agent.current().name=='0.2.4';test.assert_existing()
             assert len(list((test.agent.state/'backups').glob('preupdate-*.zip')))==1
         finally:test.tearDown()
     finally:server.shutdown();server.server_close();thread.join()
-    print('PASS: original ZIP unchanged; idempotent root patch with backup; real HTTP health succeeds; redirects blocked; immediate 0.2.4 transaction preserves user data and safety backup.')
+    print('PASS: reproduced Release directory already exists; full backup verified before preserving stale release; original ZIP unchanged; idempotent root patch with backup; real HTTP health succeeds; redirects blocked; immediate 0.2.4 transaction preserves user data and safety backup.')

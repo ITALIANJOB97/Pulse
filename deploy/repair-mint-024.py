@@ -14,6 +14,9 @@ import sys
 import tempfile
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import recovery_backup
+
 PACKAGE_SHA256 = "e0bc9c2b95f5b19dd2b131d5447c81c355533821251d5d2302ec724810e1c8af"
 UPDATER_SHA256 = "76413afa539ec0ac0fa1544a8ad4268883b9e226e9973009033a58115bfdab40"
 FIX = b'class NoRedirect(urllib.request.HTTPRedirectHandler):\n    def redirect_request(self, req, fp, code, msg, headers, newurl):\n        raise ValueError("Redirect not permitted for local health check")\n\n'
@@ -77,6 +80,19 @@ def prepare(package, destination):
         original_bootstrap(agent, package_source)
         patch_control(agent.control, original)
     updater.bootstrap = bootstrap
+    original_install = updater.Updater.install
+    def install(agent, package_source, release=None):
+        target_version = updater.validate_tree(package_source)
+        if updater.version(target_version) <= updater.version(agent.current().name):
+            raise ValueError('La versione richiesta non e successiva a quella installata.')
+        if agent.journal.exists():
+            raise ValueError('Recuperare prima la transazione interrotta.')
+        # The original main holds update.lock here; no other updater can race us.
+        backup = recovery_backup.create_full_backup(agent)
+        recovery_backup.export_backup(backup)
+        recovery_backup.retire_inactive_release(agent, target_version)
+        return original_install(agent, package_source, release)
+    updater.Updater.install = install
     return updater, source
 
 def main():
@@ -99,14 +115,40 @@ def main():
         updater, source = prepare(package, Path(temporary))
         command = 'bootstrap' if version == '0.2.4' else 'install'
         sys.argv = ['updater.py', command, '--source', str(source)]
-        print('Riparazione NoRedirect e aggiornamento immediato a PULSE 0.2.4.', flush=True)
+        print('PULSE recupero R2: backup completo verificato e aggiornamento a 0.2.4.', flush=True)
         print('Il rinvio notturno non blocca questo comando manuale. Non spegnere il PC.', flush=True)
         updater.main()
-    print('Operazione completata. Apri http://127.0.0.1:8080/admin con il tuo account.')
+    actual = (current / 'VERSION').read_text().strip()
+    if actual != '0.2.4':
+        raise ValueError('Verifica finale fallita: versione attiva ' + actual)
+    print('VERIFICATO: versione attiva 0.2.4. Apri http://127.0.0.1:8080/admin.')
     print('Il servizio corretto usa GitHub pubblico. Dati, foto e utenti conservati.')
+
+def run_logged():
+    if os.geteuid() != 0:
+        print('Eseguire: sudo bash backup-e-aggiorna.sh', file=sys.stderr)
+        return 1
+    spec = importlib.util.spec_from_file_location('pulse_support', Path(__file__).with_name('support-mint.py'))
+    support = importlib.util.module_from_spec(spec); spec.loader.exec_module(support)
+    report = support.Report(Path(__file__).parent / 'diagnostica', 'RECUPERO-R2')
+    print('Rapporto: ' + str(report.path), flush=True)
+    try:
+        process = subprocess.Popen([sys.executable, '-u', str(Path(__file__).resolve()), '--worker'], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, errors='replace')
+        for line in process.stdout:
+            clean = support.redact(line.rstrip())
+            print(clean, flush=True); report.write(clean)
+        result = process.wait()
+        report.write('Codice di uscita: ' + str(result))
+        print('Rapporto da inviare in caso di errore: ' + str(report.path), flush=True)
+        return result
+    finally:
+        report.close()
+
 
 if __name__ == '__main__':
     try:
+        if '--worker' not in sys.argv:
+            sys.exit(run_logged())
         main()
     except Exception as error:
         print('PULSE: '+str(error),file=sys.stderr)

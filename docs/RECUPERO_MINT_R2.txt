@@ -1,0 +1,55 @@
+PULSE 0.2.4 - BACKUP COMPLETO E RECUPERO R2
+
+Questo nuovo kit corregge entrambi i blocchi osservati:
+- name 'NoRedirect' is not defined
+- Release directory already exists
+
+Sul PC Linux Mint 22.x a 64 bit con PULSE gia configurato:
+1. Estrai completamente lo ZIP.
+2. Apri la cartella PULSE-Backup-Recupero-0.2.4-R2.
+3. Clic destro in uno spazio vuoto -> Apri nel terminale.
+4. Esegui:
+
+   sudo bash backup-e-aggiorna.sh
+
+5. Inserisci la password del PC e attendi senza spegnerlo.
+   Durante il backup PULSE e temporaneamente non disponibile.
+6. Al termine deve comparire: VERIFICATO: versione attiva 0.2.4.
+7. Apri http://127.0.0.1:8080/admin e premi Ctrl+Shift+R.
+
+Il kit riusa il pacchetto originale 0.2.4 verificandone SHA-256.
+Prima dell'aggiornamento salva tutti i dati di PULSE, utenti, password,
+foto, impostazioni, archivi, backup gia presenti, codice e configurazione.
+Verifica l'integrita SQLite e il contenuto di ogni file archiviato.
+I file WAL vengono incorporati nella copia coerente del database.
+
+Il backup completo viene conservato in /var/backups/pulse-full.
+Una copia leggibile dal tuo utente viene creata nella cartella personale
+PULSE-Backup: apri Home -> PULSE-Backup e copiala su USB insieme a .sha256.
+Il backup contiene dati riservati: conservarlo privatamente.
+Per la diagnosi condividere soltanto il rapporto nella cartella diagnostica.
+
+Solo dopo il backup e la verifica il kit conserva la cartella 0.2.4 inattiva
+con un nome .preserved-... e installa la 0.2.4. Non cancella la cartella.
+L'installazione mantiene anche il normale backup e rollback automatico.
+Il comando manuale non aspetta il rinvio al 28 ottobre.
+Se il backup o la sua copia falliscono, l'aggiornamento non parte.
+Se la 0.2.4 e gia attiva, ripara solo il servizio senza reinstallare i dati.
+
+Non avviare install-mint.sh e non ripetere la configurazione iniziale.
+Il kit non formatta il PC e non cambia gli account PULSE.
+Gli aggiornamenti futuri restano sul canale pubblico GitHub esistente.
+Il nuovo protocollo update.json non viene attivato da questo kit.
+
+Se il comando termina con errore:
+Apri diagnostica nella cartella del kit e passa il file PULSE-RECUPERO-R2-*.txt.
+I nomi sono sensibili a maiuscole/minuscole: l'estensione e .txt, non .TXT.
+Per leggere la versione da terminale usare: sudo cat /opt/pulse/current/VERSION
+
+RECUPERO DEL BACKUP COMPLETO
+Il file .tar.gz contiene i percorsi relativi opt/pulse, var/lib/pulse,
+var/lib/pulse-updater e le configurazioni PULSE presenti in etc e usr/local.
+Il manifest PULSE-BACKUP-MANIFEST.json registra hash, nomi e versione.
+Non e il formato ZIP da importare nella Dashboard. Non estrarlo sul sistema
+mentre i servizi sono attivi. In caso di necessita usare una procedura di
+ripristino assistita e conservare sempre anche l'installazione attuale.
