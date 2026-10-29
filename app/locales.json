@@ -237,7 +237,7 @@
     "motto_week": "OUR FOCUS THIS WEEK",
     "seasonal_decorations": "Seasonal decorations",
     "seasonal_auto": "Automatically decorate the TV during holidays",
-    "seasonal_hint": "Halloween: 20 October–1 November. Christmas: 1 December–6 January. Easter: Palm Sunday–Easter Monday, calculated each year. Europe/Zurich time. Outside these dates decorations disappear. Disable celebration effects for still decorations."
+    "seasonal_hint": "Halloween: 20 October–15 November. Christmas: 1 December–6 January. Easter: Palm Sunday–Easter Monday, calculated each year. Europe/Zurich time. Outside these dates decorations disappear. Disable celebration effects for still decorations."
   },
   "de": {
     "setup": "Ersteinrichtung",
@@ -477,7 +477,7 @@
     "motto_week": "UNSER FOKUS DIESE WOCHE",
     "seasonal_decorations": "Saisonale Dekorationen",
     "seasonal_auto": "TV während der Feiertage automatisch dekorieren",
-    "seasonal_hint": "Halloween: 20. Oktober–1. November. Weihnachten: 1. Dezember–6. Januar. Ostern: Palmsonntag–Ostermontag, jährlich berechnet. Zeitzone Europe/Zurich. Ausserhalb dieser Zeiten verschwinden die Dekorationen. Feierliche Animationen deaktivieren für unbewegte Dekorationen."
+    "seasonal_hint": "Halloween: 20. Oktober–15. November. Weihnachten: 1. Dezember–6. Januar. Ostern: Palmsonntag–Ostermontag, jährlich berechnet. Zeitzone Europe/Zurich. Ausserhalb dieser Zeiten verschwinden die Dekorationen. Feierliche Animationen deaktivieren für unbewegte Dekorationen."
   },
   "fr": {
     "setup": "Configuration initiale",
@@ -717,6 +717,6 @@
     "motto_week": "NOTRE OBJECTIF CETTE SEMAINE",
     "seasonal_decorations": "Décorations saisonnières",
     "seasonal_auto": "Décorer automatiquement le téléviseur pendant les fêtes",
-    "seasonal_hint": "Halloween : 20 octobre–1er novembre. Noël : 1er décembre–6 janvier. Pâques : du dimanche des Rameaux au lundi de Pâques, calculé chaque année. Fuseau Europe/Zurich. Les décorations disparaissent ensuite. Désactivez les animations de célébration pour des décorations fixes."
+    "seasonal_hint": "Halloween : 20 octobre–15 novembre. Noël : 1er décembre–6 janvier. Pâques : du dimanche des Rameaux au lundi de Pâques, calculé chaque année. Fuseau Europe/Zurich. Les décorations disparaissent ensuite. Désactivez les animations de célébration pour des décorations fixes."
   }
 }

@@ -1,33 +1,33 @@
-PULSE 0.2.5 — FILE DA CARICARE SUL BLOG
+PULSE 0.2.6 — FILE DA CARICARE SUL BLOG
 ==========================================
 NOVITA
 Decorazioni animate Halloween, Natale e Pasqua, attive solo nelle festività.
 Motto della settimana in DE/EN/FR: amministrazione > Seiten > Motto der Woche.
 Scegli la settimana, inserisci il testo e salva. Le settimane vuote sono saltate.
-Decorazioni: Halloween 20 ottobre–1 novembre; Natale 1 dicembre–6 gennaio;
+Decorazioni: Halloween 20 ottobre–15 novembre; Natale 1 dicembre–6 gennaio;
 Pasqua dalla Domenica delle Palme al lunedì di Pasqua, calcolata ogni anno.
 Si possono disattivare nelle impostazioni. Fuso: Europe/Zurich.
 
 CARICAMENTO SU ARUBA
-1. Estrai PULSE-Blog-0.2.5.zip sul tuo computer.
+1. Estrai PULSE-Blog-0.2.6.zip sul tuo computer.
 2. Apri sul hosting la cartella /myfile/Pulse/ del dominio www.luigipranzo.com.
 3. Carica il CONTENUTO della cartella Pulse estratta, con questi nomi esatti:
-       pulse-0.2.5.zip
+       pulse-0.2.6.zip
        stable.json
        stable.json.sig
        update.json
        update.json.sig
        guide/ (cartella della guida, aggiornare i file esistenti)
-4. Carica prima pulse-0.2.5.zip e guide/, poi i due file .sig.
+4. Carica prima pulse-0.2.6.zip e guide/, poi i due file .sig.
    Carica stable.json e update.json PER ULTIMI, sovrascrivendo i precedenti.
-   Il file pulse-0.2.5.zip deve RESTARE COMPRESSO sul sito.
+   Il file pulse-0.2.6.zip deve RESTARE COMPRESSO sul sito.
    Non creare /myfile/Pulse/Pulse/ e non caricare soltanto lo ZIP esterno.
-5. Apri gli URL dei due JSON e verifica che la versione sia 0.2.5.
+5. Apri gli URL dei due JSON e verifica che la versione sia 0.2.6.
    Non modificarli: sono firmati. Se il hosting usa una cache/CDN, escludi
    entrambi i JSON e le rispettive firme dalla cache e svuota quella esistente.
 
 URL FINALI
-https://www.luigipranzo.com/myfile/Pulse/pulse-0.2.5.zip
+https://www.luigipranzo.com/myfile/Pulse/pulse-0.2.6.zip
 https://www.luigipranzo.com/myfile/Pulse/stable.json
 https://www.luigipranzo.com/myfile/Pulse/stable.json.sig
 https://www.luigipranzo.com/myfile/Pulse/update.json

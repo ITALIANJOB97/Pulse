@@ -16,7 +16,7 @@ function seasonalState(DateTimeImmutable $now,bool $enabled=true): array {
     foreach(range($year-1,$year+1) as $y){
         $easter=easterSunday($y);
         foreach([
-            ['halloween',new DateTimeImmutable("$y-10-20",$zone),new DateTimeImmutable("$y-11-02",$zone)],
+            ['halloween',new DateTimeImmutable("$y-10-20",$zone),new DateTimeImmutable("$y-11-16",$zone)],
             ['christmas',new DateTimeImmutable("$y-12-01",$zone),new DateTimeImmutable(($y+1).'-01-07',$zone)],
             ['easter',$easter->modify('-7 days'),$easter->modify('+2 days')],
         ] as [$key,$start,$end])$windows[]=['key'=>$key,'starts_at'=>$start->getTimestamp(),'ends_at'=>$end->getTimestamp()];

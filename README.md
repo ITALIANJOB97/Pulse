@@ -1,4 +1,4 @@
-# PULSE 0.2.5
+# PULSE 0.2.6
 
 Linux Mint 22.x: per aggiornare un'installazione esistente leggere AGGIORNAMENTO_LINUX_MINT.txt ed eseguire `sudo bash deploy/upgrade-mint.sh` dalla cartella estratta. Non usare l'installer di prima installazione. Distribuzione pubblica tramite GitHub Releases: docs/PUBBLICAZIONE_GITHUB.txt. Aggiornamento remoto per Mint già configurato sul blog: PUBBLICAZIONE_BLOG.txt. Relay GitHub → blog senza comandi sul Mint: docs/RELAY_BLOG.txt.
 
@@ -6,14 +6,14 @@ Novità: guida DE/EN/FR, domenica opzionale, aggiornamenti notturni firmati con 
 
 # PULSE · Dietikon
 
-Applicazione PHP 0.2.5 per TV orizzontale Full HD, con gestione da browser.
+Applicazione PHP 0.2.6 per TV orizzontale Full HD, con gestione da browser.
 Linux Mint 22.x amd64 con PHP 8.3; Raspberry Pi OS 64 bit con PHP 8.4+.
 
 ## Aggiornamenti: protocollo update.json e compatibilità
 
 Il servizio v4 estende l’updater transazionale esistente e usa `https://www.luigipranzo.com/myfile/Pulse/update.json`, con firma Ed25519 separata, controlli ogni 6 ore, note strutturate, progresso, annullamento e installazione immediata confermata. Configurazione unica: `deploy/update-source.json`. Gli avvisi sono riservati agli amministratori. La scelta esplicita `--channel github` mantiene il canale GitHub già esistente; nessun fallback automatico.
 
-Architettura, contratto, comandi, limiti e prove: [docs/PROTOCOLLO_AGGIORNAMENTI.md](docs/PROTOCOLLO_AGGIORNAMENTI.md). Il servizio root richiede un passaggio manuale iniziale sul Mint; un normale ZIP automatico non lo sostituisce. La release 0.2.5 include il nuovo servizio e i manifest firmati per entrambi i protocolli. Il pacchetto blog contiene stable.json per i servizi precedenti e update.json per v4. La normale installazione automatica conserva il servizio e il canale già configurati.
+Architettura, contratto, comandi, limiti e prove: [docs/PROTOCOLLO_AGGIORNAMENTI.md](docs/PROTOCOLLO_AGGIORNAMENTI.md). Il servizio root richiede un passaggio manuale iniziale sul Mint; un normale ZIP automatico non lo sostituisce. La release 0.2.6 include il nuovo servizio e i manifest firmati per entrambi i protocolli. Il pacchetto blog contiene stable.json per i servizi precedenti e update.json per v4. La normale installazione automatica conserva il servizio e il canale già configurati.
 
 I Mint ancora collegati al blog possono ricevere le nuove versioni tramite il relay pubblico su Aruba, senza interventi sul PC. Il relay richiede una configurazione iniziale sul hosting; non occorre un token. Istruzioni in docs/RELAY_BLOG.txt.
 

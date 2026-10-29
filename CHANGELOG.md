@@ -1,3 +1,7 @@
+## 0.2.6 — 2026-10-29
+- Halloween prolungato fino al 15 novembre compreso: le decorazioni rimangono attive dal 20 ottobre e scompaiono il 16 novembre alle 00:00, fuso Europe/Zurich.
+- Test delle date di inizio/fine, impostazioni e guida DE/EN/FR aggiornati. Dati e altre festività invariati.
+
 ## 0.2.5 — 2026-10-29
 - Decorazioni TV animate automatiche: Halloween dal 20 ottobre al 1 novembre, Natale dal 1 dicembre al 6 gennaio, Pasqua dalla Domenica delle Palme al lunedì di Pasqua.
 - Calcolo annuale della Pasqua e fuso Europe/Zurich; decorazioni disattivabili e rispetto del movimento ridotto. Scadenza locale anche senza rete.

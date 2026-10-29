@@ -1,8 +1,8 @@
-NOTA SERVIZIO INCLUSO NELLA 0.2.5: il servizio v4 usa update.json come default.
+NOTA SERVIZIO INCLUSO NELLA 0.2.6: il servizio v4 usa update.json come default.
 Per mantenere GitHub specificare --channel github. Vedere docs/PROTOCOLLO_AGGIORNAMENTI.md.
 Le release già pubblicate non sono state sostituite.
 
-PULSE 0.2.5 — GITHUB PUBBLICO
+PULSE 0.2.6 — GITHUB PUBBLICO
 ============================
 Repository prevista: https://github.com/ITALIANJOB97/Pulse
 La repository deve essere pubblica. La configurazione locale da sola non
@@ -13,11 +13,11 @@ vanno mai caricati su GitHub. La repository pubblica contiene solo codice.
 MINT GIÀ CONFIGURATO SUL BLOG
 L’aggiornamento automatico della Dashboard mantiene il servizio blog v1.
 Puoi continuare senza comandi sul PC usando il relay pubblico su Aruba
-(docs/RELAY_BLOG.txt) oppure caricando PULSE-Blog-0.2.5.zip sul blog.
+(docs/RELAY_BLOG.txt) oppure caricando PULSE-Blog-0.2.6.zip sul blog.
 Il relay pubblico non richiede token GitHub.
 
 PASSAGGIO DIRETTO MINT -> GITHUB (UNA SOLA VOLTA)
-1. Scarica pulse-0.2.5.zip dalla Release e decomprimilo sul Mint.
+1. Scarica pulse-0.2.6.zip dalla Release e decomprimilo sul Mint.
    Non usare gli archivi Source code generati da GitHub.
 2. Apri un terminale nella cartella estratta ed esegui:
        sudo bash deploy/upgrade-mint.sh --channel github
