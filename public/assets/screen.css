@@ -10,3 +10,32 @@
 .metrics{grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}.metric{padding:32px 25px;min-height:450px}.metric h2{font-size:28px;min-height:76px}.metric .value{font-size:82px;letter-spacing:-3px;margin:30px 0}.metric .value small{font-size:32px}.metric .trend{font-size:21px;line-height:1.4}.metric .target{font-size:23px;overflow-wrap:anywhere}.signals{gap:12px;flex-wrap:wrap}.status-label{font-size:20px;margin-left:0}.metric:last-child .value{font-size:62px;min-height:90px;display:flex;align-items:center}
 
 .screen-footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;min-width:230px}.author-credit{color:#fff;font-size:17px;line-height:1.2;text-decoration:none;white-space:nowrap}.author-credit:hover{text-decoration:underline;text-underline-offset:4px}.author-credit:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
+
+/* Decorations stay in the outer 65px frame and top 30px, away from content. */
+.seasonal-layer{position:absolute;inset:0;z-index:6;overflow:hidden;pointer-events:none;contain:layout paint}
+.season-piece{position:absolute;display:block;width:var(--size);height:var(--size);transform-origin:top center}
+.season-piece svg{display:block;width:100%;height:100%;overflow:visible}
+.season-bob{animation:season-bob 7s var(--delay,0s) ease-in-out infinite}
+.season-sway{animation:season-sway 6s var(--delay,0s) ease-in-out infinite}
+.season-fly{animation:season-fly var(--duration,32s) var(--delay,0s) linear infinite}
+.season-fall{animation:season-fall var(--duration,18s) var(--delay,0s) linear infinite;opacity:.75}
+.bat-wing{transform-origin:50px 50px;animation:season-flap .6s ease-in-out infinite alternate}
+.season-still *,.season-paused *{animation-play-state:paused!important}
+.season-still .season-fly{animation:none;left:1060px!important;transform:none}.season-still .season-fly~.season-fly{left:1420px!important}
+.season-still .season-fall{animation:none;top:430px!important}.season-still .season-fall:nth-child(3n){top:680px!important}
+@keyframes season-bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-28px) rotate(5deg)}}
+@keyframes season-sway{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+@keyframes season-fly{0%{transform:translate3d(-90px,0,0)}25%{transform:translate3d(440px,7px,0)}50%{transform:translate3d(970px,0,0)}75%{transform:translate3d(1500px,8px,0)}100%{transform:translate3d(2020px,0,0)}}
+@keyframes season-fall{0%{transform:translate3d(0,-30px,0) rotate(0)}50%{transform:translate3d(5px,540px,0) rotate(95deg)}100%{transform:translate3d(0,1140px,0) rotate(190deg)}}
+@keyframes season-flap{from{transform:scaleY(.65)}to{transform:scaleY(1)}}
+@media(prefers-reduced-motion:reduce){.season-fly{left:1100px!important}.season-fly~.season-fly{left:1420px!important}.season-fall{top:440px!important}.season-fall:nth-child(3n){top:710px!important}}
+/* The week's message is given a single, generous reading surface. */
+#slide[data-page=motto] .heading{margin-bottom:26px}
+.motto-card{position:relative;isolation:isolate;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-height:0;gap:30px;margin:0 40px 8px;padding:48px 100px;border:1px solid #ffffff44;border-radius:28px;background:linear-gradient(130deg,#ffffff15,#ffffff04);overflow:hidden;text-align:center}
+.motto-card:before,.motto-card:after{content:'';position:absolute;width:380px;height:380px;border:1px solid #ffffff15;border-radius:50%;z-index:-1;right:-195px;bottom:-170px}
+.motto-card:after{width:490px;height:490px;right:-250px;bottom:-225px}
+.motto-mark{position:absolute;left:35px;top:5px;color:var(--gold);font-size:170px;line-height:1;font-weight:800;opacity:.7}
+.motto-card blockquote{margin:0;max-width:1320px;font-size:76px;line-height:1.16;font-weight:700;letter-spacing:-1.8px;white-space:normal;overflow-wrap:anywhere;flex-shrink:0}
+.motto-card figcaption{font-size:26px;font-weight:500;letter-spacing:1px;color:var(--muted);overflow-wrap:anywhere;max-width:100%;flex-shrink:0}
+.motto-card figcaption:before{content:'';display:inline-block;vertical-align:middle;width:32px;height:2px;background:var(--gold);margin-right:15px}
+.motion .motto-card{animation:reveal .65s ease-out both}

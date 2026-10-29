@@ -1,10 +1,11 @@
-# Protocollo aggiornamenti PULSE — implementazione del 26 ottobre 2026
+# Protocollo aggiornamenti PULSE — 0.2.5, 29 ottobre 2026
 
-La versione applicativa resta quella di `VERSION`: 0.2.4. Queste modifiche sono
-sorgenti in sviluppo, non una nuova release pubblicata. Non sono stati cambiati
-il manifest del dominio, le note di rilascio né gli ZIP 0.2.4 già firmati.
-Il kit pubblico `PULSE-Riparazione-0.2.4.zip` è distinto: corregge soltanto il
-difetto NoRedirect della release esistente e permette l'installazione immediata.
+Il servizio v4 è incluso nella release applicativa 0.2.5. Il normale aggiornamento
+automatico dell’applicazione non sostituisce il servizio root: per attivare v4
+è necessario eseguire una volta deploy/upgrade-mint.sh sul Mint. Il pacchetto
+blog contiene stable.json per i servizi precedenti e update.json per v4.
+Gli ZIP 0.2.4 già pubblicati restano immutati. Il kit di recupero 0.2.4-R2
+è distinto e non include le novità applicative 0.2.5.
 
 ## Struttura e architettura
 

@@ -71,9 +71,10 @@ function renderLogin(): void {
 }
 function renderDisplay(array $data,bool $archive=false): void {
     $data['labels']=dictionary($data['language']);$data['archive']=$archive;
+    if($archive)$data['seasonal']=['enabled'=>false,'windows'=>[]];
     echo '<!doctype html><html lang="'.e($data['language']).'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.e($data['store']).'</title><link rel="stylesheet" href="/assets/screen.css?v='.e(version()).'"></head><body>';
     echo '<div id="screen"><header><div class="brand">PULSE<span></span></div><div class="store" id="store"></div><div class="clock" id="clock"></div></header><main id="slide"></main><footer><span id="period"></span><nav id="pages" aria-label="Pages"></nav><div class="screen-footer-right"><span id="page-count"></span>'.authorCredit().'</div></footer><div class="timeline"><div id="timeline"></div></div><aside id="offline" role="status" hidden></aside></div>';
-    echo '<script id="screen-data" type="application/json">'.json_encode($data,JSON_THROW_ON_ERROR|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT).'</script><script src="/assets/screen.js?v='.e(version()).'" defer></script></body></html>';
+    echo '<script id="screen-data" type="application/json">'.json_encode($data,JSON_THROW_ON_ERROR|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT).'</script><script src="/assets/seasonal.js?v='.e(version()).'" defer></script><script src="/assets/screen.js?v='.e(version()).'" defer></script></body></html>';
 }
 function renderAdmin(): void {
     require __DIR__.'/views_admin.php';

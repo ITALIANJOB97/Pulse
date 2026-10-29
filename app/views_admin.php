@@ -43,7 +43,7 @@ function adminSettings(): void {
     languageSelect(setting('language','de'));field('duration',t('duration'),setting('duration',20),'number','required min="10" max="120"');
     echo '<label class="check"><input type="checkbox" name="effects"'.(setting('effects',true)?' checked':'').'>'.e(t('effects')).'</label></div><h3>'.e(t('enabled_pages')).'</h3><div class="checkbox-grid">';
     foreach(moduleKeys() as $key)echo '<label class="check"><input type="checkbox" name="pages['.$key.']"'.(setting('pages',[])[$key]??true?' checked':'').'>'.e(t($key)).'</label>';
-    echo '</div><h3>'.e(t('schedule_settings')).'</h3><label class="check"><input type="checkbox" name="show_sunday"'.(setting('show_sunday',true)?' checked':'').'>'.e(t('show_sunday')).'</label><p class="help">'.e(t('sunday_preserved')).'</p><h3>'.e(t('updates')).'</h3><label class="check"><input type="checkbox" name="update_auto"'.(setting('update_auto',true)?' checked':'').'>'.e(t('update_auto')).'</label>';
+    echo '</div><h3>'.e(t('seasonal_decorations')).'</h3><label class="check"><input type="checkbox" name="seasonal_decorations"'.(setting('seasonal_decorations',true)?' checked':'').'>'.e(t('seasonal_auto')).'</label><p class="help">'.e(t('seasonal_hint')).'</p><h3>'.e(t('schedule_settings')).'</h3><label class="check"><input type="checkbox" name="show_sunday"'.(setting('show_sunday',true)?' checked':'').'>'.e(t('show_sunday')).'</label><p class="help">'.e(t('sunday_preserved')).'</p><h3>'.e(t('updates')).'</h3><label class="check"><input type="checkbox" name="update_auto"'.(setting('update_auto',true)?' checked':'').'>'.e(t('update_auto')).'</label>';
     field('update_hour',t('update_hour'),setting('update_hour',3),'number','required min="0" max="23" step="1"');
     echo '<p class="help">'.e(t('update_window_hint')).'</p>';
     if(updaterManaged())echo '<p class="help">'.e(t(updaterSourceLabel())).'</p>';
@@ -140,7 +140,7 @@ function adminBackups(): void {
     echo '</section>';
 }
 function adminContent(): void {
-    $editable=['spotlight','podium','roles','transfers','targets','daily','tasks'];
+    $editable=['spotlight','podium','roles','transfers','targets','daily','motto','tasks'];
     $module=is_string($_GET['module']??null)?$_GET['module']:'spotlight';
     if(!in_array($module,$editable,true))$module='spotlight';
     $period=is_string($_GET['period']??null)?$_GET['period']:periodFor($module);
@@ -151,7 +151,7 @@ function adminContent(): void {
     echo '</nav><section class="panel"><div class="section-heading"><h2>'.e(t($module)).'</h2>';
     if($module!=='tasks'){
         echo '<form method="get" class="period-form">';hidden('tab','content');hidden('module',$module);
-        field('period',t('period'),$period,match($module){'daily'=>'date','transfers'=>'week',default=>'month'},'required');
+        field('period',t('period'),$period,match($module){'daily'=>'date','transfers','motto'=>'week',default=>'month'},'required');
         echo '<button>'.e(t('preview')).'</button></form>';
     }
     echo '</div>';formStart('content',$return);hidden('module',$module);hidden('period',$period);
@@ -186,6 +186,10 @@ function adminContent(): void {
             field($key,t($key),$data[$key]??$default,'number','min="'.$min.'" max="'.$max.'" step="0.1"');
         }
         echo '</div><p class="help">'.e(t('previous_hint')).'</p>';
+    }elseif($module==='motto'){
+        echo '<p class="help">'.e(t('motto_hint')).'</p><div class="form-grid thirds">';
+        foreach(['de','en','fr'] as $lang)echo '<label class="field"><span>'.e(t('motto').' · '.strtoupper($lang)).'</span><textarea name="motto_'.$lang.'" rows="5" maxlength="280">'.e($data['text'][$lang]??'').'</textarea></label>';
+        echo '</div>';field('motto_author',t('motto_author'),$data['author']??'','text','maxlength="80"');
     }elseif($module==='daily'){
         for($i=0;$i<6;$i++){echo '<div class="form-grid thirds">';foreach(['de','en','fr'] as $lang)field('line_'.$i.'_'.$lang,t('line').' '.($i+1).' · '.strtoupper($lang),$data[$i][$lang]??'','text','maxlength="180"');echo '</div>';}
     }elseif($module==='tasks'){

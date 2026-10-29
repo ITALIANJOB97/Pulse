@@ -230,7 +230,14 @@
     "update_error_php_upgrade_required": "Update PHP before installing this release.",
     "update_error_installation_failed": "Installation failed. Check the rollback status and diagnostic report.",
     "update_error_interrupted_update": "An interrupted update was restored to the previous version.",
-    "update_error_preflight_or_backup_failed": "The preparation or backup failed. No migration was performed."
+    "update_error_preflight_or_backup_failed": "The preparation or backup failed. No migration was performed.",
+    "motto": "Weekly motto",
+    "motto_author": "Author or team (optional)",
+    "motto_hint": "Choose a week, then write up to 280 characters in each language. The TV shows only that week’s motto, Monday–Sunday. An empty week is skipped; previous mottos stay saved. Missing translations use the first available text.",
+    "motto_week": "OUR FOCUS THIS WEEK",
+    "seasonal_decorations": "Seasonal decorations",
+    "seasonal_auto": "Automatically decorate the TV during holidays",
+    "seasonal_hint": "Halloween: 20 October–1 November. Christmas: 1 December–6 January. Easter: Palm Sunday–Easter Monday, calculated each year. Europe/Zurich time. Outside these dates decorations disappear. Disable celebration effects for still decorations."
   },
   "de": {
     "setup": "Ersteinrichtung",
@@ -463,7 +470,14 @@
     "update_error_php_upgrade_required": "Vor dieser Version muss PHP aktualisiert werden.",
     "update_error_installation_failed": "Installation fehlgeschlagen. Wiederherstellungsstatus und Diagnosebericht prüfen.",
     "update_error_interrupted_update": "Ein unterbrochenes Update wurde auf die vorherige Version zurückgesetzt.",
-    "update_error_preflight_or_backup_failed": "Vorbereitung oder Sicherung fehlgeschlagen. Keine Migration durchgeführt."
+    "update_error_preflight_or_backup_failed": "Vorbereitung oder Sicherung fehlgeschlagen. Keine Migration durchgeführt.",
+    "motto": "Motto der Woche",
+    "motto_author": "Autor oder Team (optional)",
+    "motto_hint": "Woche auswählen und bis zu 280 Zeichen pro Sprache eingeben. Auf dem TV erscheint nur das Motto dieser Woche, Montag–Sonntag. Leere Wochen werden übersprungen; frühere Mottos bleiben gespeichert. Fehlende Übersetzungen verwenden den ersten verfügbaren Text.",
+    "motto_week": "UNSER FOKUS DIESE WOCHE",
+    "seasonal_decorations": "Saisonale Dekorationen",
+    "seasonal_auto": "TV während der Feiertage automatisch dekorieren",
+    "seasonal_hint": "Halloween: 20. Oktober–1. November. Weihnachten: 1. Dezember–6. Januar. Ostern: Palmsonntag–Ostermontag, jährlich berechnet. Zeitzone Europe/Zurich. Ausserhalb dieser Zeiten verschwinden die Dekorationen. Feierliche Animationen deaktivieren für unbewegte Dekorationen."
   },
   "fr": {
     "setup": "Configuration initiale",
@@ -696,6 +710,13 @@
     "update_error_php_upgrade_required": "Mettez PHP à jour avant cette version.",
     "update_error_installation_failed": "Échec de l’installation. Consultez le statut de restauration et le diagnostic.",
     "update_error_interrupted_update": "Une mise à jour interrompue a été restaurée à la version précédente.",
-    "update_error_preflight_or_backup_failed": "Échec de la préparation ou de la sauvegarde. Aucune migration effectuée."
+    "update_error_preflight_or_backup_failed": "Échec de la préparation ou de la sauvegarde. Aucune migration effectuée.",
+    "motto": "Devise de la semaine",
+    "motto_author": "Auteur ou équipe (facultatif)",
+    "motto_hint": "Choisissez une semaine, puis saisissez jusqu’à 280 caractères par langue. Le téléviseur affiche uniquement la devise de cette semaine, du lundi au dimanche. Les semaines vides sont ignorées ; les anciennes devises restent enregistrées. Une traduction manquante utilise le premier texte disponible.",
+    "motto_week": "NOTRE OBJECTIF CETTE SEMAINE",
+    "seasonal_decorations": "Décorations saisonnières",
+    "seasonal_auto": "Décorer automatiquement le téléviseur pendant les fêtes",
+    "seasonal_hint": "Halloween : 20 octobre–1er novembre. Noël : 1er décembre–6 janvier. Pâques : du dimanche des Rameaux au lundi de Pâques, calculé chaque année. Fuseau Europe/Zurich. Les décorations disparaissent ensuite. Désactivez les animations de célébration pour des décorations fixes."
   }
 }

@@ -61,6 +61,7 @@ function handleAction(string $action): void {
             setSetting('store_name',$name); setSetting('language',$lang); setSetting('duration',$duration);
             setSetting('effects',isset($_POST['effects'])); setSetting('pages',$pages);
             setSetting('show_sunday',isset($_POST['show_sunday']));
+            setSetting('seasonal_decorations',isset($_POST['seasonal_decorations']));
             setSetting('update_auto',isset($_POST['update_auto'])); setSetting('update_hour',$hour);
             if($url!==setting('update_url','')) setSetting('update_state',[]);
             setSetting('update_url',$url); touchRevision(); db()->commit();
@@ -135,6 +136,8 @@ function saveContentForm(): void {
             'quality'=>optionalNumber('quality',0,100),'quality_target'=>optionalNumber('quality_target',0,100),'quality_previous'=>optionalNumber('quality_previous',0,100),
         ];
         if($payload['waiting_amber']<$payload['waiting_green'])throw new DomainException(t('invalid_input'));
+    } elseif($module==='motto') {
+        $payload=['text'=>translationsFromPost('motto',280),'author'=>inputText('motto_author',80)];
     } elseif($module==='daily') {
         for($i=0;$i<6;$i++)$payload[]=translationsFromPost('line_'.$i,180);
     } elseif($module==='tasks') {

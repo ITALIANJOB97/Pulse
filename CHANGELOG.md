@@ -1,3 +1,11 @@
+## 0.2.5 — 2026-10-29
+- Decorazioni TV animate automatiche: Halloween dal 20 ottobre al 1 novembre, Natale dal 1 dicembre al 6 gennaio, Pasqua dalla Domenica delle Palme al lunedì di Pasqua.
+- Calcolo annuale della Pasqua e fuso Europe/Zurich; decorazioni disattivabili e rispetto del movimento ridotto. Scadenza locale anche senza rete.
+- Nuova pagina Motto della settimana con testi DE/EN/FR, autore facoltativo, selezione settimana ISO e adattamento del testo. Le settimane vuote vengono saltate senza riproporre il motto precedente.
+- Guida aggiornata nelle tre lingue. Nessuna modifica distruttiva allo schema o ai dati esistenti.
+- Include il protocollo aggiornamenti v4, progresso, note, installazione immediata e annullamento. Le funzioni operative v4 richiedono l'aggiornamento manuale iniziale del servizio root; il normale ZIP automatico conserva servizio e canale esistenti.
+- Pubblicazione blog con stable.json (servizi precedenti) e update.json (v4), entrambi firmati. Backup verificato e recupero di directory release inattive nell'updater v4.
+
 ## 0.2.4 — 2026-10-19
 - Service Podium: decimali sotto 1 accettati, conservati e visualizzati; separatore punto o virgola.
 - Servizio v3 per aggiornamenti GitHub pubblici senza token, con backup, verifica firme e finestra notturna.

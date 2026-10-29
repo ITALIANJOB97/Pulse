@@ -64,7 +64,7 @@ def main():
     existing=subprocess.run(gh+['release','view',tag,'--repo',REPO,'--json','isDraft'],capture_output=True,text=True,env=env)
     if existing.returncode==0:raise RuntimeError('Release '+tag+' already exists. Do not overwrite it; review any draft or increment VERSION.')
     # Application tests are isolated in system temporary folders.
-    for test in ('core.php','features-020.php','podium-decimals.php','blog-relay.php','signatures.php'):
+    for test in ('core.php','features-020.php','podium-decimals.php','seasonal-motto.php','blog-relay.php','signatures.php'):
         run([args.php,'-d','extension=sodium',ROOT/'tests'/test])
     run([sys.executable,ROOT/'bin/build-linux-mint-zip.py'])
     directory=ROOT/'dist/GitHub'/tag

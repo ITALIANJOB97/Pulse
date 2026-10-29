@@ -1,0 +1,12 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const context={module:{exports:{}}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../public/assets/seasonal.js'),'utf8'),context);
+const {activeSeason,mottoVisible}=context.module.exports;
+const state={enabled:true,windows:[{key:'halloween',starts_at:100,ends_at:200}]};
+assert.equal(activeSeason(state,99),'');assert.equal(activeSeason(state,100),'halloween');assert.equal(activeSeason(state,199.999),'halloween');assert.equal(activeSeason(state,200),'');
+assert.equal(activeSeason({...state,enabled:false},150),'');assert.equal(activeSeason({},150),'');
+const data={motto_ends_at:200,content:{motto:{text:{de:'Gemeinsam.',en:''}}}};
+assert.equal(mottoVisible(data,100),true);assert.equal(mottoVisible(data,200),false);assert.equal(mottoVisible({...data,archive:true},201),true);
+assert.equal(mottoVisible({content:{motto:{text:{de:'  '}}}},100),false);
+assert.equal(mottoVisible({content:{}},100),false);
+console.log('11 seasonal browser logic checks passed: boundaries, disabled state, missing legacy data, weekly expiry and archive.');

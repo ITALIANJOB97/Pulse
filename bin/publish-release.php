@@ -47,6 +47,16 @@ try{
     $blogManifest['url']=$updateSource['baseUrl'].'pulse-'.$version.'.zip';
     $blogJson=json_encode($blogManifest,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;
     $blogSig=base64_encode(sodium_crypto_sign_detached($blogJson,$secret)).PHP_EOL;
+    $updateManifest=[
+        'schemaVersion'=>1,'program'=>$updateSource['program'],'version'=>$version,
+        'downloadUrl'=>$blogManifest['url'],'sha256'=>$manifest['sha256'],'size'=>$manifest['size'],
+        'publishedAt'=>$manifest['published_at'],'mandatory'=>false,'minimumSupportedVersion'=>'0.2.0',
+        'releaseNotes'=>['features'=>[$notes['en']],'improvements'=>[],'fixes'=>[]],
+        'pulse'=>['minUpdater'=>4,'phpMin'=>'8.3.0','dbSchema'=>1,'platform'=>'linuxmint22-amd64'],
+    ];
+    $updateJson=json_encode($updateManifest,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;
+    $updateSig=base64_encode(sodium_crypto_sign_detached($updateJson,$secret)).PHP_EOL;
+    file_put_contents($dir.'/update.json',$updateJson);file_put_contents($dir.'/update.json.sig',$updateSig);
     sodium_memzero($secret);
     file_put_contents($dir.'/blog-stable.json',$blogJson);
     file_put_contents($dir.'/blog-stable.json.sig',$blogSig);
@@ -76,6 +86,8 @@ try{
         $archive->addFile($target,'Pulse/pulse-'.$version.'.zip');
         $archive->addFromString('Pulse/stable.json',$blogJson);
         $archive->addFromString('Pulse/stable.json.sig',$blogSig);
+        $archive->addFromString('Pulse/update.json',$updateJson);
+        $archive->addFromString('Pulse/update.json.sig',$updateSig);
         foreach(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($guide,FilesystemIterator::SKIP_DOTS)) as $file){
             if($file->isLink()||!$file->isFile())throw new RuntimeException('Unexpected guide entry.');
             $relative=str_replace('\\','/',substr($file->getPathname(),strlen($guide)+1));

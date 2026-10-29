@@ -186,7 +186,7 @@ function initialize(array $data): void {
     @unlink(storage('setup-token'));
 }
 function moduleKeys(): array {
-    return ['spotlight','podium','team','roles','transfers','targets','daily','gallery','tasks'];
+    return ['spotlight','podium','team','roles','transfers','targets','daily','gallery','motto','tasks'];
 }
 function employees(bool $activeOnly = false): array {
     return db()->query('SELECT * FROM employees' . ($activeOnly ? ' WHERE active=1' : '') . ' ORDER BY name COLLATE NOCASE,id')->fetchAll();
@@ -207,7 +207,7 @@ function periodFor(string $module, ?DateTimeImmutable $date = null): string {
     $date ??= new DateTimeImmutable('now');
     return match($module) {
         'daily' => $date->format('Y-m-d'),
-        'transfers' => $date->format('o-\WW'),
+        'transfers', 'motto' => $date->format('o-\WW'),
         'tasks', 'gallery', 'team' => 'all',
         default => $date->format('Y-m'),
     };
@@ -218,7 +218,7 @@ function validPeriod(string $module, string $period): bool {
         $d = DateTimeImmutable::createFromFormat('!Y-m-d', $period);
         return $d && $d->format('Y-m-d') === $period;
     }
-    if ($module === 'transfers') {
+    if (in_array($module, ['transfers','motto'], true)) {
         if (!preg_match('/^(\d{4})-W(\d{2})$/D', $period, $m)) return false;
         return (new DateTimeImmutable())->setISODate((int)$m[1], (int)$m[2])->format('o-\WW') === $period;
     }
@@ -235,8 +235,8 @@ function screenAllowed(): bool {
     $key = $_COOKIE['pulse_screen'] ?? '';
     return is_string($key) && strlen($key) === 64 && hash_equals(setting('screen_key',''), $key);
 }
-function screenData(): array {
-    $now = new DateTimeImmutable();
+function screenData(?DateTimeImmutable $now = null): array {
+    $now = ($now ?? new DateTimeImmutable())->setTimezone(new DateTimeZone('Europe/Zurich'));
     $modules = [];
     foreach (moduleKeys() as $key) $modules[$key] = content($key, periodFor($key, $now));
     $photos = db()->query("SELECT id,label FROM media WHERE kind='gallery' ORDER BY id")->fetchAll();
@@ -246,6 +246,9 @@ function screenData(): array {
         'store' => setting('store_name', 'PULSE · Dietikon'), 'language' => setting('language', 'de'),
         'duration' => setting('duration', 20), 'effects' => setting('effects', true),
         'show_sunday' => setting('show_sunday', true),
+        'server_time' => $now->getTimestamp(),
+        'seasonal' => seasonalState($now, setting('seasonal_decorations', true) !== false),
+        'motto_ends_at' => $now->setISODate((int)$now->format('o'), (int)$now->format('W'), 1)->setTime(0,0)->modify('+7 days')->getTimestamp(),
         'pages' => setting('pages', array_fill_keys(moduleKeys(), true)),
         'employees' => employees(true), 'content' => $modules, 'gallery' => $photos,
         'updates' => publicUpdateState(false),

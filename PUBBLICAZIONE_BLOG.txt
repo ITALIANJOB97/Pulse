@@ -1,50 +1,62 @@
-PULSE 0.2.4 — PACCHETTO DA CARICARE SUL BLOG
-================================================
-Questo pacchetto aggiorna le installazioni Mint che hanno già il servizio
-notturno 0.2.0/0.2.1 configurato sul blog. Non richiede comandi sul Mint.
-Non può aggiungere da remoto il servizio a una vecchia installazione 0.1.x.
+PULSE 0.2.5 — FILE DA CARICARE SUL BLOG
+==========================================
+NOVITA
+Decorazioni animate Halloween, Natale e Pasqua, attive solo nelle festività.
+Motto della settimana in DE/EN/FR: amministrazione > Seiten > Motto der Woche.
+Scegli la settimana, inserisci il testo e salva. Le settimane vuote sono saltate.
+Decorazioni: Halloween 20 ottobre–1 novembre; Natale 1 dicembre–6 gennaio;
+Pasqua dalla Domenica delle Palme al lunedì di Pasqua, calcolata ogni anno.
+Si possono disattivare nelle impostazioni. Fuso: Europe/Zurich.
 
-PER QUESTA NOTTE
-1. Estrai PULSE-Blog-0.2.4.zip sul tuo computer.
-2. Nel pannello file/FTP del blog apri /myfile/Pulse/.
-3. Carica prima pulse-0.2.4.zip e la cartella guide (aggiornando i file esistenti).
-   Il file pulse-0.2.4.zip deve restare compresso: NON estrarlo sul sito.
-4. Carica stable.json.sig, poi stable.json PER ULTIMO, sovrascrivendo i precedenti.
-   Non creare per errore /myfile/Pulse/Pulse/. Non caricare lo ZIP esterno
-   PULSE-Blog-0.2.4.zip al posto dei suoi contenuti.
-5. Apri https://www.luigipranzo.com/myfile/Pulse/stable.json:
-   deve mostrare "version": "0.2.4" e "min_updater": 1.
-   Se usi una cache/CDN, svuotala per stable.json e stable.json.sig e disabilita
-   la cache su questi due file. Non aggiungere redirect o pagine di login.
-6. Il Mint controlla circa ogni 30 minuti. Se acceso, online, con installazione
-   automatica attiva e non rinviata, installa nella finestra configurata
-   (predefinita: 03:00–04:00, ora svizzera). Se perde la finestra, riprova la successiva.
+CARICAMENTO SU ARUBA
+1. Estrai PULSE-Blog-0.2.5.zip sul tuo computer.
+2. Apri sul hosting la cartella /myfile/Pulse/ del dominio www.luigipranzo.com.
+3. Carica il CONTENUTO della cartella Pulse estratta, con questi nomi esatti:
+       pulse-0.2.5.zip
+       stable.json
+       stable.json.sig
+       update.json
+       update.json.sig
+       guide/ (cartella della guida, aggiornare i file esistenti)
+4. Carica prima pulse-0.2.5.zip e guide/, poi i due file .sig.
+   Carica stable.json e update.json PER ULTIMI, sovrascrivendo i precedenti.
+   Il file pulse-0.2.5.zip deve RESTARE COMPRESSO sul sito.
+   Non creare /myfile/Pulse/Pulse/ e non caricare soltanto lo ZIP esterno.
+5. Apri gli URL dei due JSON e verifica che la versione sia 0.2.5.
+   Non modificarli: sono firmati. Se il hosting usa una cache/CDN, escludi
+   entrambi i JSON e le rispettive firme dalla cache e svuota quella esistente.
 
 URL FINALI
-https://www.luigipranzo.com/myfile/Pulse/pulse-0.2.4.zip
+https://www.luigipranzo.com/myfile/Pulse/pulse-0.2.5.zip
 https://www.luigipranzo.com/myfile/Pulse/stable.json
 https://www.luigipranzo.com/myfile/Pulse/stable.json.sig
+https://www.luigipranzo.com/myfile/Pulse/update.json
+https://www.luigipranzo.com/myfile/Pulse/update.json.sig
 https://www.luigipranzo.com/myfile/Pulse/guide/index.html
-Devono rispondere direttamente, senza cambiare dominio www/non-www.
+Devono essere accessibili direttamente, senza login o redirect www/non-www.
+
+QUANDO SI AGGIORNA IL MINT
+Il servizio già presente mantiene il proprio canale: blog oppure GitHub.
+- Blog precedente (v1): cerca stable.json, controllo circa ogni 30 minuti.
+- Blog con servizio v4: cerca update.json, controllo ogni 6 ore.
+- GitHub (v3/v4, anche dopo il kit R2): cerca la Release firmata pubblicata
+  su ITALIANJOB97/Pulse. Il solo caricamento sul blog non aggiorna questo canale.
+Il servizio installa nella finestra configurata (normalmente 03:00–04:00
+Europe/Zurich), se il PC è acceso, online e l'installazione non è rinviata.
+Le nuove funzioni Installa ora/Annulla richiedono il servizio root v4.
+Il normale aggiornamento automatico non sostituisce quel servizio.
+Per attivare v4 localmente leggere AGGIORNAMENTO_LINUX_MINT.txt; non serve
+farlo soltanto per ricevere decorazioni e motto tramite il servizio funzionante.
 
 DATI ESISTENTI
-Il servizio verifica firma, dimensione e SHA-256; crea e verifica un backup
-prima delle modifiche. Database, account, immagini, impostazioni e archivi
-restano in /var/lib/pulse. Non viene ripetuta la configurazione iniziale.
+Il servizio verifica firma, dimensione e SHA-256, poi crea e verifica un backup
+prima delle modifiche. Database, account, foto, impostazioni e archivi restano
+in /var/lib/pulse. Non ripetere la configurazione iniziale o l'installer.
 In caso di errore è previsto il ripristino della versione e dei dati precedenti.
-Il risultato Service/Ticket del team è manuale: se prima usavi 0.2.0 e non
-avevi un valore manuale, resta vuoto finché non viene compilato.
-
-PROSSIME VERSIONI DA GITHUB SENZA TOCCARE IL MINT
-Percorso: GitHub pubblico -> relay sul tuo hosting -> blog -> Mint.
-È disponibile PULSE-Relay-Hosting-0.2.4.zip con istruzioni RELAY_BLOG.txt.
-Il relay richiede una configurazione iniziale sul pannello hosting: un cron PHP. Nessuna credenziale GitHub richiesta. Finché non viene configurato, ogni
-versione va caricata sul blog come sopra. Il solo upload di questo ZIP non
-attiva il collegamento a GitHub, e non cambia il servizio root del Mint.
-Il passaggio DIRETTO Mint -> GitHub resta un’alternativa manuale una tantum,
-descritta in docs/PUBBLICAZIONE_GITHUB.txt.
+Questo pacchetto non può riparare da remoto un vecchio servizio root guasto:
+se permane NoRedirect o Release directory already exists, usare il kit R2
+già fornito oppure la procedura di upgrade locale della nuova release.
 
 CONTENUTO PUBBLICO
-Repository e pacchetto del programma sono destinati alla distribuzione pubblica.
-Non contengono foto, account, database reali, credenziali GitHub o la chiave
-privata di firma. I dati del negozio restano sul Mint.
+Questi file contengono solo il programma e la guida. Sono esclusi i dati del
+negozio, le foto reali, gli account, le credenziali e la chiave privata di firma.
