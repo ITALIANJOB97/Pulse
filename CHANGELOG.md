@@ -1,3 +1,9 @@
+## 0.2.7 — 2026-10-30
+- Halloween: quattro pipistrelli attraversano l'intera TV su traiettorie curve casuali, entrando da tutti i lati e cambiando percorso a ogni passaggio.
+- Quattro ragnatele allineate agli angoli dello schermo e tre ragni su fili, con discese sfalsate e profondità variabile.
+- Animazioni leggere tramite transform, fermate durante la pausa e quando la scheda è nascosta; decorazioni statiche con effetti disattivati o movimento ridotto.
+- Docs e guida EN/DE/FR aggiornati. Periodo Halloween invariato: 20 ottobre–15 novembre. Nessuna modifica a dati, account, foto o schema del database.
+
 ## 0.2.6 — 2026-10-29
 - Halloween prolungato fino al 15 novembre compreso: le decorazioni rimangono attive dal 20 ottobre e scompaiono il 16 novembre alle 00:00, fuso Europe/Zurich.
 - Test delle date di inizio/fine, impostazioni e guida DE/EN/FR aggiornati. Dati e altre festività invariati.

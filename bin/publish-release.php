@@ -7,7 +7,7 @@ try{
     if(!extension_loaded('sodium'))throw new RuntimeException('PHP sodium required (Windows: php -d extension=sodium).');
     $root=dirname(__DIR__);$command=$argv[1]??'';
     $updateSource=json_decode((string)file_get_contents($root.'/deploy/update-source.json'),true,8,JSON_THROW_ON_ERROR);
-    $private=$root.'/.release-private/signing.key';$public=$root.'/deploy/release-public.key';
+    $private=getenv('PULSE_SIGNING_KEY')?:$root.'/.release-private/signing.key';$public=$root.'/deploy/release-public.key';
     if($command==='init-key'){
         if(is_file($private)||is_file($public))throw new RuntimeException('Key already exists. Never replace a deployed signing key without a rotation plan.');
         if(!is_dir(dirname($private)))mkdir(dirname($private),0700,true);

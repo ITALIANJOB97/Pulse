@@ -11,10 +11,19 @@
 
 .screen-footer-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;min-width:230px}.author-credit{color:#fff;font-size:17px;line-height:1.2;text-decoration:none;white-space:nowrap}.author-credit:hover{text-decoration:underline;text-underline-offset:4px}.author-credit:focus-visible{outline:2px solid var(--gold);outline-offset:5px}
 
-/* Decorations stay in the outer 65px frame and top 30px, away from content. */
+/* Side decorations frame the content; a small Halloween flock crosses the canvas. */
 .seasonal-layer{position:absolute;inset:0;z-index:6;overflow:hidden;pointer-events:none;contain:layout paint}
 .season-piece{position:absolute;display:block;width:var(--size);height:var(--size);transform-origin:top center}
 .season-piece svg{display:block;width:100%;height:100%;overflow:visible}
+.season-web{opacity:.42;transform-origin:center center}
+.season-bat{left:0;top:0;transform:translate3d(var(--rest-x),-12px,0);opacity:.9;will-change:transform}
+.season-spider-rig{position:absolute;top:0;width:var(--size);height:var(--size)}
+.season-thread{position:absolute;top:0;left:50%;width:1px;height:calc(var(--drop) + 12px);background:#d9e7ff99;transform-origin:top;animation:season-spider-thread var(--duration) var(--delay) ease-in-out infinite both}
+.season-spider-body{left:0;top:0;animation:season-spider-drop var(--duration) var(--delay) ease-in-out infinite both}
+@keyframes season-spider-drop{0%,100%{transform:translate3d(0,-70px,0);opacity:0}6%{opacity:1}40%,60%{transform:translate3d(0,var(--drop),0);opacity:1}94%{opacity:1}}
+@keyframes season-spider-thread{0%,100%{transform:scaleY(0);opacity:0}6%{opacity:1}40%,60%{transform:scaleY(1);opacity:1}94%{opacity:1}}
+.season-still .season-spider-body{animation:none;transform:translateY(28px);opacity:1}
+.season-still .season-thread{animation:none;height:40px;transform:none;opacity:1}
 .season-bob{animation:season-bob 7s var(--delay,0s) ease-in-out infinite}
 .season-sway{animation:season-sway 6s var(--delay,0s) ease-in-out infinite}
 .season-fly{animation:season-fly var(--duration,32s) var(--delay,0s) linear infinite}
@@ -39,3 +48,5 @@
 .motto-card figcaption{font-size:26px;font-weight:500;letter-spacing:1px;color:var(--muted);overflow-wrap:anywhere;max-width:100%;flex-shrink:0}
 .motto-card figcaption:before{content:'';display:inline-block;vertical-align:middle;width:32px;height:2px;background:var(--gold);margin-right:15px}
 .motion .motto-card{animation:reveal .65s ease-out both}
+
+@media(prefers-reduced-motion:reduce){.season-bat{will-change:auto}.season-spider-body{animation:none;transform:translateY(28px);opacity:1}.season-thread{animation:none;height:40px;transform:none;opacity:1}}
