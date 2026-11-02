@@ -1,5 +1,7 @@
 # PULSE 0.2.8: decimali in Team Targets e aggiornamento immediato
 
+> Superata dalla 0.2.9: il pacchetto 0.2.8 è rifiutato dal validatore per il launcher nella radice. Usare la 0.2.9 e la [procedura aggiornata](ABILITARE_AGGIORNAMENTO_IMMEDIATO.md). I test applicativi qui riportati non verificavano l’accettazione dello ZIP da parte del servizio installato.
+
 La versione 0.2.8 corregge l’inserimento di obiettivo e risultato corrente Service/Ticket in Team Targets. Ora si possono usare anche valori inferiori a 1, come **0.6** oppure **0,6**. Il valore viene salvato per il mese scelto e mostrato sulla TV senza arrotondamento a un numero intero.
 
 La pagina Updates rende esplicita la funzione **Scarica e installa ora**. La conferma riguarda la versione visualizzata; durante download o installazione non si possono avviare richieste duplicate. Il servizio Mint v4 scarica il pacchetto firmato, verifica integrità e backup e installa anche fuori dall’orario notturno.

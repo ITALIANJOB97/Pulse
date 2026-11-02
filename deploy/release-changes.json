@@ -1,12 +1,10 @@
 {
-  "features": [
-    "Download and install now with confirmation of the displayed version; immediate upgrade launcher for existing Mint installations."
-  ],
+  "features": [],
   "improvements": [
-    "Updated EN/DE/FR guides and immediate installation instructions for older Mint update services."
+    "Package builds now validate extraction using the updater rules.",
+    "One-time activation instructions for immediate update controls on older Mint update services."
   ],
   "fixes": [
-    "Team Targets Service/Ticket accepts and retains decimals below 1, with dot or comma, without integer rounding on TV.",
-    "Reject stale version confirmations and duplicate requests during download or installation."
+    "Remove the unsupported root-level launcher from the installable ZIP; use deploy/upgrade-mint.sh."
   ]
 }

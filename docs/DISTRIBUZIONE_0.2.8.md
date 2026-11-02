@@ -1,5 +1,7 @@
 # PULSE 0.2.8 — Distribuzione sul NAS
 
+> Superata dalla 0.2.9: il pacchetto 0.2.8 è rifiutato dal validatore per il launcher nella radice. Usare la 0.2.9 e la [procedura aggiornata](ABILITARE_AGGIORNAMENTO_IMMEDIATO.md). I test applicativi qui riportati non verificavano l’accettazione dello ZIP da parte del servizio installato.
+
 Aggiornato il **2 novembre 2026**.
 
 ## Posizione dei file

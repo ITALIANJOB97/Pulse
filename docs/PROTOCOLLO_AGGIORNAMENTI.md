@@ -1,4 +1,4 @@
-# Protocollo aggiornamenti PULSE — 0.2.8, 2 novembre 2026
+# Protocollo aggiornamenti PULSE — 0.2.9, 2 novembre 2026
 
 Il servizio v4 è incluso nella release applicativa 0.2.5. Il normale aggiornamento
 automatico dell’applicazione non sostituisce il servizio root: per attivare v4

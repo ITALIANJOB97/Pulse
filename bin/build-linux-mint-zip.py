@@ -6,6 +6,7 @@ import re
 import stat
 import zipfile
 import argparse
+from package_compatibility import verify_package
 parser = argparse.ArgumentParser()
 parser.add_argument("--review", action="store_true", help="Build a separate source review archive without replacing a published version")
 REVIEW = parser.parse_args().review
@@ -19,7 +20,7 @@ OUTPUT.mkdir(exist_ok=True)
 FILES = [
     "VERSION", "README.md", "CHANGELOG.md", "LEGGIMI_LINUX_MINT.txt",
     "INSTALLAZIONE_LINUX_MINT.txt", "INSTALLAZIONE_RASPBERRY.txt",
-    "DIAGNOSI_LINUX_MINT.txt", "AGGIORNAMENTO_LINUX_MINT.txt", "PUBBLICAZIONE_BLOG.txt", "aggiorna-ora.sh", ".gitignore", "storage/.gitkeep",
+    "DIAGNOSI_LINUX_MINT.txt", "AGGIORNAMENTO_LINUX_MINT.txt", "PUBBLICAZIONE_BLOG.txt", ".gitignore", "storage/.gitkeep",
 ]
 EXTENSIONS = {".php", ".json", ".css", ".js", ".cjs", ".sh", ".conf", ".service", ".timer", ".py", ".html", ".txt", ".md", ".key"}
 for folder in ("app", "bin", "config", "deploy", "public", "tests", "docs"):
@@ -66,6 +67,8 @@ def build(prefix: str, files: list[str]):
                     raise RuntimeError("Runtime data must not be packaged")
                 if relative in ("config/local.php", ".env") or "diagnostica/" in relative:
                     raise RuntimeError("Local secrets/reports must not be packaged")
+        if "app/bootstrap.php" in files:
+            verify_package(temporary, ROOT / "deploy/updater.py")
         if archive_path.exists() and not REVIEW and hashlib.sha256(archive_path.read_bytes()).digest() != hashlib.sha256(temporary.read_bytes()).digest():
             raise RuntimeError("This version already has a different archive. Use --review or choose a new VERSION explicitly; published files were not overwritten.")
         temporary.replace(archive_path)

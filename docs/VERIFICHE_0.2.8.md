@@ -1,5 +1,7 @@
 # Verifiche PULSE 0.2.8 — 2 novembre 2026
 
+> Superata dalla 0.2.9: il pacchetto 0.2.8 è rifiutato dal validatore per il launcher nella radice. Usare la 0.2.9 e la [procedura aggiornata](ABILITARE_AGGIORNAMENTO_IMMEDIATO.md). I test applicativi qui riportati non verificavano l’accettazione dello ZIP da parte del servizio installato.
+
 ## Correzione e compatibilità
 
 Team Targets Service/Ticket usava input numerici con step=1 e sulla TV formattazione con zero decimali. Entrambi sono corretti: obiettivo e risultato corrente accettano punto o virgola e conservano i decimali. Limiti 0–100000000 verificati lato server; valori vuoti restano null, zero resta un valore valido. Salvataggio mensile, payload TV e snapshot preservano il valore. Nessuna migrazione SQLite.

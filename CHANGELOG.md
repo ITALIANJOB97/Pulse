@@ -1,3 +1,9 @@
+## 0.2.9 — 2026-11-02
+- Corretto il pacchetto 0.2.8: il launcher nella radice non era ammesso dal validatore dei servizi già installati. Il pacchetto torna a usare deploy/upgrade-mint.sh, senza allargare i percorsi autorizzati.
+- La creazione dello ZIP ora esegue anche il validatore di estrazione dell’updater: un pacchetto rifiutato non viene prodotto come release installabile.
+- Documentata l’abilitazione una tantum del servizio v4 per il pulsante Scarica e installa ora, mantenendo GitHub e senza reinstallare l’applicazione.
+- Conservate le correzioni dei decimali Service/Ticket e le decorazioni precedenti. Nessuna migrazione dei dati.
+
 ## 0.2.8 — 2026-11-02
 - Team Targets: obiettivo e risultato corrente Service/Ticket accettano decimali sotto 1 con punto o virgola (0.6 / 0,6); visualizzazione TV senza arrotondamento a interi. Zero, valori mancanti, mesi e storico restano distinti.
 - Comando Scarica e installa ora con conferma della versione mostrata; richieste obsolete o durante download/installazione rifiutate. Il servizio v4 installa anche fuori dalla finestra notturna dopo il backup verificato.

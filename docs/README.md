@@ -1,8 +1,12 @@
 # Documentazione PULSE
 
-Versione di riferimento: **0.2.8**, 2 novembre 2026.
+Versione di riferimento: **0.2.9**, 2 novembre 2026.
 
 ## Release e file sul NAS
+
+- [Release corretta v0.2.9](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.2.9).
+- [Abilitare Scarica e installa ora sul Mint](ABILITARE_AGGIORNAMENTO_IMMEDIATO.md).
+- [Verifiche del pacchetto 0.2.9](VERIFICHE_0.2.9.md).
 
 - [Release GitHub v0.2.8 e download](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.2.8).
 

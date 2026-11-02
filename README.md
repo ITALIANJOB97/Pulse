@@ -1,6 +1,8 @@
-# PULSE 0.2.8
+# PULSE 0.2.9
 
-Correzione urgente Team Targets: obiettivo e risultato Service/Ticket accettano decimali sotto 1 (`0.6` o `0,6`) e la TV li mostra senza arrotondarli a interi. Nessuna migrazione del database. Aggiornamento immediato: amministrazione > Updates > controlla > **Scarica e installa ora** (servizio v4). Per un servizio precedente scaricare ed estrarre la release sul Mint, poi eseguire `sudo bash aggiorna-ora.sh --channel blog` oppure `--channel github` per conservare GitHub. Dettagli in [AGGIORNAMENTO_LINUX_MINT.txt](AGGIORNAMENTO_LINUX_MINT.txt).
+Corretto il pacchetto 0.2.8 che veniva rifiutato dal servizio di installazione. Il comando supportato resta `sudo bash deploy/upgrade-mint.sh --channel github`. Se manca **Scarica e installa ora**, seguire la [procedura di attivazione del servizio v4](docs/ABILITARE_AGGIORNAMENTO_IMMEDIATO.md).
+
+Correzione urgente Team Targets: obiettivo e risultato Service/Ticket accettano decimali sotto 1 (`0.6` o `0,6`) e la TV li mostra senza arrotondarli a interi. Nessuna migrazione del database. Aggiornamento immediato: amministrazione > Updates > controlla > **Scarica e installa ora** (servizio v4). Per un servizio precedente scaricare ed estrarre la release sul Mint, poi eseguire `sudo bash deploy/upgrade-mint.sh --channel blog` oppure `--channel github` per conservare GitHub. Dettagli in [AGGIORNAMENTO_LINUX_MINT.txt](AGGIORNAMENTO_LINUX_MINT.txt).
 
 Linux Mint 22.x: per aggiornare un'installazione esistente leggere AGGIORNAMENTO_LINUX_MINT.txt ed eseguire `sudo bash deploy/upgrade-mint.sh` dalla cartella estratta. Non usare l'installer di prima installazione. Distribuzione pubblica tramite GitHub Releases: docs/PUBBLICAZIONE_GITHUB.txt. Aggiornamento remoto per Mint già configurato sul blog: PUBBLICAZIONE_BLOG.txt. Relay GitHub → blog senza comandi sul Mint: docs/RELAY_BLOG.txt.
 
@@ -8,7 +10,7 @@ Novità: guida DE/EN/FR, domenica opzionale, aggiornamenti notturni firmati con 
 
 # PULSE · Dietikon
 
-Applicazione PHP 0.2.8 per TV orizzontale Full HD, con gestione da browser.
+Applicazione PHP 0.2.9 per TV orizzontale Full HD, con gestione da browser.
 Linux Mint 22.x amd64 con PHP 8.3; Raspberry Pi OS 64 bit con PHP 8.4+.
 
 ## Aggiornamenti: protocollo update.json e compatibilità
@@ -125,7 +127,7 @@ la verifica sul dispositivo reale.
 
 ## Pacchetto Linux Mint
 
-Versione 0.2.8, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
+Versione 0.2.9, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
 
     python bin/build-linux-mint-zip.py
 
@@ -150,4 +152,4 @@ Test Linux: python3 tests/support-mint.py.
 
 ## Riparazione urgente della release 0.2.4
 
-Il kit `PULSE-Riparazione-0.2.4.zip`, allegato separato alla release GitHub v0.2.4, corregge il simbolo NoRedirect mancante. Estrarlo sul Mint ed eseguire `sudo bash aggiorna-ora.sh`: usa il pacchetto originale verificato, aggiorna immediatamente con backup e mantiene il servizio GitHub. Non contiene il nuovo protocollo update.json.
+Il kit `PULSE-Riparazione-0.2.4.zip`, allegato separato alla release GitHub v0.2.4, corregge il simbolo NoRedirect mancante. Estrarlo sul Mint ed eseguire `sudo bash deploy/upgrade-mint.sh`: usa il pacchetto originale verificato, aggiorna immediatamente con backup e mantiene il servizio GitHub. Non contiene il nuovo protocollo update.json.
