@@ -1,4 +1,4 @@
-# Protocollo aggiornamenti PULSE — 0.2.5, 29 ottobre 2026
+# Protocollo aggiornamenti PULSE — 0.2.8, 2 novembre 2026
 
 Il servizio v4 è incluso nella release applicativa 0.2.5. Il normale aggiornamento
 automatico dell’applicazione non sostituisce il servizio root: per attivare v4
@@ -88,7 +88,7 @@ obbligatorietà, percentuale, byte scaricati, velocità e numero di file (1 pacc
 Se la dimensione manca ed il server non la comunica, la barra resta indeterminata.
 
 - Controlla aggiornamenti: richiesta manuale al servizio esistente.
-- Scarica e installa: conferma esplicita, richiesta legata alla versione; installa
+- Scarica e installa ora: conferma esplicita della versione mostrata, verificata anche lato server; richieste obsolete o durante download/installazione sono rifiutate. Installa
   appena il servizio la prende in carico, anche di giorno e con rinvio precedente.
 - Ricordamelo più tardi: rinvia 24 ore e revoca l'eventuale installazione immediata.
 - Salta questa versione: disponibile solo se mandatory=false, validato anche lato server.
@@ -128,7 +128,7 @@ Non caricare il pacchetto di verifica dei sorgenti come aggiornamento di produzi
 Per una nuova release scegliere esplicitamente una versione superiore a quella
 installata e preparare le note reali. Aggiornare VERSION solo dopo questa scelta,
 quindi creare il normale ZIP con `python bin/build-linux-mint-zip.py`.
-Preparare manualmente update.json con SHA-256 e dimensione di quel pacchetto.
+Per il pacchetto blog completo eseguire `php bin/publish-release.php publish-blog`: usa la chiave locale e produce stable.json e update.json firmati con hash e dimensione reali. Le categorie delle note sono in deploy/release-changes.json. La procedura seguente resta disponibile per firmare un manifest preparato manualmente.
 
 ```sh
 php -d extension=sodium bin/sign-update.php /percorso/update.json /percorso/pulse-VERSIONE.zip
@@ -163,6 +163,7 @@ php -d extension=sodium tests/update-protocol.php
 php tests/core.php
 php tests/features-020.php
 php tests/podium-decimals.php
+php tests/targets-decimals.php
 php -d extension=sodium tests/signatures.php
 php -d extension=sodium tests/blog-relay.php
 php tests/restore.php

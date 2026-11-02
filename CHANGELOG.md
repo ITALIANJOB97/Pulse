@@ -1,8 +1,11 @@
+## 0.2.8 — 2026-11-02
+- Team Targets: obiettivo e risultato corrente Service/Ticket accettano decimali sotto 1 con punto o virgola (0.6 / 0,6); visualizzazione TV senza arrotondamento a interi. Zero, valori mancanti, mesi e storico restano distinti.
+- Comando Scarica e installa ora con conferma della versione mostrata; richieste obsolete o durante download/installazione rifiutate. Il servizio v4 installa anche fuori dalla finestra notturna dopo il backup verificato.
+- Nuovo avvio immediato `sudo bash aggiorna-ora.sh --channel blog|github` dalla release estratta per aggiornare anche i servizi precedenti. Non richiede una nuova configurazione dell'applicazione.
+- Docs, guida DE/EN/FR e pacchetto blog con entrambi i manifest firmati aggiornati. Nessuna migrazione del database; conservate le decorazioni distribuite nella 0.2.7.
+
 ## 0.2.7 — 2026-10-30
-- Halloween: quattro pipistrelli attraversano l'intera TV su traiettorie curve casuali, entrando da tutti i lati e cambiando percorso a ogni passaggio.
-- Quattro ragnatele allineate agli angoli dello schermo e tre ragni su fili, con discese sfalsate e profondità variabile.
-- Animazioni leggere tramite transform, fermate durante la pausa e quando la scheda è nascosta; decorazioni statiche con effetti disattivati o movimento ridotto.
-- Docs e guida EN/DE/FR aggiornati. Periodo Halloween invariato: 20 ottobre–15 novembre. Nessuna modifica a dati, account, foto o schema del database.
+- Pipistrelli con percorsi casuali su tutto lo schermo, ragnatele laterali e ragni che scendono. Rispetto di pausa, schede nascoste, movimento ridotto e impostazioni degli effetti. Halloween resta attivo fino al 15 novembre incluso.
 
 ## 0.2.6 — 2026-10-29
 - Halloween prolungato fino al 15 novembre compreso: le decorazioni rimangono attive dal 20 ottobre e scompaiono il 16 novembre alle 00:00, fuso Europe/Zurich.

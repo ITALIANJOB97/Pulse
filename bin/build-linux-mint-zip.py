@@ -19,7 +19,7 @@ OUTPUT.mkdir(exist_ok=True)
 FILES = [
     "VERSION", "README.md", "CHANGELOG.md", "LEGGIMI_LINUX_MINT.txt",
     "INSTALLAZIONE_LINUX_MINT.txt", "INSTALLAZIONE_RASPBERRY.txt",
-    "DIAGNOSI_LINUX_MINT.txt", "AGGIORNAMENTO_LINUX_MINT.txt", "PUBBLICAZIONE_BLOG.txt", ".gitignore", "storage/.gitkeep",
+    "DIAGNOSI_LINUX_MINT.txt", "AGGIORNAMENTO_LINUX_MINT.txt", "PUBBLICAZIONE_BLOG.txt", "aggiorna-ora.sh", ".gitignore", "storage/.gitkeep",
 ]
 EXTENSIONS = {".php", ".json", ".css", ".js", ".cjs", ".sh", ".conf", ".service", ".timer", ".py", ".html", ".txt", ".md", ".key"}
 for folder in ("app", "bin", "config", "deploy", "public", "tests", "docs"):

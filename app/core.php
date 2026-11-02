@@ -114,6 +114,11 @@ function inputNumber(string $key, float $min, float $max, float $default = 0): f
 function optionalNumber(string $key, float $min, float $max): ?float {
     return ($_POST[$key] ?? '') === '' ? null : inputNumber($key, $min, $max);
 }
+function optionalDecimalNumber(string $key, float $min, float $max): ?float {
+    $value = $_POST[$key] ?? '';
+    if (is_string($value)) $value = str_replace(',', '.', trim($value));
+    return $value === '' ? null : numberValue($value, $min, $max);
+}
 function passwordValid(string $password): bool {
     return strlen($password) >= 12 && strlen($password) <= 72;
 }

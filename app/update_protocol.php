@@ -124,7 +124,8 @@ function updateAction(string $action): void {
         setSetting('update_skip',$release['version']);setSetting('update_install',[]);return;
     }
     if($action==='install_update'){
-        if(!updaterControlsAvailable()||in_array($state['phase']??'',['incompatible','offline','checking'],true))throw new DomainException(t('update_service_upgrade'));
+        if(!updaterControlsAvailable())throw new DomainException(t('update_service_upgrade'));
+        if(in_array($state['phase']??'',['incompatible','offline','checking','downloading','installing'],true)||($_POST['version']??null)!==$release['version'])throw new DomainException(t('invalid_input'));
         setSetting('update_skip','');setSetting('update_postpone_until',0);
         setSetting('update_install',['version'=>$release['version'],'nonce'=>bin2hex(random_bytes(12))]);
         setSetting('update_retry',bin2hex(random_bytes(12)));return;

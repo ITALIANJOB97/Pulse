@@ -129,8 +129,8 @@ function saveContentForm(): void {
         $payload=['days'=>$days,'pending'=>(int)inputNumber('pending',0,100000)];
     } elseif($module==='targets') {
         $payload=[
-            'service_target'=>optionalNumber('service_target',0,100000000),
-            'service_total'=>optionalNumber('service_total',0,100000000),
+            'service_target'=>optionalDecimalNumber('service_target',0,100000000),
+            'service_total'=>optionalDecimalNumber('service_total',0,100000000),
             'nps'=>optionalNumber('nps',-100,100),'nps_target'=>optionalNumber('nps_target',-100,100),'nps_previous'=>optionalNumber('nps_previous',-100,100),
             'waiting'=>optionalNumber('waiting',0,86400),'waiting_green'=>inputNumber('waiting_green',0,86400,180),'waiting_amber'=>inputNumber('waiting_amber',0,86400,300),
             'quality'=>optionalNumber('quality',0,100),'quality_target'=>optionalNumber('quality_target',0,100),'quality_previous'=>optionalNumber('quality_previous',0,100),

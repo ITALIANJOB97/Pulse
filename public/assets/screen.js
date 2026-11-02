@@ -20,7 +20,7 @@
     return '<div class="'+cls+'">'+image+'</div>';
   }
   function number(v,digits){return v==null?'—':new Intl.NumberFormat(data.language,{maximumFractionDigits:digits==null?1:digits}).format(v);}
-  function serviceNumber(v){return new Intl.NumberFormat(data.language,{maximumSignificantDigits:15}).format(v);}
+  function serviceNumber(v){return v==null?'—':new Intl.NumberFormat(data.language,{maximumSignificantDigits:15}).format(v);}
   function chunks(list,size){const result=[];for(let i=0;i<list.length;i+=size)result.push(list.slice(i,i+size));return result.length?result:[[]];}
   function buildSlides(){
     const out=[];
@@ -100,7 +100,7 @@
       return '<div class="metrics">'+metric(label('nps'),number(c.nps),number(c.nps_target),trend(c.nps,c.nps_previous))+
         metric(label('waiting_title'),time,c.waiting_green==null?'—':'≤ '+number(c.waiting_green/60)+' min',signal)+
         metric(label('quality_title'),number(c.quality)+(c.quality==null?'':'<small>%</small>'),number(c.quality_target)+(c.quality_target==null?'':'%'),trend(c.quality,c.quality_previous))+
-        metric(label('service_team'),number(c.service_total,0),number(c.service_target,0),'<div class="trend flat">'+(c.service_total!=null&&c.service_target>0?number(c.service_total/c.service_target*100,0)+'% · ':'')+esc(label('team'))+'</div>')+
+        metric(label('service_team'),serviceNumber(c.service_total),serviceNumber(c.service_target),'<div class="trend flat">'+(c.service_total!=null&&c.service_target>0?number(c.service_total/c.service_target*100,0)+'% · ':'')+esc(label('team'))+'</div>')+
         '</div><div class="thresholds"><span>'+esc(label('green'))+': ≤ '+number(c.waiting_green)+' s</span><span>'+esc(label('amber'))+': '+number(c.waiting_green)+'–'+number(c.waiting_amber)+' s</span><span>'+esc(label('red'))+': &gt; '+number(c.waiting_amber)+' s</span></div>';
     }
     if(key==='daily'||key==='tasks'){

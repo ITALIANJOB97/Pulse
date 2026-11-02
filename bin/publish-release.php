@@ -7,7 +7,7 @@ try{
     if(!extension_loaded('sodium'))throw new RuntimeException('PHP sodium required (Windows: php -d extension=sodium).');
     $root=dirname(__DIR__);$command=$argv[1]??'';
     $updateSource=json_decode((string)file_get_contents($root.'/deploy/update-source.json'),true,8,JSON_THROW_ON_ERROR);
-    $private=getenv('PULSE_SIGNING_KEY')?:$root.'/.release-private/signing.key';$public=$root.'/deploy/release-public.key';
+    $private=$root.'/.release-private/signing.key';$public=$root.'/deploy/release-public.key';
     if($command==='init-key'){
         if(is_file($private)||is_file($public))throw new RuntimeException('Key already exists. Never replace a deployed signing key without a rotation plan.');
         if(!is_dir(dirname($private)))mkdir(dirname($private),0700,true);
@@ -29,6 +29,11 @@ try{
     copy($zip,$target);
     $notes=json_decode(file_get_contents($root.'/deploy/release-notes.json'),true,32,JSON_THROW_ON_ERROR);
     foreach(['en','de','fr'] as $lang)if(!is_string($notes[$lang]??null)||mb_strlen($notes[$lang])>2000)throw new RuntimeException('Invalid release notes.');
+    $changes=json_decode(file_get_contents($root.'/deploy/release-changes.json'),true,16,JSON_THROW_ON_ERROR);
+    foreach(['features','improvements','fixes'] as $category){
+        if(!is_array($changes[$category]??null)||!array_is_list($changes[$category])||count($changes[$category])>50)throw new RuntimeException('Invalid structured release notes.');
+        foreach($changes[$category] as $line)if(!is_string($line)||mb_strlen($line)>2000)throw new RuntimeException('Invalid structured release note.');
+    }
     $manifest=[
         'app'=>'pulse-dietikon','schema'=>1,'channel'=>'stable','version'=>$version,
         'published_at'=>gmdate('c'),'expires_at'=>gmdate('c',time()+366*86400),
@@ -51,7 +56,7 @@ try{
         'schemaVersion'=>1,'program'=>$updateSource['program'],'version'=>$version,
         'downloadUrl'=>$blogManifest['url'],'sha256'=>$manifest['sha256'],'size'=>$manifest['size'],
         'publishedAt'=>$manifest['published_at'],'mandatory'=>false,'minimumSupportedVersion'=>'0.2.0',
-        'releaseNotes'=>['features'=>[$notes['en']],'improvements'=>[],'fixes'=>[]],
+        'releaseNotes'=>$changes,
         'pulse'=>['minUpdater'=>4,'phpMin'=>'8.3.0','dbSchema'=>1,'platform'=>'linuxmint22-amd64'],
     ];
     $updateJson=json_encode($updateManifest,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;
@@ -94,6 +99,8 @@ try{
             $archive->addFile($file->getPathname(),'Pulse/guide/'.$relative);
         }
         $archive->addFile($root.'/PUBBLICAZIONE_BLOG.txt','LEGGIMI_PRIMA.txt');
+        $archive->addFile($root.'/AGGIORNAMENTO_LINUX_MINT.txt','AGGIORNA_ORA.txt');
+        $archive->addFile($root.'/docs/BLOG_'.$version.'.md','TESTO_BLOG.md');
         $archive->close();file_put_contents($out.'.sha256',hash_file('sha256',$out).'  '.basename($out).PHP_EOL);
         echo "Blog upload archive: ".basename($out)." (program ZIP is accessible by URL after upload).\n";
     }

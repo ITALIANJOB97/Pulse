@@ -111,7 +111,8 @@ function adminUpdatePanel(): void {
     if($available){
         if($controls&&!in_array($phase,['downloading','installing','incompatible','offline','checking'],true)){
             formStart('install_update','/admin?tab=updates');
-            echo '<button class="primary" data-update-confirm="'.e(t('update_install_confirm')).'">'.e(t('update_install')).'</button></form>';
+            hidden('version',$release['version']);
+            echo '<button class="primary" data-update-confirm="'.e(t('update_install_confirm').' (v'.$release['version'].')').'">'.e(t('update_install')).'</button></form>';
         }
         if($managed&&!in_array($phase,['installing','downloading'],true)){formStart('postpone_update','/admin?tab=updates');saveButton('postpone_update');}
         if((!$managed||$controls)&&empty($release['mandatory'])&&!in_array($phase,['installing','skipped'],true)){formStart('skip_update','/admin?tab=updates');saveButton('update_skip');}
@@ -176,8 +177,8 @@ function adminContent(): void {
         field('pending',t('pending'),$data['pending']??0,'number','required min="0" max="100000"');echo '</div>';
     }elseif($module==='targets'){
         echo '<div class="form-grid">';
-        field('service_target',t('service_target'),$data['service_target']??'','number','min="0" max="100000000" step="1"');
-        field('service_total',t('service_total'),$data['service_total']??'','number','min="0" max="100000000" step="1"');
+        field('service_target',t('service_target'),$data['service_target']??'','text','inputmode="decimal" maxlength="32"');
+        field('service_total',t('service_total'),$data['service_total']??'','text','inputmode="decimal" maxlength="32"');
         echo '</div><p class="help">'.e(t('service_total_hint')).'</p>';
         echo '<div class="form-grid thirds">';
         foreach(['nps','nps_target','nps_previous','waiting','waiting_green','waiting_amber','quality','quality_target','quality_previous'] as $key){

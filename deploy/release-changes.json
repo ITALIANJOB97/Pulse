@@ -1,0 +1,12 @@
+{
+  "features": [
+    "Download and install now with confirmation of the displayed version; immediate upgrade launcher for existing Mint installations."
+  ],
+  "improvements": [
+    "Updated EN/DE/FR guides and immediate installation instructions for older Mint update services."
+  ],
+  "fixes": [
+    "Team Targets Service/Ticket accepts and retains decimals below 1, with dot or comma, without integer rounding on TV.",
+    "Reject stale version confirmations and duplicate requests during download or installation."
+  ]
+}
