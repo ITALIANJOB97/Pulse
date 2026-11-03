@@ -10,15 +10,29 @@ function easterSunday(int $year): DateTimeImmutable {
     $month=intdiv($h+$l-7*$m+114,31);$day=($h+$l-7*$m+114)%31+1;
     return new DateTimeImmutable(sprintf('%04d-%02d-%02d',$year,$month,$day),new DateTimeZone('Europe/Zurich'));
 }
-function seasonalState(DateTimeImmutable $now,bool $enabled=true): array {
+function validateCarnivalDates(string $start,string $end): array {
+    if($start===''&&$end==='')return [];
+    $a=DateTimeImmutable::createFromFormat('!Y-m-d',$start,new DateTimeZone('Europe/Zurich'));
+    $b=DateTimeImmutable::createFromFormat('!Y-m-d',$end,new DateTimeZone('Europe/Zurich'));
+    if(!$a||!$b||$a->format('Y-m-d')!==$start||$b->format('Y-m-d')!==$end||$a>$b||$a->format('Y')!==$b->format('Y')||$a->diff($b)->days>60)throw new DomainException(t('carnival_invalid'));
+    return ['start'=>$start,'end'=>$end];
+}
+function seasonalState(DateTimeImmutable $now,bool $enabled=true,array $carnival=[]): array {
     $zone=new DateTimeZone('Europe/Zurich');$now=$now->setTimezone($zone);
     $windows=[];$year=(int)$now->format('Y');
     foreach(range($year-1,$year+1) as $y){
         $easter=easterSunday($y);
+        // Swiss Fasnacht reference: Schmutziger Donnerstag through Güdisdienstag.
+        $carnivalStart=$easter->modify('-52 days');$carnivalEnd=$easter->modify('-46 days');
+        if(isset($carnival['start'],$carnival['end'])&&substr($carnival['start'],0,4)===(string)$y){
+            $carnivalStart=new DateTimeImmutable($carnival['start'],$zone);
+            $carnivalEnd=(new DateTimeImmutable($carnival['end'],$zone))->modify('+1 day');
+        }
         foreach([
-            ['halloween',new DateTimeImmutable("$y-10-20",$zone),new DateTimeImmutable("$y-11-16",$zone)],
+            ['halloween',new DateTimeImmutable("$y-10-20",$zone),new DateTimeImmutable("$y-11-06",$zone)],
             ['christmas',new DateTimeImmutable("$y-12-01",$zone),new DateTimeImmutable(($y+1).'-01-07',$zone)],
             ['easter',$easter->modify('-7 days'),$easter->modify('+2 days')],
+            ['carnival',$carnivalStart,$carnivalEnd],
         ] as [$key,$start,$end])$windows[]=['key'=>$key,'starts_at'=>$start->getTimestamp(),'ends_at'=>$end->getTimestamp()];
     }
     return ['enabled'=>$enabled,'windows'=>$windows];

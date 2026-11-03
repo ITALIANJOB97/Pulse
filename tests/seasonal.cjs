@@ -39,7 +39,7 @@ assert(!artwork('christmas').includes('season-spider'));assert.equal(artwork('')
 const animations=[];
 class Element{
   constructor(){this.dataset={};this.listeners={};this.classes=new Set();this.classList={toggle:(key,on)=>on?this.classes.add(key):this.classes.delete(key)};}
-  set innerHTML(html){this.html=html;this.bats=Array.from({length:(html.match(/season-bat"/g)||[]).length},()=>new Element());}
+  set innerHTML(html){this.html=html;this.bats=Array.from({length:(html.match(/season-(?:bat|roamer)"/g)||[]).length},()=>new Element());}
   querySelectorAll(){return this.bats||[];}
   setAttribute(){} appendChild(child){this.child=child;}
   addEventListener(name,fn){this.listeners[name]=fn;} removeEventListener(name){delete this.listeners[name];} remove(){this.removed=true;}
@@ -62,3 +62,20 @@ controller.update({...fresh,archive:true});assert(root.child.hidden);assert(anim
 controller.update({...fresh,server_time:201});assert(root.child.hidden,'Season expiry must remove decorations');
 controller.destroy();assert(root.child.removed);assert.equal(media.change,null);
 console.log('Halloween checks passed: 160 distinct full-screen routes; all entry edges; webs/spiders; repeated flights; pause/resume; reduced motion; effects off; season expiry; archives; cleanup.');
+
+for(const [key,roamers,particles] of [['christmas',1,18],['easter',4,10],['carnival',3,24]]){
+ const html=artwork(key);assert.equal((html.match(/season-roamer"/g)||[]).length,roamers);
+ assert.equal((html.match(/season-fall/g)||[]).length,particles);
+ const start=animations.length,r=new Element();
+ const d={effects:true,server_time:150,seasonal:{enabled:true,windows:[{key,starts_at:100,ends_at:200}]}};
+ const c=create(r,d);assert.equal(animations.length,start+roamers);
+ c.update(d);c.tick();assert.equal(animations.length,start+roamers);
+ c.setPaused(true);assert(animations.slice(start).every(a=>a.playState==='paused'));
+ c.setPaused(false);assert(animations.slice(start).every(a=>a.playState==='running'));
+ c.update({...d,effects:false});assert(animations.slice(start).every(a=>a.cancelled));
+ c.update(d);assert.equal(animations.length,start+2*roamers);
+ media.matches=true;media.change();assert(animations.slice(start).every(a=>a.cancelled));
+ media.matches=false;media.change();c.update({...d,server_time:200});assert(r.child.hidden);
+ c.destroy();assert(r.child.removed);
+}
+console.log('Christmas, Easter, Carnival: bounded particles, moving routes, polling, pause, reduced motion, expiry and cleanup passed.');

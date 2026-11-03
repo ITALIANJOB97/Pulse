@@ -60,7 +60,7 @@ try{
     check($snapshot['employees'][0]['name']==='Alex Test','Historical names were changed.');
     setSetting('installed_version','0.0.9');syncVersion();
     check(setting('version_event')['version']===version(),'Installed-version notification missing.');
-    $release=validateRelease(['app'=>'pulse-dietikon','version'=>'0.3.0','notes'=>['en'=>'New version']]);
+    $release=validateRelease(['app'=>'pulse-dietikon','version'=>'9.0.0','notes'=>['en'=>'New version']]);
     setSetting('update_state',['release'=>$release]);
     check(publicUpdateState()['available'],'Available-version notification missing.');
     setSetting('update_state',['release'=>validateRelease(['app'=>'pulse-dietikon','version'=>version()])]);

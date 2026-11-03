@@ -1,8 +1,6 @@
-# PULSE 0.2.9
+# PULSE 0.3.0
 
-Corretto il pacchetto 0.2.8 che veniva rifiutato dal servizio di installazione. Il comando supportato resta `sudo bash deploy/upgrade-mint.sh --channel github`. Se manca **Scarica e installa ora**, seguire la [procedura di attivazione del servizio v4](docs/ABILITARE_AGGIORNAMENTO_IMMEDIATO.md).
-
-Correzione urgente Team Targets: obiettivo e risultato Service/Ticket accettano decimali sotto 1 (`0.6` o `0,6`) e la TV li mostra senza arrotondarli a interi. Nessuna migrazione del database. Aggiornamento immediato: amministrazione > Updates > controlla > **Scarica e installa ora** (servizio v4). Per un servizio precedente scaricare ed estrarre la release sul Mint, poi eseguire `sudo bash deploy/upgrade-mint.sh --channel blog` oppure `--channel github` per conservare GitHub. Dettagli in [AGGIORNAMENTO_LINUX_MINT.txt](AGGIORNAMENTO_LINUX_MINT.txt).
+Hall of Fame con card e storie, priorità di sette giorni ai nuovi membri, due Mitarbeiter del mese e decorazioni di Carnevale, Natale e Pasqua. Halloween termina il 5 novembre compreso. [Guida alle nuove funzioni](docs/HALL_OF_FAME.md) · [Calendario e decorazioni](docs/DECORAZIONI_STAGIONALI.md).
 
 Linux Mint 22.x: per aggiornare un'installazione esistente leggere AGGIORNAMENTO_LINUX_MINT.txt ed eseguire `sudo bash deploy/upgrade-mint.sh` dalla cartella estratta. Non usare l'installer di prima installazione. Distribuzione pubblica tramite GitHub Releases: docs/PUBBLICAZIONE_GITHUB.txt. Aggiornamento remoto per Mint già configurato sul blog: PUBBLICAZIONE_BLOG.txt. Relay GitHub → blog senza comandi sul Mint: docs/RELAY_BLOG.txt.
 
@@ -10,7 +8,7 @@ Novità: guida DE/EN/FR, domenica opzionale, aggiornamenti notturni firmati con 
 
 # PULSE · Dietikon
 
-Applicazione PHP 0.2.9 per TV orizzontale Full HD, con gestione da browser.
+Applicazione PHP 0.3.0 per TV orizzontale Full HD, con gestione da browser.
 Linux Mint 22.x amd64 con PHP 8.3; Raspberry Pi OS 64 bit con PHP 8.4+.
 
 ## Aggiornamenti: protocollo update.json e compatibilità
@@ -38,11 +36,11 @@ Nessun account predefinito, nessun dato dimostrativo.
 - Password hash, CSRF, limite tentativi, sessioni e cambio password.
 - Interfaccia EN/DE/FR e creazione/rimozione amministratori.
 - CRUD Mitarbeiter, attivazione/disattivazione, ruoli e foto normalizzate.
-- Dieci pagine TV: premio mensile, podio, team, ruoli mensili, transfer,
-  target, sei Daily Tasks, immagini, motto settimanale e Store Tasks.
+- Dodici moduli TV: premio mensile, podio, team, ruoli mensili, transfer,
+  target, sei Daily Tasks, immagini, motto settimanale, Hall of Fame, storie e Store Tasks.
 - Inserimento manuale dei contenuti, rotazione, paginazione delle liste.
 - NPS e Quality con target e trend; Waiting Time con soglie configurabili.
-- Animazioni celebrative e decorazioni automatiche Halloween, Natale e Pasqua.
+- Animazioni celebrative e decorazioni automatiche Halloween, Natale, Pasqua e Carnevale.
 - Motto settimanale DE/EN/FR, autore facoltativo, pagina saltata nelle settimane vuote.
 - Decorazioni disattivabili, movimento ridotto e scadenza locale anche senza rete.
 - Snapshot e backup giornalieri/settimanali con immagini, download protetto,
@@ -127,7 +125,7 @@ la verifica sul dispositivo reale.
 
 ## Pacchetto Linux Mint
 
-Versione 0.2.9, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
+Versione 0.3.0, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
 
     python bin/build-linux-mint-zip.py
 

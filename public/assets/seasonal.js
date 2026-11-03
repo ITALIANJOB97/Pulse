@@ -3,7 +3,7 @@
   'use strict';
   function activeSeason(state, now){
     if(!state || state.enabled===false || !Array.isArray(state.windows))return '';
-    const found=state.windows.find(function(w){return ['halloween','christmas','easter'].includes(w.key)&&Number.isFinite(w.starts_at)&&Number.isFinite(w.ends_at)&&now>=w.starts_at&&now<w.ends_at;});
+    const found=state.windows.find(function(w){return ['halloween','christmas','easter','carnival'].includes(w.key)&&Number.isFinite(w.starts_at)&&Number.isFinite(w.ends_at)&&now>=w.starts_at&&now<w.ends_at;});
     return found?found.key:'';
   }
   function mottoVisible(data,now){
@@ -12,6 +12,12 @@
     return Boolean(hasText)&&(data.archive||!Number.isFinite(data.motto_ends_at)||now<data.motto_ends_at);
   }
   const drawings={
+    bunny:'<ellipse cx="37" cy="26" rx="10" ry="25" fill="#fff7e8" transform="rotate(-12 37 26)"/><ellipse cx="65" cy="25" rx="10" ry="25" fill="#fff7e8" transform="rotate(12 65 25)"/><path d="M37 10L40 36M65 10L61 36" stroke="#f3a6ba" stroke-width="6" stroke-linecap="round"/><ellipse cx="50" cy="78" rx="30" ry="22" fill="#fff7e8"/><circle cx="51" cy="53" r="27" fill="#fffaf0"/><circle cx="42" cy="49" r="3" fill="#284b6b"/><circle cx="61" cy="49" r="3" fill="#284b6b"/><path d="M47 59L56 59L51 65Z" fill="#ea8ca9"/><path d="M51 65Q42 74 39 65M51 65Q60 74 63 65" stroke="#a67580" fill="none" stroke-width="2"/><ellipse cx="29" cy="91" rx="13" ry="7" fill="#f2dfe6"/><ellipse cx="73" cy="91" rx="13" ry="7" fill="#f2dfe6"/>',
+    sleigh:'<path d="M10 62Q36 78 70 60L63 81H24Z" fill="#ee5270"/><path d="M9 85Q44 99 88 78M24 78L22 88M61 77L65 85" stroke="#ffdf87" stroke-width="4" fill="none"/><path d="M56 30Q63 13 73 27L83 24L78 35L67 38L64 52" fill="#b48968"/><path d="M72 25L74 10M74 19L85 13" stroke="#ffd79b" stroke-width="3" fill="none"/><path d="M62 48L88 52L91 62M68 51L68 62M82 52L77 65" stroke="#c79a73" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M60 43L34 55" stroke="#ffdf87" fill="none" stroke-width="2"/><rect x="17" y="49" width="17" height="16" rx="3" fill="#7bd9bb"/><path d="M25 49V65M17 55H34" stroke="#fff1ae" stroke-width="3"/><circle cx="42" cy="41" r="11" fill="#ffd6bb"/><path d="M30 36Q34 8 53 32L62 30" stroke="#ed5273" fill="#ed5273" stroke-width="5"/><circle cx="61" cy="30" r="5" fill="#fff"/><path d="M32 42Q42 65 52 42" fill="#fff"/><path d="M30 61Q42 53 53 63" stroke="#ed5273" stroke-width="10"/>',
+    mask:'<path d="M16 36Q3 14 15 5Q38 11 38 37M61 35Q63 5 82 5Q94 26 79 40" fill="#e871b5"/><path d="M24 37Q29 7 45 12L51 37M54 37Q43 10 59 5Q73 19 67 39" fill="#69d8d6"/><path d="M5 38Q27 21 49 39Q73 21 95 38L87 68Q66 84 50 66Q31 85 12 67Z" fill="#a991ef" stroke="#ffe598" stroke-width="3"/><path d="M17 48Q29 40 41 51Q29 65 17 48M59 51Q71 40 83 48Q71 65 59 51" fill="#00559d" stroke="#ffe598" stroke-width="3"/><path d="M50 38L55 61L50 68L45 61Z" fill="#ffe598"/><circle cx="12" cy="39" r="3" fill="#fff"/><circle cx="89" cy="39" r="3" fill="#fff"/>',
+    ribbon:'<path d="M26 0C85 12 15 28 62 46S12 70 65 88S31 97 49 100" fill="none" stroke="#f3d768" stroke-width="9"/><path d="M68 0C8 16 82 32 34 48S86 74 36 92" fill="none" stroke="#ee86bf" stroke-width="7"/>',
+    petal:'<path d="M18 74Q8 12 80 20Q94 83 18 74" fill="#f7c8e5"/><path d="M22 69L73 27" stroke="#fff0d5" stroke-width="3"/>',
+    gift:'<rect x="14" y="34" width="73" height="57" rx="5" fill="#ed698b"/><path d="M12 32H89V46H12Z" fill="#f5809e"/><path d="M44 32H57V91H44Z" fill="#ffe18b"/><path d="M50 32C8 27 20 -1 41 17L50 32C93 26 79 -2 59 17Z" fill="none" stroke="#ffe18b" stroke-width="7"/>',
     pumpkin:'<path d="M48 25Q44 12 57 7L61 14Q50 17 56 27" fill="#83d79b"/><ellipse cx="50" cy="58" rx="45" ry="34" fill="#ffab38"/><ellipse cx="50" cy="58" rx="29" ry="34" fill="#ff8330"/><ellipse cx="50" cy="58" rx="13" ry="34" fill="#ffb449"/><path d="M24 53L36 40L40 55ZM60 55L64 40L77 53ZM26 66L37 73L45 67L52 75L60 67L71 69Q52 92 26 66" fill="#162d55"/>',
     ghost:'<path d="M17 86V40a33 33 0 0166 0v46l-16-10-17 11-17-11z" fill="#edf7ff" stroke="#c7ddff" stroke-width="2"/><ellipse cx="38" cy="43" rx="5" ry="8" fill="#183957"/><ellipse cx="62" cy="43" rx="5" ry="8" fill="#183957"/><ellipse cx="50" cy="63" rx="6" ry="8" fill="#416185"/><ellipse cx="28" cy="57" rx="6" ry="3" fill="#f6a6c5"/><ellipse cx="72" cy="57" rx="6" ry="3" fill="#f6a6c5"/>',
     bat:'<path class="bat-wing left" d="M48 50Q30 15 2 31Q18 35 12 58Q27 45 34 70L49 62" fill="#201f46" stroke="#c9b7ff" stroke-width="2"/><path class="bat-wing right" d="M52 50Q70 15 98 31Q82 35 88 58Q73 45 66 70L51 62" fill="#201f46" stroke="#c9b7ff" stroke-width="2"/><path d="M41 46L39 24L49 35L61 24L59 46Q69 72 50 78Q31 72 41 46" fill="#30234e"/><circle cx="45" cy="50" r="3" fill="#ffbf4d"/><circle cx="55" cy="50" r="3" fill="#ffbf4d"/>',
@@ -41,15 +47,30 @@
         html+='<span class="season-spider-rig" style="left:'+x+'px;--size:'+(i===1?34:42)+'px;--drop:'+(i===1?220:370+i*110)+'px;--duration:'+(20+i*4)+'s;--delay:'+(-i*7)+'s"><span class="season-thread"></span>'+icon('spider','season-spider-body','')+'</span>';
       });
     }else if(key==='christmas'){
-      html+=icon('tree','season-corner','left:5px;bottom:85px;--size:61px');
-      html+=icon('tree','season-corner','right:4px;bottom:85px;--size:63px');
-      for(let i=0;i<4;i++)html+=icon('bauble','season-sway','left:'+(440+i*310)+'px;top:-11px;--size:40px;--delay:'+(-i*2)+'s');
-      for(let i=0;i<12;i++)html+=icon('snow','season-fall',(i%2?'right:':'left:')+(8+(i*13)%35)+'px;top:-32px;--size:'+(12+i%3*5)+'px;--duration:'+(13+i%4*3)+'s;--delay:'+(-i*2.7)+'s');
+      html+=icon('tree','season-corner','left:0;bottom:87px;--size:72px');
+      html+=icon('tree','season-corner','right:0;bottom:87px;--size:72px');
+      html+=icon('gift','season-corner','left:6px;top:510px;--size:50px');
+      html+=icon('gift','season-corner','right:5px;top:690px;--size:49px');
+      let lights='<svg class="season-lights" viewBox="0 0 1920 42" aria-hidden="true"><path d="M0 0';
+      for(let x=0;x<1920;x+=240)lights+='Q'+(x+120)+' 54 '+(x+240)+' 0';
+      lights+='" fill="none" stroke="#7cd7bc" stroke-width="3"/>';
+      for(let i=0;i<16;i++)lights+='<circle class="season-light" cx="'+(60+i*120)+'" cy="20" r="6" fill="'+(['#ffe49c','#ff8aa6','#c0fff0'][i%3])+'" style="--delay:'+(-i*.4)+'s"/>';
+      html+=lights+'</svg>';
+      for(let i=0;i<4;i++)html+=icon('bauble','season-sway','left:'+(400+i*360)+'px;top:-8px;--size:43px;--delay:'+(-i*2)+'s');
+      for(let i=0;i<18;i++)html+=icon('snow','season-fall season-snow','left:'+(35+i*104)+'px;top:-32px;--size:'+(12+i%3*5)+'px;--duration:'+(16+i%4*3)+'s;--drift:'+(-55+i%5*27)+'px;--delay:'+(-i*2.7)+'s');
+      html+=icon('sleigh','season-roamer','--size:106px;--rest-x:1630px');
     }else if(key==='easter'){
-      html+=icon('flower','season-sway','left:3px;bottom:89px;--size:65px');
-      html+=icon('flower','season-sway','right:4px;bottom:89px;--size:64px;--delay:-3s');
-      for(let i=0;i<4;i++)html+=icon('egg','season-bob',(i%2?'right:':'left:')+'12px;top:'+(210+Math.floor(i/2)*390)+'px;--size:40px;--delay:'+(-i*2)+'s');
-      for(let i=0;i<2;i++)html+=icon('butterfly','season-fly','top:-6px;left:0;--size:46px;--duration:'+(34+i*9)+'s;--delay:'+(-i*21)+'s');
+      html+=icon('bunny','season-bunny','left:0;bottom:88px;--size:68px');
+      html+=icon('bunny','season-bunny','right:0;bottom:88px;--size:68px;--delay:-4s');
+      html+=icon('flower','season-sway','left:1px;top:170px;--size:54px');
+      html+=icon('flower','season-sway','right:1px;top:170px;--size:54px;--delay:-3s');
+      for(let i=0;i<4;i++)html+=icon('egg','season-bob',(i%2?'right:':'left:')+'8px;top:'+(350+Math.floor(i/2)*280)+'px;--size:42px;--delay:'+(-i*2)+'s');
+      for(let i=0;i<4;i++)html+=icon('butterfly','season-roamer','--size:'+(44+i*4)+'px;--rest-x:'+(330+i*390)+'px');
+      for(let i=0;i<10;i++)html+=icon('petal','season-fall season-petal','left:'+(80+i*183)+'px;top:-40px;--size:'+(12+i%3*3)+'px;--duration:'+(22+i%4*3)+'s;--drift:'+(-90+i%4*60)+'px;--delay:'+(-i*3.1)+'s');
+    }else if(key==='carnival'){
+      for(let i=0;i<4;i++)html+=icon('ribbon','season-sway',(i%2?'right:':'left:')+'1px;top:'+(180+Math.floor(i/2)*530)+'px;--size:60px;--delay:'+(-i*2)+'s');
+      for(let i=0;i<3;i++)html+=icon('mask','season-roamer','--size:'+(61+i*4)+'px;--rest-x:'+(470+i*470)+'px');
+      for(let i=0;i<24;i++)html+='<span class="season-confetti season-fall" style="left:'+(20+i*79)+'px;top:-30px;--size:8px;--drift:'+(-85+i%6*34)+'px;--duration:'+(16+i%5*3)+'s;--delay:'+(-i*1.7)+'s;background:'+(['#ffe79b','#ef8cc8','#8ce8d5','#c8b6ff'][i%4])+'"></span>';
     }
     return html;
   }
@@ -92,9 +113,9 @@
     function stopFlights(){flights.forEach(function(item){item.animation.onfinish=null;item.animation.cancel();});flights=[];}
     function launch(item,delay){
       const plan=flightPlan();
-      item.animation=item.element.animate(plan.frames,{duration:plan.duration,delay:delay,fill:'both',easing:'linear'});
+      item.animation=item.element.animate(plan.frames,{duration:plan.duration*(key==='christmas'?1.7:key==='halloween'?1:1.2),delay:delay,fill:'both',easing:'linear'});
       item.animation.onfinish=function(){
-        if(!destroyed&&key==='halloween'&&!still&&flights.includes(item))launch(item,Math.random()*1800);
+        if(!destroyed&&key&&!still&&flights.includes(item))launch(item,Math.random()*1800);
       };
       if(paused)item.animation.pause();
     }
@@ -104,9 +125,9 @@
       if(next!==key){stopFlights();key=next;layer.innerHTML=artwork(key);layer.dataset.season=key;}
       still=data.effects===false||Boolean(reduced&&reduced.matches);
       layer.hidden=!key;layer.classList.toggle('season-still',still);layer.classList.toggle('season-paused',paused);
-      if(key!=='halloween'||still){stopFlights();return;}
+      if(!key||still){stopFlights();return;}
       if(!flights.length){
-        layer.querySelectorAll('.season-bat').forEach(function(element,i){
+        layer.querySelectorAll('.season-bat,.season-roamer').forEach(function(element,i){
           if(typeof element.animate!=='function')return;
           const item={element:element,animation:null};flights.push(item);launch(item,i*1800);
         });

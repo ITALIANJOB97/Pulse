@@ -4,10 +4,11 @@
   const root=document.getElementById('screen'),main=document.getElementById('slide');
   const ticker=document.getElementById('timeline'),pageNav=document.getElementById('pages');
   const offline=document.getElementById('offline');
-  const keys=['spotlight','podium','team','roles','transfers','targets','daily','gallery','motto','tasks'];
+  const keys=['spotlight','podium','team','roles','transfers','targets','daily','gallery','motto','hall','hall_story','tasks'];
   let slides=[],index=0,timer=null,fxTimer=null,pollTimer=null,paused=false;
   const reduced=window.matchMedia('(prefers-reduced-motion: reduce)');
   const seasonal=PulseSeasonal.create(root,data);
+  const selectHall=PulsePeople.createHallSelector();
   let mottoWasVisible=PulseSeasonal.mottoVisible(data,seasonal.now());
   function esc(v){return String(v==null?'':v).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
   function label(key){return data.labels[key]||key;}
@@ -27,7 +28,9 @@
     keys.forEach(function(key){
       if(data.pages[key]===false)return;
       if(key==='motto'&&!PulseSeasonal.mottoVisible(data,seasonal.now()))return;
+      if(['hall','hall_story'].includes(key)&&!(data.content.hall||[]).length)return;
       let groups=[null];
+      if(key==='hall')groups=chunks(data.content.hall,6);
       if(key==='team')groups=[data.employees.slice().sort(function(a,b){const roles=['manager','deputy','supervisor','member'];return roles.indexOf(a.role)-roles.indexOf(b.role);})];
       if(key==='roles')groups=chunks((data.content.roles||[]).filter(function(r){return person(r.employee_id);}),6);
       if(key==='tasks')groups=chunks((data.content.tasks[data.language]||data.content.tasks.en||data.content.tasks.de||data.content.tasks.fr||[]).filter(function(s){return s.trim();}),6);
@@ -48,8 +51,18 @@
   function renderBody(slide){
     const key=slide.key,c=data.content[key]||[];
     if(key==='spotlight'){
-      const p=person(c.employee_id);if(!p)return empty();
-      return '<div class="hero">'+photo(p,'portrait')+'<div><span class="award-tag">'+esc(label('spotlight'))+'</span><h2>'+esc(p.name)+'</h2><p>'+esc(translated(c.message))+'</p><p class="thanks">'+esc(label('thanks'))+'</p></div></div>';
+      const winners=PulsePeople.awardPeople(c,data.employees);if(!winners.length)return empty();
+      if(winners.length===2)return '<div class="award-duo"><div class="award-duo-grid">'+winners.map(function(p){return '<article class="award-duo-card">'+photo(p,'portrait')+'<h2>'+esc(p.name)+'</h2></article>';}).join('')+'</div><p class="award-duo-message">'+esc(translated(c.message))+'</p><p class="thanks">'+esc(label('thanks'))+'</p></div>';
+      const p=winners[0];return '<div class="hero">'+photo(p,'portrait')+'<div><span class="award-tag">'+esc(label('spotlight'))+'</span><h2>'+esc(p.name)+'</h2><p>'+esc(translated(c.message))+'</p><p class="thanks">'+esc(label('thanks'))+'</p></div></div>';
+    }
+    if(key==='hall'){
+      const count=slide.items.length,columns=Math.min(3,count),rows=Math.ceil(count/columns);
+      return '<div class="hall-grid" style="--hall-columns:'+columns+';--hall-rows:'+rows+'">'+slide.items.map(function(p){return '<article class="hall-card">'+photo(p,'hall-photo')+'<h2>'+esc(p.name)+'</h2><span class="hall-card-star" aria-hidden="true">✦</span></article>';}).join('')+'</div>';
+    }
+    if(key==='hall_story'){
+      const p=selectHall(data.content.hall||[],data.archive?data.server_time:seasonal.now());if(!p)return empty();
+      const story=translated(p.story);
+      return '<figure class="hall-feature"><div class="hall-feature-person">'+photo(p,'hall-portrait')+'<figcaption><span class="hall-kicker">'+esc(label('hall_legacy'))+'</span><h2>'+esc(p.name)+'</h2></figcaption></div>'+(story?'<blockquote class="hall-quote"><p>'+esc(story)+'</p></blockquote>':'')+'<div class="hall-signature" aria-hidden="true"><span></span>✦<span></span></div></figure>';
     }
     if(key==='podium'){
       const all=(Array.isArray(c)?c:[]).filter(function(r){return person(r.employee_id)&&r.count>0;}).sort(function(a,b){return b.count-a.count||a.employee_id-b.employee_id;});
@@ -152,20 +165,34 @@
     }
     main.appendChild(layer);fxTimer=setTimeout(function(){layer.remove();},5400);
   }
+  function hallHeading(slide){
+    const branch='<path d="M82 77Q20 58 31 13"/><path d="M76 75Q51 88 48 65Q69 62 76 75M61 66Q34 71 34 50Q52 48 61 66M47 51Q22 51 25 31Q42 31 47 51M35 35Q17 22 29 7Q43 18 35 35"/>';
+    return '<div class="hall-heading"><svg class="hall-crest" viewBox="0 0 180 90" aria-hidden="true"><g fill="#f3d768" stroke="#f3d768" stroke-width="1">'+branch+'<g transform="translate(180 0) scale(-1 1)">'+branch+'</g></g><path d="M90 21L97 41L118 41L101 54L108 75L90 62L72 75L79 54L62 41L83 41Z" fill="#fff0b4"/></svg><div><span>'+esc(label(slide.key==='hall_story'?'hall_legacy':'hall_subtitle'))+'</span><h1>HALL OF FAME</h1></div>'+(slide.parts>1?'<small>'+slide.part+' / '+slide.parts+'</small>':'')+'</div>';
+  }
+  function fitPeople(){
+    const featureName=main.querySelector('.hall-feature h2');
+    if(featureName)for(let size=67;size>=28;size-=3){featureName.style.fontSize=size+'px';if(featureName.scrollHeight<=featureName.clientHeight+1)break;}
+    const quote=main.querySelector('.hall-quote'),text=quote&&quote.querySelector('p');
+    if(text)for(let size=38;size>=22;size--){text.style.fontSize=size+'px';if(text.scrollHeight<=quote.clientHeight)break;}
+    main.querySelectorAll('.hall-card h2,.award-duo-card h2').forEach(function(name){
+      const start=name.closest('.hall-card')?36:52;for(let size=start;size>=22;size-=2){name.style.fontSize=size+'px';if(name.scrollHeight<=name.clientHeight+1)break;}
+    });
+    const message=main.querySelector('.award-duo-message');if(message)for(let size=30;size>=22;size--){message.style.fontSize=size+'px';if(message.scrollHeight<=message.clientHeight+1)break;}
+  }
   function show(){
     clearTimeout(timer);clearTimeout(fxTimer);
     if(index>=slides.length)index=0;
-    const slide=slides[index],title=slide.key==='spotlight'?'award_title':slide.key==='podium'?'podium_title':slide.key==='targets'?'targets_title':slide.key;
+    const slide=slides[index],title=slide.key==='spotlight'?(PulsePeople.awardPeople(data.content.spotlight,data.employees).length===2?'award_title_two':'award_title'):slide.key==='podium'?'podium_title':slide.key==='targets'?'targets_title':slide.key;
     document.documentElement.lang=data.language;
     document.getElementById('store').textContent=data.store;
     main.dataset.page=slide.key;
     main.classList.toggle('motion',Boolean(data.effects)&&!reduced.matches);
-    main.innerHTML='<div class="heading"><div><div class="eyebrow">'+esc(label(slide.key==='motto'?'motto_week':slide.key))+'</div><h1>'+esc(label(title))+'</h1></div>'+(slide.parts>1?'<span class="subpage">'+slide.part+' / '+slide.parts+'</span>':'')+'</div>'+renderBody(slide);
+    main.innerHTML=(['hall','hall_story'].includes(slide.key)?hallHeading(slide):'<div class="heading"><div><div class="eyebrow">'+esc(label(slide.key==='motto'?'motto_week':slide.key))+'</div><h1>'+esc(label(title))+'</h1></div>'+(slide.parts>1?'<span class="subpage">'+slide.part+' / '+slide.parts+'</span>':'')+'</div>')+renderBody(slide);
     const period=['transfers','motto'].includes(slide.key)?data.week:slide.key==='daily'?data.date:data.month;
     document.getElementById('period').textContent=(data.archive?label('archive')+' · ':'')+period;
     document.getElementById('page-count').textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
     pageNav.innerHTML=slides.map(function(s,i){return '<button type="button" data-page="'+i+'" aria-label="'+esc(label(s.key))+' '+s.part+'" aria-current="'+(i===index)+'"></button>';}).join('');
-    fitTeam();fitMotto();celebrate(slide.key);schedule();seasonal.tick();clock();
+    fitTeam();fitMotto();fitPeople();celebrate(slide.key);schedule();seasonal.tick();clock();
   }
   function schedule(){
     clearTimeout(timer);ticker.style.transition='none';ticker.style.transform='scaleX(0)';

@@ -31,8 +31,8 @@ function languageSelect(string $value): void {
     foreach(['de'=>'Deutsch','en'=>'English','fr'=>'Français'] as $key=>$label)echo '<option value="'.$key.'"'.($key===$value?' selected':'').'>'.$label.'</option>';
     echo '</select></label>';
 }
-function employeeSelect(string $key,mixed $selected=null): void {
-    echo '<label class="field"><span>'.e(t('employee')).'</span><select name="'.e($key).'"><option value="">— '.e(t('choose_employee')).' —</option>';
+function employeeSelect(string $key,mixed $selected=null,string $label='employee'): void {
+    echo '<label class="field"><span>'.e(t($label)).'</span><select name="'.e($key).'"><option value="">— '.e(t('choose_employee')).' —</option>';
     foreach(employees() as $person)echo '<option value="'.$person['id'].'"'.((string)$person['id']===(string)$selected?' selected':'').'>'.e($person['name']).'</option>';
     echo '</select></label>';
 }
@@ -74,11 +74,11 @@ function renderDisplay(array $data,bool $archive=false): void {
     if($archive)$data['seasonal']=['enabled'=>false,'windows'=>[]];
     echo '<!doctype html><html lang="'.e($data['language']).'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.e($data['store']).'</title><link rel="stylesheet" href="/assets/screen.css?v='.e(version()).'"></head><body>';
     echo '<div id="screen"><header><div class="brand">PULSE<span></span></div><div class="store" id="store"></div><div class="clock" id="clock"></div></header><main id="slide"></main><footer><span id="period"></span><nav id="pages" aria-label="Pages"></nav><div class="screen-footer-right"><span id="page-count"></span>'.authorCredit().'</div></footer><div class="timeline"><div id="timeline"></div></div><aside id="offline" role="status" hidden></aside></div>';
-    echo '<script id="screen-data" type="application/json">'.json_encode($data,JSON_THROW_ON_ERROR|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT).'</script><script src="/assets/seasonal.js?v='.e(version()).'" defer></script><script src="/assets/screen.js?v='.e(version()).'" defer></script></body></html>';
+    echo '<script id="screen-data" type="application/json">'.json_encode($data,JSON_THROW_ON_ERROR|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT).'</script><script src="/assets/seasonal.js?v='.e(version()).'" defer></script><script src="/assets/people.js?v='.e(version()).'" defer></script><script src="/assets/screen.js?v='.e(version()).'" defer></script></body></html>';
 }
 function renderAdmin(): void {
     require __DIR__.'/views_admin.php';
-    $tabs=['overview','content','employees','gallery','settings','administrators','backups','updates'];
+    $tabs=['overview','content','employees','hall','gallery','settings','administrators','backups','updates'];
     $tab=is_string($_GET['tab']??null)?$_GET['tab']:'overview';if(!in_array($tab,$tabs,true))$tab='overview';
     pageStart(t($tab),'admin-page');
     echo '<div data-update-background data-csrf="'.e($_SESSION['csrf']).'" hidden></div>';
@@ -89,7 +89,7 @@ function renderAdmin(): void {
     showFlash();$update=publicUpdateState();
     if($update['available']&&$tab!=='updates')echo '<a class="notice update-link" href="/admin?tab=updates">'.e(t('update_available')).' · v'.e($update['version']).' →</a>';
     match($tab){
-        'overview'=>adminOverview(),'content'=>adminContent(),'employees'=>adminEmployees(),'gallery'=>adminGallery(),
+        'overview'=>adminOverview(),'content'=>adminContent(),'employees'=>adminEmployees(),'hall'=>adminHall(),'gallery'=>adminGallery(),
         'settings'=>adminSettings(),'administrators'=>adminAccounts(),'backups'=>adminBackups(),'updates'=>adminUpdates(),
     };
     echo '</main></div>';pageEnd();

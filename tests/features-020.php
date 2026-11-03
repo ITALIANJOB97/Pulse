@@ -47,7 +47,7 @@ $savedArchive=json_decode(db()->query("SELECT payload FROM snapshots WHERE kind=
 ensure020($savedArchive['content']['targets']['service_total']==320,'Later edits changed historical data.');
 ensure020(applicationHealth()['ok']===true,'Application health failed.');
 mkdir($dir.'/updater');file_put_contents($dir.'/updater/config.json','{}');
-file_put_contents($dir.'/updater/status.json',jsonValue(['phase'=>'scheduled','release'=>['version'=>'0.3.0','notes'=>['de'=>'Neu','en'=>'New','fr'=>'Nouveau']]]));
+file_put_contents($dir.'/updater/status.json',jsonValue(['phase'=>'scheduled','release'=>['version'=>'9.0.0','notes'=>['de'=>'Neu','en'=>'New','fr'=>'Nouveau']]]));
 ensure020(publicUpdateState()['available']===true,'Managed available notice missing.');
 $check=checkUpdates();ensure020($check['queued']===true&&strlen(setting('update_requested'))===24,'Check request was not queued.');
 $_POST=['csrf'=>$_SESSION['csrf']];handleAction('postpone_update');ensure020(setting('update_postpone_until')>=time()+86399,'Postpone not persisted.');

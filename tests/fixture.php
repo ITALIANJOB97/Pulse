@@ -9,7 +9,7 @@ if($command==='image'){
     imagefill($image,0,0,imagecolorallocate($image,232,203,85));
     imagejpeg($image,storage('fixture.jpg'),85);
 }elseif($command==='available'){
-    setSetting('update_state',['release'=>validateRelease(['app'=>'pulse-dietikon','version'=>'0.3.0','notes'=>['en'=>'Test release']]),'checked_at'=>gmdate('c')]);
+    setSetting('update_state',['release'=>validateRelease(['app'=>'pulse-dietikon','version'=>'9.0.0','notes'=>['en'=>'Test release']]),'checked_at'=>gmdate('c')]);
 }elseif($command==='installed'){
     setSetting('installed_version','0.0.9');syncVersion();
 }elseif($command==='clear-updates'){

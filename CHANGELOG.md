@@ -4,6 +4,17 @@
 - Documentata l’abilitazione una tantum del servizio v4 per il pulsante Scarica e installa ora, mantenendo GitHub e senza reinstallare l’applicazione.
 - Conservate le correzioni dei decimali Service/Ticket e le decorazioni precedenti. Nessuna migrazione dei dati.
 
+## 0.3.0 — 2026-11-03
+
+- Hall of Fame: scelta alla rimozione di un Mitarbeiter, conservazione della foto e dedica DE/EN/FR modificabile (500 caratteri per lingua).
+- Due pagine TV: card con titolo e stemma dorato, fino a sei per schermata; ritratto con dedica selezionato casualmente senza ripetizioni consecutive quando possibile.
+- Priorità di sette giorni ai nuovi inserimenti, con alternanza tra nuovi membri. Le modifiche non rinnovano la priorità.
+- Fino a due Mitarbeiter del mese, foto intere affiancate e messaggio condiviso; compatibilità con i premi già salvati.
+- Carnevale: maschere, coriandoli e nastri. Periodo automatico Schmutziger Donnerstag–Güdisdienstag, con intervallo locale personalizzabile per anno.
+- Natale con luci, neve, regali e slitta; Pasqua con conigli, uova, petali e farfalle. Pause, movimento ridotto e disattivazione rispettati.
+- Halloween dal 20 ottobre al 5 novembre compreso, Europe/Zurich.
+- Guide EN/DE/FR e Docs aggiornati. Schema SQLite invariato: dati, utenti, foto e storico mantenuti.
+
 ## 0.2.8 — 2026-11-02
 - Team Targets: obiettivo e risultato corrente Service/Ticket accettano decimali sotto 1 con punto o virgola (0.6 / 0,6); visualizzazione TV senza arrotondamento a interi. Zero, valori mancanti, mesi e storico restano distinti.
 - Comando Scarica e installa ora con conferma della versione mostrata; richieste obsolete o durante download/installazione rifiutate. Il servizio v4 installa anche fuori dalla finestra notturna dopo il backup verificato.

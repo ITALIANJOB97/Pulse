@@ -41,6 +41,8 @@ function handleAction(string $action): void {
             db()->prepare('INSERT INTO employees(name,role,photo,active) VALUES(?,?,?,?)')->execute([$name,$role,$photo,isset($_POST['active'])?1:0]);
         }
         touchRevision();
+    } elseif (in_array($action,['employee_archive','hall_save','hall_delete'],true)) {
+        hallAction($action);
     } elseif ($action==='employee_delete') {
         db()->prepare('DELETE FROM employees WHERE id=?')->execute([employeeId($_POST['id']??0)]); touchRevision();
     } elseif ($action==='gallery_add') {
@@ -56,12 +58,14 @@ function handleAction(string $action): void {
         if(!in_array(true,$pages,true)) throw new DomainException(t('invalid_input'));
         $duration=(int)inputNumber('duration',10,120,20);
         $hour=(int)inputNumber('update_hour',0,23,3);
+        $carnival=(array_key_exists('carnival_start',$_POST)||array_key_exists('carnival_end',$_POST))?validateCarnivalDates(inputText('carnival_start',10),inputText('carnival_end',10)):setting('carnival_dates',[]);
         db()->beginTransaction();
         try {
             setSetting('store_name',$name); setSetting('language',$lang); setSetting('duration',$duration);
             setSetting('effects',isset($_POST['effects'])); setSetting('pages',$pages);
             setSetting('show_sunday',isset($_POST['show_sunday']));
             setSetting('seasonal_decorations',isset($_POST['seasonal_decorations']));
+            setSetting('carnival_dates',$carnival);
             setSetting('update_auto',isset($_POST['update_auto'])); setSetting('update_hour',$hour);
             if($url!==setting('update_url','')) setSetting('update_state',[]);
             setSetting('update_url',$url); touchRevision(); db()->commit();
@@ -111,7 +115,11 @@ function saveContentForm(): void {
     if(!in_array($module,moduleKeys(),true)||!validPeriod($module,$period)) throw new DomainException(t('invalid_input'));
     $payload=[];
     if($module==='spotlight') {
-        $payload=['employee_id'=>employeeId($_POST['employee_id']??null,true),'message'=>translationsFromPost('message')];
+        $first=employeeId($_POST['employee_id']??null,true);
+        $second=employeeId($_POST['employee_id_2']??null,true);
+        if($first!==null&&$first===$second)throw new DomainException(t('spotlight_duplicate'));
+        $ids=array_values(array_filter([$first,$second],static fn($id)=>$id!==null));
+        $payload=['employee_id'=>$ids[0]??null,'employee_ids'=>$ids,'message'=>translationsFromPost('message')];
     } elseif($module==='podium') {
         $counts=$_POST['counts']??[];
         if(!is_array($counts)) throw new DomainException(t('invalid_input'));

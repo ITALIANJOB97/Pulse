@@ -2,10 +2,11 @@
 declare(strict_types=1);
 function adminOverview(): void {
     echo '<section class="welcome-banner"><span class="eyebrow">PULSE '.e(version()).'</span><h2>'.e(t('ready')).'</h2><p>'.e(t('ready_detail')).'</p><a class="button primary" href="/display" target="_blank" rel="noopener">'.e(t('open_tv')).' ↗</a></section><p class="muted">'.e(t('no_fake_data')).'</p><div class="module-grid">';
-    foreach(moduleKeys() as $i=>$module)echo '<a class="module-card" href="/admin?tab='.($module==='team'?'employees':($module==='gallery'?'gallery':'content&module='.$module)).'"><span class="module-index">'.str_pad((string)($i+1),2,'0',STR_PAD_LEFT).'</span><h3>'.e(t($module)).'</h3><span>↗</span></a>';
+    foreach(moduleKeys() as $i=>$module)echo '<a class="module-card" href="/admin?tab='.($module==='team'?'employees':($module==='gallery'?'gallery':(in_array($module,['hall','hall_story'],true)?'hall':'content&module='.$module))).'"><span class="module-index">'.str_pad((string)($i+1),2,'0',STR_PAD_LEFT).'</span><h3>'.e(t($module)).'</h3><span>↗</span></a>';
     echo '</div>';
 }
 function adminEmployees(): void {
+    if(isset($_GET['remove'])){adminEmployeeDeparture((int)$_GET['remove']);return;}
     $people=employees();$edit=null;
     foreach($people as $p)if($p['id']==($_GET['edit']??0))$edit=$p;
     echo '<div class="split"><section class="panel"><h2>'.e(t($edit?'edit':'new_employee')).'</h2>';
@@ -23,7 +24,7 @@ function adminEmployees(): void {
         if($p['photo'])echo '<img class="avatar" src="/media?id='.(int)$p['photo'].'" alt="">';
         else echo '<div class="avatar initials">'.e(mb_substr($p['name'],0,1)).'</div>';
         echo '<div class="person-name"><strong>'.e($p['name']).'</strong><span>'.e(t($p['role'])).' · '.e(t($p['active']?'on':'off')).'</span></div><a class="button subtle" href="/admin?tab=employees&amp;edit='.$p['id'].'">'.e(t('edit')).'</a>';
-        deleteButton('employee_delete',(int)$p['id'],'/admin?tab=employees');echo '</article>';
+        echo '<a class="button danger subtle" href="/admin?tab=employees&amp;remove='.(int)$p['id'].'">'.e(t('remove_employee')).'</a></article>';
     }
     echo '</section></div>';
 }
@@ -43,7 +44,7 @@ function adminSettings(): void {
     languageSelect(setting('language','de'));field('duration',t('duration'),setting('duration',20),'number','required min="10" max="120"');
     echo '<label class="check"><input type="checkbox" name="effects"'.(setting('effects',true)?' checked':'').'>'.e(t('effects')).'</label></div><h3>'.e(t('enabled_pages')).'</h3><div class="checkbox-grid">';
     foreach(moduleKeys() as $key)echo '<label class="check"><input type="checkbox" name="pages['.$key.']"'.(setting('pages',[])[$key]??true?' checked':'').'>'.e(t($key)).'</label>';
-    echo '</div><h3>'.e(t('seasonal_decorations')).'</h3><label class="check"><input type="checkbox" name="seasonal_decorations"'.(setting('seasonal_decorations',true)?' checked':'').'>'.e(t('seasonal_auto')).'</label><p class="help">'.e(t('seasonal_hint')).'</p><h3>'.e(t('schedule_settings')).'</h3><label class="check"><input type="checkbox" name="show_sunday"'.(setting('show_sunday',true)?' checked':'').'>'.e(t('show_sunday')).'</label><p class="help">'.e(t('sunday_preserved')).'</p><h3>'.e(t('updates')).'</h3><label class="check"><input type="checkbox" name="update_auto"'.(setting('update_auto',true)?' checked':'').'>'.e(t('update_auto')).'</label>';
+    echo '</div><h3>'.e(t('seasonal_decorations')).'</h3><label class="check"><input type="checkbox" name="seasonal_decorations"'.(setting('seasonal_decorations',true)?' checked':'').'>'.e(t('seasonal_auto')).'</label><p class="help">'.e(t('seasonal_hint')).'</p>'.carnivalSettingsHtml().'<h3>'.e(t('schedule_settings')).'</h3><label class="check"><input type="checkbox" name="show_sunday"'.(setting('show_sunday',true)?' checked':'').'>'.e(t('show_sunday')).'</label><p class="help">'.e(t('sunday_preserved')).'</p><h3>'.e(t('updates')).'</h3><label class="check"><input type="checkbox" name="update_auto"'.(setting('update_auto',true)?' checked':'').'>'.e(t('update_auto')).'</label>';
     field('update_hour',t('update_hour'),setting('update_hour',3),'number','required min="0" max="23" step="1"');
     echo '<p class="help">'.e(t('update_window_hint')).'</p>';
     if(updaterManaged())echo '<p class="help">'.e(t(updaterSourceLabel())).'</p>';
@@ -157,7 +158,8 @@ function adminContent(): void {
     }
     echo '</div>';formStart('content',$return);hidden('module',$module);hidden('period',$period);
     if($module==='spotlight'){
-        employeeSelect('employee_id',$data['employee_id']??null);
+        $winners=$data['employee_ids']??array_values(array_filter([$data['employee_id']??null]));
+        echo '<div class="form-grid">';employeeSelect('employee_id',$winners[0]??null,'spotlight_first');employeeSelect('employee_id_2',$winners[1]??null,'spotlight_second');echo '</div><p class="help">'.e(t('spotlight_two_hint')).'</p>';
         echo '<div class="form-grid thirds">';foreach(['de','en','fr'] as $lang)area('message_'.$lang,t('message').' · '.strtoupper($lang),$data['message'][$lang]??'');echo '</div>';
     }elseif($module==='podium'){
         $counts=[];foreach($data as $row)$counts[$row['employee_id']]=$row['count'];
@@ -198,4 +200,52 @@ function adminContent(): void {
         foreach(['de','en','fr'] as $lang)area('tasks_'.$lang,strtoupper($lang),implode("\n",$data[$lang]??[]),12);echo '</div>';
     }
     saveButton();echo '</section>';
+}
+
+function hallStoryFields(array $story=[]): void {
+    echo '<div class="form-grid thirds">';
+    foreach(['de','en','fr'] as $lang)echo '<label class="field"><span>'.e(t('hall_story_label').' · '.strtoupper($lang)).'</span><textarea name="story_'.$lang.'" rows="5" maxlength="500">'.e($story[$lang]??'').'</textarea></label>';
+    echo '</div><p class="help">'.e(t('hall_story_hint')).'</p>';
+}
+function adminEmployeeDeparture(int $id): void {
+    $q=db()->prepare('SELECT * FROM employees WHERE id=?');$q->execute([$id]);$person=$q->fetch();
+    if(!$person){echo '<div class="notice error">'.e(t('invalid_input')).'</div>';return;}
+    echo '<p><a class="button subtle" href="/admin?tab=employees">← '.e(t('back')).'</a></p><section class="panel departure-panel"><span class="eyebrow">'.e(t('remove_employee')).'</span><h2>'.e($person['name']).'</h2><p>'.e(t('departure_question')).'</p></section>';
+    echo '<section class="panel hall-editor"><h2>★ '.e(t('hall_add')).'</h2><p class="help">'.e(t('hall_priority_hint')).'</p>';
+    formStart('employee_archive','/admin?tab=hall');hidden('id',$id);hallStoryFields();saveButton('hall_add');echo '</section>';
+    echo '<section class="panel"><h2>'.e(t('delete')).'</h2><p class="help">'.e(t('departure_delete_hint')).'</p>';
+    deleteButton('employee_delete',$id,'/admin?tab=employees');echo '</section>';
+}
+function adminHall(): void {
+    $members=hallMembers();$edit=null;
+    foreach($members as $member)if($member['id']==($_GET['edit']??0))$edit=$member;
+    echo '<section class="welcome-banner"><span class="eyebrow">PULSE · DIETIKON</span><h2>HALL OF FAME</h2><p>'.e(t('hall_intro')).'</p><a class="button" href="/admin?tab=employees">'.e(t('employees')).' →</a></section>';
+    if($edit){
+        echo '<section class="panel hall-editor"><h2>'.e(t('edit')).' · '.e($edit['name']).'</h2>';
+        formStart('hall_save','/admin?tab=hall',true);hidden('id',$edit['id']);
+        field('name',t('name'),$edit['name'],'text','required maxlength="100"');
+        field('photo',t('photo'),'','file','accept="image/jpeg,image/png,image/webp"');
+        if($edit['photo'])echo '<img class="employee-preview" src="/media?id='.(int)$edit['photo'].'" alt="'.e($edit['name']).'">';
+        hallStoryFields($edit['story']??[]);saveButton();echo '</section>';
+    }
+    if(!$members){echo '<div class="empty">'.e(t('hall_empty')).'</div>';return;}
+    echo '<div class="hall-admin-grid">';
+    foreach($members as $member){
+        $text='';foreach(array_unique([language(),'en','de','fr']) as $lang)if(!empty($member['story'][$lang])){$text=$member['story'][$lang];break;}
+        echo '<article class="panel hall-admin-card">';
+        if($member['photo'])echo '<img class="hall-admin-photo" src="/media?id='.(int)$member['photo'].'" alt="'.e($member['name']).'">';
+        else echo '<div class="hall-admin-photo initials">'.e(mb_substr($member['name'],0,1)).'</div>';
+        echo '<h2>'.e($member['name']).'</h2><p class="preserve">'.e($text).'</p>';
+        if(($member['priority_until']??0)>time())echo '<p class="hall-priority">★ '.e(t('hall_priority_until')).' '.e((new DateTimeImmutable('@'.$member['priority_until']))->setTimezone(new DateTimeZone('Europe/Zurich'))->format('d.m.Y H:i')).'</p>';
+        echo '<div class="hall-admin-actions"><a class="button" href="/admin?tab=hall&amp;edit='.(int)$member['id'].'">'.e(t('edit')).'</a>';
+        deleteButton('hall_delete',(int)$member['id'],'/admin?tab=hall');echo '</div></article>';
+    }
+    echo '</div>';
+}
+
+function carnivalSettingsHtml(): string {
+    ob_start();$carnival=setting('carnival_dates',[]);
+    echo '<h3>'.e(t('carnival_dates')).'</h3><p class="help">'.e(t('carnival_hint')).'</p><div class="form-grid">';
+    field('carnival_start',t('carnival_start'),$carnival['start']??'','date');field('carnival_end',t('carnival_end'),$carnival['end']??'','date');echo '</div>';
+    return ob_get_clean();
 }

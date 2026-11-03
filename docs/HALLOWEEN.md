@@ -1,6 +1,6 @@
-# Halloween sulla TV — PULSE 0.2.7
+# Halloween sulla TV — PULSE 0.3.0
 
-Dal 20 ottobre al 15 novembre compreso, nel fuso Europe/Zurich, quattro pipistrelli
+Dal 20 ottobre al 5 novembre compreso, nel fuso Europe/Zurich, quattro pipistrelli
 attraversano tutta la TV. Ogni volo segue una traiettoria curva casuale nuova,
 con ingresso e uscita dai diversi lati. Quattro ragnatele sono ancorate ai quattro
 angoli dello schermo, allineate ai bordi superiori e inferiori. Tre ragni scendono
@@ -13,22 +13,22 @@ su fili dall'alto, in momenti diversi e con profondità variabile.
 - Movimento ridotto nel browser/sistema: rispettato anche durante la sessione.
 - Barra spaziatrice sulla TV: pausa e ripresa dei movimenti e delle pagine.
 - Scheda nascosta: animazioni in pausa fino al ritorno alla TV.
-- Archivi: nessuna decorazione stagionale. Natale e Pasqua mantengono i loro effetti.
+- Archivi: nessuna decorazione stagionale. Natale, Pasqua e Carnevale hanno scene dedicate: [calendario completo](DECORAZIONI_STAGIONALI.md).
 
-Il periodo e la scadenza locale senza rete non cambiano. Nessun contenuto,
+Il periodo termina ora il 5 novembre; la scadenza locale senza rete resta attiva. Nessun contenuto,
 account, foto o impostazione del negozio viene sostituito da questa release.
 
 ## Pubblicazione sul server
 
-Usare PULSE-Blog-0.2.7.zip: estrarre sul computer, poi caricare il contenuto della
+Usare PULSE-Blog-0.3.0.zip: estrarre sul computer, poi caricare il contenuto della
 cartella Pulse in https://www.luigipranzo.com/myfile/Pulse/.
-Caricare prima pulse-0.2.7.zip e guide/, poi le firme, infine stable.json e update.json.
-Il pacchetto interno pulse-0.2.7.zip resta compresso. Non modificare i JSON firmati.
+Caricare prima pulse-0.3.0.zip e guide/, poi le firme, infine stable.json e update.json.
+Il pacchetto interno pulse-0.3.0.zip resta compresso. Non modificare i JSON firmati.
 Istruzioni complete: [PUBBLICAZIONE_BLOG.txt](../PUBBLICAZIONE_BLOG.txt).
 
 La guida utente aggiornata è inclusa in guide/ nelle lingue EN, DE e FR.
 Per i Mint configurati esclusivamente su GitHub è necessaria la Release firmata
-v0.2.7: un semplice commit o il solo caricamento su Aruba non aggiornano quel canale.
+v0.3.0: un semplice commit o il solo caricamento su Aruba non aggiornano quel canale.
 
 ## Implementazione
 

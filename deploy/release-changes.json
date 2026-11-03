@@ -1,10 +1,17 @@
 {
-  "features": [],
+  "features": [
+    "Hall of Fame: removal choice, preserved photos, multilingual dedications, gallery and random stories.",
+    "New Hall of Fame entries receive seven days of priority; multiple new entries alternate fairly.",
+    "Two employees of the month can share one award page.",
+    "Carnival decorations with annual Swiss reference dates and optional local date override."
+  ],
   "improvements": [
-    "Package builds now validate extraction using the updater rules.",
-    "One-time activation instructions for immediate update controls on older Mint update services."
+    "Christmas: lights, snow, gifts and a roaming sleigh. Easter: bunnies, eggs, petals and roaming butterflies.",
+    "Hall of Fame uses up to six cards per page and adapts long names and dedications.",
+    "Updated EN/DE/FR help pages and Italian deployment documentation."
   ],
   "fixes": [
-    "Remove the unsupported root-level launcher from the installable ZIP; use deploy/upgrade-mint.sh."
+    "Halloween ends on 5 November inclusive.",
+    "Retain legacy single-winner awards, existing photos, snapshots and accounts without a database schema migration."
   ]
 }

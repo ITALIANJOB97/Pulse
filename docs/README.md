@@ -1,8 +1,14 @@
 # Documentazione PULSE
 
-Versione di riferimento: **0.2.9**, 2 novembre 2026.
+Versione di riferimento: **0.3.0**, 3 novembre 2026.
 
 ## Release e file sul NAS
+
+- [PULSE 0.3.0 su GitHub](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.3.0).
+- [Hall of Fame e due Mitarbeiter del mese](HALL_OF_FAME.md).
+- [Decorazioni e calendario svizzero](DECORAZIONI_STAGIONALI.md).
+- [Novità e testo per il blog](BLOG_0.3.0.md).
+- [Verifiche 0.3.0](VERIFICHE_0.3.0.md).
 
 - [Release corretta v0.2.9](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.2.9).
 - [Abilitare Scarica e installa ora sul Mint](ABILITARE_AGGIORNAMENTO_IMMEDIATO.md).

@@ -110,7 +110,7 @@ function fixture(command){cp.execFileSync(process.env.PULSE_PHP||'php',[path.joi
   assert(await page.getByText('320',{exact:true}).isVisible(),'Manual team result not shown on TV');
   await page.clock.install();
   fixture('available');await page.clock.fastForward(31000);
-  await page.waitForFunction(()=>!document.querySelector('#update-notice').hidden&&document.querySelector('#update-notice').textContent.includes('0.3.0'));
+  await page.waitForFunction(()=>!document.querySelector('#update-notice').hidden&&document.querySelector('#update-notice').textContent.includes('9.0.0'));
   fixture('installed');await page.clock.fastForward(31000);
   await page.waitForFunction(()=>document.querySelector('#update-notice').textContent.includes('Update installed'));
   fixture('clear-updates');

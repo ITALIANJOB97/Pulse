@@ -191,7 +191,7 @@ function initialize(array $data): void {
     @unlink(storage('setup-token'));
 }
 function moduleKeys(): array {
-    return ['spotlight','podium','team','roles','transfers','targets','daily','gallery','motto','tasks'];
+    return ['spotlight','podium','team','roles','transfers','targets','daily','gallery','motto','hall','hall_story','tasks'];
 }
 function employees(bool $activeOnly = false): array {
     return db()->query('SELECT * FROM employees' . ($activeOnly ? ' WHERE active=1' : '') . ' ORDER BY name COLLATE NOCASE,id')->fetchAll();
@@ -213,12 +213,12 @@ function periodFor(string $module, ?DateTimeImmutable $date = null): string {
     return match($module) {
         'daily' => $date->format('Y-m-d'),
         'transfers', 'motto' => $date->format('o-\WW'),
-        'tasks', 'gallery', 'team' => 'all',
+        'tasks', 'gallery', 'team', 'hall', 'hall_story' => 'all',
         default => $date->format('Y-m'),
     };
 }
 function validPeriod(string $module, string $period): bool {
-    if (in_array($module, ['tasks','gallery','team'], true)) return $period === 'all';
+    if (in_array($module, ['tasks','gallery','team','hall','hall_story'], true)) return $period === 'all';
     if ($module === 'daily') {
         $d = DateTimeImmutable::createFromFormat('!Y-m-d', $period);
         return $d && $d->format('Y-m-d') === $period;
@@ -252,7 +252,7 @@ function screenData(?DateTimeImmutable $now = null): array {
         'duration' => setting('duration', 20), 'effects' => setting('effects', true),
         'show_sunday' => setting('show_sunday', true),
         'server_time' => $now->getTimestamp(),
-        'seasonal' => seasonalState($now, setting('seasonal_decorations', true) !== false),
+        'seasonal' => seasonalState($now, setting('seasonal_decorations', true) !== false, setting('carnival_dates', [])),
         'motto_ends_at' => $now->setISODate((int)$now->format('o'), (int)$now->format('W'), 1)->setTime(0,0)->modify('+7 days')->getTimestamp(),
         'pages' => setting('pages', array_fill_keys(moduleKeys(), true)),
         'employees' => employees(true), 'content' => $modules, 'gallery' => $photos,
