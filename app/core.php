@@ -252,6 +252,7 @@ function screenData(?DateTimeImmutable $now = null): array {
         'duration' => setting('duration', 20), 'effects' => setting('effects', true),
         'show_sunday' => setting('show_sunday', true),
         'server_time' => $now->getTimestamp(),
+        'countdowns' => activeCountdowns($now),
         'seasonal' => seasonalState($now, setting('seasonal_decorations', true) !== false, setting('carnival_dates', [])),
         'motto_ends_at' => $now->setISODate((int)$now->format('o'), (int)$now->format('W'), 1)->setTime(0,0)->modify('+7 days')->getTimestamp(),
         'pages' => setting('pages', array_fill_keys(moduleKeys(), true)),

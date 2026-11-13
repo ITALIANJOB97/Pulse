@@ -1,4 +1,17 @@
 'use strict';
+// Expire one-off switches even when Settings remains open across midnight.
+const countdownSettings=document.querySelector('[data-countdown-settings]');
+if(countdownSettings){
+  const received=Date.now(),server=Number(countdownSettings.dataset.serverTime);
+  function expireCountdownSettings(){
+    const now=server+(Date.now()-received)/1000;
+    countdownSettings.querySelectorAll('[data-countdown-expires]').forEach(function(row){if(now>=Number(row.dataset.countdownExpires))row.remove();});
+    if(!countdownSettings.querySelector('[data-countdown-expires]')){countdownSettings.remove();clearInterval(countdownSettingsTimer);}
+  }
+  const countdownSettingsTimer=setInterval(expireCountdownSettings,1000);
+  expireCountdownSettings();
+  document.addEventListener('visibilitychange',expireCountdownSettings);
+}
 document.querySelectorAll('[data-confirm]').forEach(function(button){
   button.addEventListener('click',function(event){if(!window.confirm(button.dataset.confirm))event.preventDefault();});
 });

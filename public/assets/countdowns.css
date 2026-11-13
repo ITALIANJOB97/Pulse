@@ -1,0 +1,30 @@
+/* Bundled artwork, one decoded background at a time. No video or third-party requests. */
+#screen[data-countdown="gta"],#screen[data-countdown="doomsday"]{background:#0d1020;--countdown-accent:#ffb6e3}
+#screen[data-countdown="doomsday"]{--countdown-accent:#b9edaa;background:#080e0c}
+#screen[data-countdown="gta"]::before,#screen[data-countdown="doomsday"]::before{content:"";position:absolute;inset:0;background-image:linear-gradient(180deg,#040611a6 0%,#04061100 22%,#04061133 44%,#080917ed 86%),var(--countdown-image);background-size:cover;background-position:center;pointer-events:none}
+#screen[data-countdown="doomsday"]::before{background-image:linear-gradient(180deg,#020907bb 0%,#02090700 22%,#02090733 44%,#020907f0 86%),var(--countdown-image)}
+#screen[data-countdown="gta"]>header,#screen[data-countdown="gta"]>footer,#screen[data-countdown="doomsday"]>header,#screen[data-countdown="doomsday"]>footer{position:relative;z-index:1;border-color:#ffffff26;background:transparent;text-shadow:0 2px 12px #000b}
+#screen[data-countdown="gta"]>.seasonal-layer,#screen[data-countdown="doomsday"]>.seasonal-layer{visibility:hidden}
+#slide[data-page^="countdown_"]{padding:0 70px 42px}
+.countdown-scene{display:grid;grid-template-columns:minmax(0,1fr) 840px;align-items:end;gap:45px;flex:1;min-height:0;color:#fff}
+.countdown-intro{padding-bottom:12px;text-shadow:0 3px 14px #000b}
+.countdown-kicker{display:inline-block;font-size:19px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--countdown-accent);margin-bottom:18px}
+.countdown-intro h1{margin:0 0 24px;font-size:76px;line-height:1.02;letter-spacing:-3px}
+.countdown-title-gta{display:block;max-width:620px;font-family:"Arial Black",Arial,Helvetica,sans-serif;font-weight:900}
+.countdown-title-gta b{display:inline-block;color:#ffc5e9;font-size:104px;letter-spacing:-8px;line-height:.8;text-shadow:3px 3px 0 #902b79,-1px -1px 0 #fff;vertical-align:baseline;margin-left:9px}
+.countdown-title-doom{display:block;font-family:Georgia,"Times New Roman",serif;font-size:78px;font-weight:900;letter-spacing:-3px;color:#d9ead4;text-shadow:0 2px 0 #345a3d,0 0 36px #80bd6277}
+.countdown-title-doom small{display:block;font-family:Arial,Helvetica,sans-serif;font-size:25px;font-weight:800;letter-spacing:12px;color:#e9f2e6;margin-bottom:13px}
+.countdown-intro p{font-size:23px;line-height:1.5;font-weight:600}
+.countdown-intro p span{color:#e1dde9;font-weight:400}
+.countdown-panel{padding:28px 32px 25px;background:linear-gradient(130deg,#291433e8,#100f23ed);border:1px solid #ffd0ef66;border-radius:24px;box-shadow:0 18px 65px #0007,0 0 50px #ff54c010}
+[data-countdown="doomsday"] .countdown-panel{background:linear-gradient(130deg,#14251ced,#07100bed);border-color:#c4e7b866;border-radius:4px;box-shadow:0 18px 65px #0009,inset 0 0 35px #98d36c0a}
+.countdown-until{font-size:17px;text-transform:uppercase;letter-spacing:3px;color:var(--countdown-accent);font-weight:700}
+.countdown-digits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:15px}
+.countdown-unit{text-align:center;min-width:0;position:relative}
+.countdown-unit+ .countdown-unit:before{content:':' ;position:absolute;left:-12px;top:10px;font-size:54px;font-weight:300;color:var(--countdown-accent);opacity:.5}
+.countdown-unit strong{font-size:105px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-6px;line-height:1.15;display:block;color:#fff}
+.countdown-unit span{display:block;font-size:17px;letter-spacing:1px;text-transform:uppercase;color:#e8d9ed;margin-top:6px}
+[data-countdown="doomsday"] .countdown-unit span{color:#d2e5cf}
+.countdown-line{height:2px;margin-top:23px;background:linear-gradient(90deg,transparent,var(--countdown-accent),transparent);opacity:.8}
+.motion .countdown-scene{animation:reveal .8s ease-out both}
+@media(prefers-reduced-motion:reduce){.motion .countdown-scene{animation:none}}

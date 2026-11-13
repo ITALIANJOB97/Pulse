@@ -23,6 +23,12 @@ FILES = [
     "DIAGNOSI_LINUX_MINT.txt", "AGGIORNAMENTO_LINUX_MINT.txt", "PUBBLICAZIONE_BLOG.txt", ".gitignore", "storage/.gitkeep",
 ]
 EXTENSIONS = {".php", ".json", ".css", ".js", ".cjs", ".sh", ".conf", ".service", ".timer", ".py", ".html", ".txt", ".md", ".key"}
+
+
+def countdown_image(name: str) -> bool:
+    return re.fullmatch(r"public/assets/countdowns/(?:gta|doomsday)-\d{2}\.jpg", name) is not None
+
+
 for folder in ("app", "bin", "config", "deploy", "public", "tests", "docs"):
     for path in sorted((ROOT / folder).rglob("*")):
         if path.is_symlink():
@@ -30,7 +36,7 @@ for folder in ("app", "bin", "config", "deploy", "public", "tests", "docs"):
         relative = path.relative_to(ROOT).as_posix()
         if any(part in {"diagnostica", "__pycache__"} for part in path.relative_to(ROOT).parts):
             continue
-        if path.is_file() and path.suffix in EXTENSIONS and relative != "config/local.php":
+        if path.is_file() and (path.suffix in EXTENSIONS or countdown_image(relative)) and relative != "config/local.php":
             if path.suffix == ".key" and relative != "deploy/release-public.key":
                 raise SystemExit("Unexpected key file; never package private keys")
             FILES.append(relative)
@@ -54,7 +60,7 @@ def build(prefix: str, files: list[str]):
                 path = ROOT / name
                 if path.is_symlink():
                     raise SystemExit(f"Refusing symlink: {path}")
-                data = path.read_text(encoding="utf-8-sig").replace("\r\n", "\n").encode("utf-8")
+                data = path.read_bytes() if countdown_image(name) else path.read_text(encoding="utf-8-sig").replace("\r\n", "\n").encode("utf-8")
                 archive.writestr(entry(name), data)
                 manifest.append(f"{hashlib.sha256(data).hexdigest()}  {name}")
             archive.writestr(entry("CONTENTS.sha256"), ("\n".join(manifest) + "\n").encode("utf-8"))

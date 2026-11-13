@@ -11,6 +11,7 @@ date_default_timezone_set($config['timezone']);
 require __DIR__ . '/core.php';
 require __DIR__ . '/hall.php';
 require __DIR__ . '/seasonal.php';
+require __DIR__ . '/countdowns.php';
 require __DIR__ . '/i18n.php';
 require __DIR__ . '/updates.php';
 require __DIR__ . '/backup.php';

@@ -66,6 +66,7 @@ function handleAction(string $action): void {
             setSetting('show_sunday',isset($_POST['show_sunday']));
             setSetting('seasonal_decorations',isset($_POST['seasonal_decorations']));
             setSetting('carnival_dates',$carnival);
+            if (isset($_POST['countdowns_present'])) setSetting('countdowns', countdownPreferences($_POST['countdowns'] ?? []));
             setSetting('update_auto',isset($_POST['update_auto'])); setSetting('update_hour',$hour);
             if($url!==setting('update_url','')) setSetting('update_state',[]);
             setSetting('update_url',$url); touchRevision(); db()->commit();

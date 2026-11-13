@@ -1,0 +1,412 @@
+{
+  "origin": "Countdown.zip supplied by the project owner, 2026-11-13. Artwork rights remain with respective rights holders; no license is inferred.",
+  "processing": "JPEG, maximum 1920 x 1080, aspect ratio retained, metadata stripped; no generated or retouched artwork.",
+  "images": [
+    {
+      "asset": "gta-01.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_01_landscape.jpg",
+      "source_sha256": "613da4597a6c63da703fd3bc5c82a4ba606d4dc03739ed77fe0b7317d6adc4ab",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "830d96332cbe03f6351cd3279c068c90065351f2b89beadac0ce27befb1a8635"
+    },
+    {
+      "asset": "gta-02.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_01_ultrawide.jpg",
+      "source_sha256": "42ff1a503d082de720a940397bc8d27d8c4272d9d3e3983f56a0a8abaf4a6082",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "1a9f15cfd8a7f427944d0dc71474b96c383368694e7b30d58317ccf708def1d6"
+    },
+    {
+      "asset": "gta-03.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_01_With_Logos_landscape.jpg",
+      "source_sha256": "2dff304ba88ba87d5b770fe4c59caa728fdadeae37c79a3a4ac702477782e455",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "6a4f1df09f7daf1905ea30402aa757e496a28fda47a9a0430a9b3464b04ec6b4"
+    },
+    {
+      "asset": "gta-04.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_02_landscape.jpg",
+      "source_sha256": "f90ef8611677397e9b989c28d41dfa8d542fcce577d339c0a3beab3bc78830cf",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "841717f079487f0ae8c272ae25df2b471ef4795dfbc13caa9caa374055e283ba"
+    },
+    {
+      "asset": "gta-05.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_02_ultrawide.jpg",
+      "source_sha256": "1e7b1dc1ba58e66b2ab248e16b557abf3658d5f91e6c197b688d4c09140b0087",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "f495cdd4852c3d1fd7f9168ef390a0e6ae1086468ea16d0745cacd8cfe39f1d8"
+    },
+    {
+      "asset": "gta-06.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_02_With_Logos_landscape.jpg",
+      "source_sha256": "a3823c3c9da04fb1441a76960c39c08441e6e926f6664876611fb934d74dd6fd",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "aae9d1366545bd172d8902092a0bfea3709641611f205a0ef24d5dd564288ffb"
+    },
+    {
+      "asset": "gta-07.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Beach_landscape.jpg",
+      "source_sha256": "cb6ead2b6ba6f9b3041384f7b94db9133715decf6887130b18ca745d79526c6a",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "1eb946a34f8fe67f91697270d37a230f4b8b2cff74a73864fbe59373ffb7037e"
+    },
+    {
+      "asset": "gta-08.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Beach_ultrawide.jpg",
+      "source_sha256": "6fc141053b844c56157b8da6223f8251544e7b6304d8c6f0b4eabb2ed63c45c1",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "20c8398bd383960aee323b153aae0b6a2d845491a5af58a26c548ce3e2d97caf"
+    },
+    {
+      "asset": "gta-09.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Beach_With_Logos_landscape.jpg",
+      "source_sha256": "acc1085944b8e3fb75597f4004bc40c552ae6e86c4fdbc694c57a5da6985f881",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "8bdf0900d60a6c669d52ba3f5ecb8cafcc5bdc57b7f6dd745d0b78deeebcfcb2"
+    },
+    {
+      "asset": "gta-10.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Motel_landscape.jpg",
+      "source_sha256": "db46ccf7629cb52113d699cc1f8f5efa379b249ee2e82ae9103fbf5b03db6dca",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "78fb199211a0dfba7f7b0de9d5beb89b5db07998a6e5f3ce4d5f54883a6c8daa"
+    },
+    {
+      "asset": "gta-11.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Motel_ultrawide.jpg",
+      "source_sha256": "6d067913d816dad076d3d30ce471486ee7a8d2dc1c3efc7559a81ad9cc39c7db",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "4f3b7308ee634bf721c7c2dbec65a01a4092fd123eb5aa321a2aaf02434bcddf"
+    },
+    {
+      "asset": "gta-12.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Robbery_landscape.jpg",
+      "source_sha256": "93b7d77f6e36d45b2c0f28cc502ce1113f7b44bb623819ffb0e416c4b9d60615",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "40a7d0867f3c776f793b037801145e8ae7e220b3ffdafcdaeeb8d6549819c466"
+    },
+    {
+      "asset": "gta-13.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Robbery_ultrawide.jpg",
+      "source_sha256": "99e8595ff6fd1621d295ef2f2b21ab0135064f0ee91be30a85dd3b63d7beb274",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "e36c13ac20d72eb892573fccd5a0b0253296fd4bf38249ddaeacfd3b2f5184eb"
+    },
+    {
+      "asset": "gta-14.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_and_Lucia_Robbery_With_Logo_landscape.jpg",
+      "source_sha256": "d2f83c04c297860eb19e6d6979b72e974cc5d9e12705103f1c01f20badab24fa",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "4d5e6b5ea21d38db69c46206d3b9e38ae4ff78ead497da60f31b6ffdfd5b6221"
+    },
+    {
+      "asset": "gta-15.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_Lucia_Lock_And_Load_landscape.jpg",
+      "source_sha256": "70ff911e69ddd7464f59885b8dbf03a7cf0214170c0072f79c315255aad38784",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "c938ceb8b561f421f8fe9e6fe2000a3a766ae354eb106f5746b31b3d3ad9e2c3"
+    },
+    {
+      "asset": "gta-16.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_Lucia_Lock_And_Load_ultrawide.jpg",
+      "source_sha256": "80456059de32acf874d48158c595c2d4b32c3b823dc6e6caae1ae546d9768fd3",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "d3c6d4fc4355506ea566774ebaf285b2a4058001bc98401d5f9d722b6ae1a7b4"
+    },
+    {
+      "asset": "gta-17.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_Lucia_Lock_And_Load_With_Logos_landscape.jpg",
+      "source_sha256": "86f7c609d3a06474e60f3f7b0727b1b78981ff659225c5077eb6d6ccaf451503",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "6ff0cdaae911058a1c978e15b180956e1eb6c3f433f14499e64381dd57944eba"
+    },
+    {
+      "asset": "gta-18.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_Lucia_Rooftop_landscape.jpg",
+      "source_sha256": "73be5d427997f180c120c1a98d4ead6a131a671a0c94c66ddfe912199b58429a",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "53a485830f5e5918ad9976b767b29482874ae7bdba7dd25e933e2e95818d8b29"
+    },
+    {
+      "asset": "gta-19.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_Lucia_Rooftop_ultrawide.jpg",
+      "source_sha256": "62c0a83ddc77f89f60f58e05f5c25080d201e9f81382908d4debb485eab50bbd",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "43fc7cabbc95245b6374853b19093b0100529be658ce3cbc1a122997f66e32ec"
+    },
+    {
+      "asset": "gta-20.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Jason_Lucia_Rooftop_With_Logos_landscape.jpg",
+      "source_sha256": "5e5f5314dbb9e82139f10dbdaa865d2e8d37581c30817378113e23d52845224b",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "72db5c80fc78992fdde9b91131af24381a3436565f0d9a319eddcdac8b1e5141"
+    },
+    {
+      "asset": "gta-21.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Official_Cover_Art_landscape.jpg",
+      "source_sha256": "e2e213e7f5163a188cc8430005e02e2b86c397c99b088ae2895e142abcd3ef79",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "e8961030d7eaed143844c064042f6bc028b2d07598c81409e0b8d81619196498"
+    },
+    {
+      "asset": "gta-22.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/Official_Cover_Art_ultrawide.jpg",
+      "source_sha256": "dd0c111c5d691cbf090ad80d748fc497a13a47d3c1674051b50bb58f323c3fea",
+      "original_size": [
+        5120,
+        2160
+      ],
+      "size": [
+        1920,
+        810
+      ],
+      "sha256": "3a885880298d579f6b0b2d96817fa8cb1cd2436aca2d18f87c37047fc2cee449"
+    },
+    {
+      "asset": "gta-23.jpg",
+      "source": "Countdown/GTAVI_Wallpapers/The_Album_Cover_Art_landscape.jpg",
+      "source_sha256": "8d95b54d55a05b2b6ec2762f9d2ad8561dee06bbe4a28d671c264ccadfd10511",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "9e3b161a24a899a7ea6f57f574d638b32835a7663c842057ee8584a0d6e03d17"
+    },
+    {
+      "asset": "doomsday-01.jpg",
+      "source": "Countdown/Doomsday/avengers-doomsday-3840x2160-26919.jpg",
+      "source_sha256": "58cf00f6e47078c81300422313c1cbe181b30ae0cff222fd9e010943a42a7094",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "e52adf43e222ba2d61a06be8bf7ed31fd7043111a5b617b1bb6e998c9284a682"
+    },
+    {
+      "asset": "doomsday-02.jpg",
+      "source": "Countdown/Doomsday/avengers-doomsday-3840x2160-27521.jpg",
+      "source_sha256": "77e4f8ad443d7b558f3370621b0d5999b42308b9b84bb94ecf69ec8ed196ce33",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "04612e034d1b2a1ce969461cc3ee324e028652f67b9680a02228ace749406b1b"
+    },
+    {
+      "asset": "doomsday-03.jpg",
+      "source": "Countdown/Doomsday/avengers-doomsday-3840x2160-27643.jpg",
+      "source_sha256": "cc4af365d27dcb73b2f16e5a573877142dcaa0546f9745ba4e3d890a7b777998",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "f8acd312d88a3abc6ee584b4d894ff15f8983f15adda5526b3468b2781c8b80e"
+    },
+    {
+      "asset": "doomsday-04.jpg",
+      "source": "Countdown/Doomsday/avengers-doomsday-3840x2160-27644.jpg",
+      "source_sha256": "f620bed3d8dfb438ff98b8b52945838218e2b6e5b8516af589d3b3a13b5ebb44",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "d91ecf6b60607d970367a4ad3c8d73d843e803ad13b2af0370f92049b9fad6a6"
+    },
+    {
+      "asset": "doomsday-05.jpg",
+      "source": "Countdown/Doomsday/doctor-doom-3840x2160-26922.jpg",
+      "source_sha256": "a98cb551654019ab34be07bddaeb84ce8867956d339bcdb3c80fe2ddfd8d9172",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "14b98886f737b9f285fd1e57bc4f830af0357e02a4d9c8f8cf49e4e105a6fd88"
+    },
+    {
+      "asset": "doomsday-06.jpg",
+      "source": "Countdown/Doomsday/doctor-doom-movie-3840x2160-27707.jpg",
+      "source_sha256": "9b8ac786e5f8ace793f6541a8ab758a50054d33e164a4cbf7e474b235d8f8d01",
+      "original_size": [
+        3840,
+        2160
+      ],
+      "size": [
+        1920,
+        1080
+      ],
+      "sha256": "5ee1c4ce76635901ae092ea78366939b95354e1d8faa852aa475b0ca4937c32e"
+    }
+  ]
+}

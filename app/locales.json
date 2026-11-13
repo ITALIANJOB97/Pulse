@@ -261,7 +261,19 @@
     "carnival_start": "First day (optional)",
     "carnival_end": "Last day, included (optional)",
     "carnival_hint": "Automatic Swiss reference: Schmutziger Donnerstag through Güdisdienstag (4–9 February 2027). Local Swiss dates vary. Leave both fields blank for automatic dates, or enter a local period for one year. Other years stay automatic.",
-    "carnival_invalid": "Enter both valid dates in the same year, in order, covering no more than 61 days."
+    "carnival_invalid": "Enter both valid dates in the same year, in order, covering no more than 61 days.",
+    "temporary_countdowns": "Temporary countdowns",
+    "countdown_hint": "Choose which countdowns appear on the TV, then save. Each page and its switch disappear at 00:00 Europe/Zurich on its release day.",
+    "countdown_gta": "Grand Theft Auto VI",
+    "countdown_doomsday": "Avengers: Doomsday",
+    "countdown_kicker": "The wait is almost over",
+    "countdown_until": "The countdown is on",
+    "countdown_cinema": "Swiss cinema release",
+    "countdown_launch": "Launch day",
+    "countdown_days": "Days",
+    "countdown_hours": "Hours",
+    "countdown_minutes": "Minutes",
+    "countdown_seconds": "Seconds"
   },
   "de": {
     "setup": "Ersteinrichtung",
@@ -525,7 +537,19 @@
     "carnival_start": "Erster Tag (optional)",
     "carnival_end": "Letzter Tag, inklusive (optional)",
     "carnival_hint": "Automatische Schweizer Referenz: Schmutziger Donnerstag bis Güdisdienstag (4.–9. Februar 2027). Lokale Fasnachtstermine können abweichen. Beide Felder leer lassen oder den lokalen Zeitraum für ein Jahr festlegen. Andere Jahre bleiben automatisch.",
-    "carnival_invalid": "Zwei gültige, aufsteigende Daten im selben Jahr eingeben, für höchstens 61 Tage."
+    "carnival_invalid": "Zwei gültige, aufsteigende Daten im selben Jahr eingeben, für höchstens 61 Tage.",
+    "temporary_countdowns": "Temporäre Countdowns",
+    "countdown_hint": "Countdowns für den TV auswählen und speichern. Die Seite und ihr Schalter verschwinden am Erscheinungstag um 00:00 Uhr (Europe/Zurich).",
+    "countdown_gta": "Grand Theft Auto VI",
+    "countdown_doomsday": "Avengers: Doomsday",
+    "countdown_kicker": "Das Warten hat bald ein Ende",
+    "countdown_until": "Der Countdown läuft",
+    "countdown_cinema": "Kinostart Schweiz",
+    "countdown_launch": "Release-Tag",
+    "countdown_days": "Tage",
+    "countdown_hours": "Stunden",
+    "countdown_minutes": "Minuten",
+    "countdown_seconds": "Sekunden"
   },
   "fr": {
     "setup": "Configuration initiale",
@@ -789,6 +813,18 @@
     "carnival_start": "Premier jour (facultatif)",
     "carnival_end": "Dernier jour inclus (facultatif)",
     "carnival_hint": "Référence suisse automatique : du Schmutziger Donnerstag au Güdisdienstag (4–9 février 2027). Les dates locales varient. Laissez les deux champs vides ou indiquez une période locale pour une année. Les autres années restent automatiques.",
-    "carnival_invalid": "Indiquez deux dates valides dans l’ordre, la même année, sur 61 jours maximum."
+    "carnival_invalid": "Indiquez deux dates valides dans l’ordre, la même année, sur 61 jours maximum.",
+    "temporary_countdowns": "Comptes à rebours temporaires",
+    "countdown_hint": "Choisissez les comptes à rebours affichés sur la TV, puis enregistrez. Chaque page et son interrupteur disparaissent à 00 h 00 (Europe/Zurich) le jour de la sortie.",
+    "countdown_gta": "Grand Theft Auto VI",
+    "countdown_doomsday": "Avengers: Doomsday",
+    "countdown_kicker": "L’attente touche à sa fin",
+    "countdown_until": "Le compte à rebours est lancé",
+    "countdown_cinema": "Sortie cinéma en Suisse",
+    "countdown_launch": "Jour de sortie",
+    "countdown_days": "Jours",
+    "countdown_hours": "Heures",
+    "countdown_minutes": "Minutes",
+    "countdown_seconds": "Secondes"
   }
 }

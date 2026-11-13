@@ -1,17 +1,15 @@
 {
   "features": [
-    "Hall of Fame: removal choice, preserved photos, multilingual dedications, gallery and random stories.",
-    "New Hall of Fame entries receive seven days of priority; multiple new entries alternate fairly.",
-    "Two employees of the month can share one award page.",
-    "Carnival decorations with annual Swiss reference dates and optional local date override."
+    "Temporary countdowns for GTA VI (19 November 2026) and Avengers: Doomsday (Swiss release, 16 December 2026).",
+    "29 bundled backgrounds, dedicated visual themes and live countdowns in EN/DE/FR.",
+    "Independent admin switches disappear with each page at midnight Europe/Zurich on its release date."
   ],
   "improvements": [
-    "Christmas: lights, snow, gifts and a roaming sleigh. Easter: bunnies, eggs, petals and roaming butterflies.",
-    "Hall of Fame uses up to six cards per page and adapts long names and dedications.",
-    "Updated EN/DE/FR help pages and Italian deployment documentation."
+    "Expiry works on an open TV, including paused rotation and interrupted network access.",
+    "No recurring yearly events or countdowns in historical snapshots.",
+    "Optimized local images and updated EN/DE/FR guides; existing data and accounts preserved."
   ],
   "fixes": [
-    "Halloween ends on 5 November inclusive.",
-    "Retain legacy single-winner awards, existing photos, snapshots and accounts without a database schema migration."
+    "Release builder preserves JPEG bytes and verifies package checksums."
   ]
 }

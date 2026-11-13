@@ -1,0 +1,35 @@
+{
+  "gta": [
+    "/assets/countdowns/gta-01.jpg",
+    "/assets/countdowns/gta-02.jpg",
+    "/assets/countdowns/gta-03.jpg",
+    "/assets/countdowns/gta-04.jpg",
+    "/assets/countdowns/gta-05.jpg",
+    "/assets/countdowns/gta-06.jpg",
+    "/assets/countdowns/gta-07.jpg",
+    "/assets/countdowns/gta-08.jpg",
+    "/assets/countdowns/gta-09.jpg",
+    "/assets/countdowns/gta-10.jpg",
+    "/assets/countdowns/gta-11.jpg",
+    "/assets/countdowns/gta-12.jpg",
+    "/assets/countdowns/gta-13.jpg",
+    "/assets/countdowns/gta-14.jpg",
+    "/assets/countdowns/gta-15.jpg",
+    "/assets/countdowns/gta-16.jpg",
+    "/assets/countdowns/gta-17.jpg",
+    "/assets/countdowns/gta-18.jpg",
+    "/assets/countdowns/gta-19.jpg",
+    "/assets/countdowns/gta-20.jpg",
+    "/assets/countdowns/gta-21.jpg",
+    "/assets/countdowns/gta-22.jpg",
+    "/assets/countdowns/gta-23.jpg"
+  ],
+  "doomsday": [
+    "/assets/countdowns/doomsday-01.jpg",
+    "/assets/countdowns/doomsday-02.jpg",
+    "/assets/countdowns/doomsday-03.jpg",
+    "/assets/countdowns/doomsday-04.jpg",
+    "/assets/countdowns/doomsday-05.jpg",
+    "/assets/countdowns/doomsday-06.jpg"
+  ]
+}

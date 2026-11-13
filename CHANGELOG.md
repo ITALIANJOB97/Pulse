@@ -1,3 +1,13 @@
+## 0.3.1 — 2026-11-13
+
+- Countdown temporanei GTA VI (19 novembre 2026) e Avengers: Doomsday (16 dicembre 2026, uscita svizzera).
+- 23 sfondi GTA VI e 6 Doomsday forniti dal proprietario del progetto, ottimizzati fino a 1920 × 1080 senza ritoccare l’illustrazione. Selezione casuale senza ripetizioni immediate quando possibile.
+- Temi rosa/viola e verde scuro, giorni/ore/minuti/secondi e data in EN/DE/FR. Nessun caricamento di immagini da servizi esterni.
+- Due interruttori indipendenti in Impostazioni. Alla mezzanotte Europe/Zurich del giorno d’uscita spariscono pagina e controllo; nessuna ricorrenza annuale, nessun countdown negli archivi.
+- Scadenza controllata anche dalla TV aperta, in pausa o senza rete; rimozione al ritorno da una scheda sospesa. Le decorazioni stagionali non coprono le pagine countdown.
+- Packaging JPEG binario con checksum, senza modificare il validatore dei sistemi già installati. Database, utenti, foto e storico invariati.
+- Guide e documentazione aggiornate.
+
 ## 0.2.9 — 2026-11-02
 - Corretto il pacchetto 0.2.8: il launcher nella radice non era ammesso dal validatore dei servizi già installati. Il pacchetto torna a usare deploy/upgrade-mint.sh, senza allargare i percorsi autorizzati.
 - La creazione dello ZIP ora esegue anche il validatore di estrazione dell’updater: un pacchetto rifiutato non viene prodotto come release installabile.
