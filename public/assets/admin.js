@@ -15,6 +15,20 @@ if(countdownSettings){
 document.querySelectorAll('[data-confirm]').forEach(function(button){
   button.addEventListener('click',function(event){if(!window.confirm(button.dataset.confirm))event.preventDefault();});
 });
+const countdownManager=document.querySelector('[data-countdown-manager]');
+if(countdownManager){
+  const received=Date.now(),server=Number(countdownManager.dataset.serverTime);
+  function expireManagedCountdowns(){
+    const now=server+(Date.now()-received)/1000;
+    countdownManager.querySelectorAll('[data-countdown-card]').forEach(function(card){
+      if(now<Number(card.dataset.endsAt))return;
+      const toggle=card.querySelector('[data-countdown-toggle]');if(toggle)toggle.remove();
+      card.querySelector('[data-countdown-state]').textContent=countdownManager.dataset.expiredLabel;
+    });
+  }
+  setInterval(expireManagedCountdowns,1000);expireManagedCountdowns();
+  document.addEventListener('visibilitychange',expireManagedCountdowns);
+}
 const wizard=document.querySelector('[data-wizard]');
 if(wizard){
   const steps=Array.from(wizard.querySelectorAll('[data-step]'));

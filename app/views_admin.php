@@ -1,9 +1,10 @@
 <?php
 declare(strict_types=1);
+require_once __DIR__.'/views_countdowns.php';
 function adminOverview(): void {
     echo '<section class="welcome-banner"><span class="eyebrow">PULSE '.e(version()).'</span><h2>'.e(t('ready')).'</h2><p>'.e(t('ready_detail')).'</p><a class="button primary" href="/display" target="_blank" rel="noopener">'.e(t('open_tv')).' ↗</a></section><p class="muted">'.e(t('no_fake_data')).'</p><div class="module-grid">';
     foreach(moduleKeys() as $i=>$module)echo '<a class="module-card" href="/admin?tab='.($module==='team'?'employees':($module==='gallery'?'gallery':(in_array($module,['hall','hall_story'],true)?'hall':'content&module='.$module))).'"><span class="module-index">'.str_pad((string)($i+1),2,'0',STR_PAD_LEFT).'</span><h3>'.e(t($module)).'</h3><span>↗</span></a>';
-    echo '</div>';
+    echo '<a class="module-card" href="/admin?tab=countdowns"><span class="module-index">'.str_pad((string)(count(moduleKeys())+1),2,'0',STR_PAD_LEFT).'</span><h3>'.e(t('countdowns')).'</h3><span>↗</span></a></div>';
 }
 function adminEmployees(): void {
     if(isset($_GET['remove'])){adminEmployeeDeparture((int)$_GET['remove']);return;}

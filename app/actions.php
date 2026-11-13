@@ -43,6 +43,10 @@ function handleAction(string $action): void {
         touchRevision();
     } elseif (in_array($action,['employee_archive','hall_save','hall_delete'],true)) {
         hallAction($action);
+    } elseif (in_array($action,['countdown_save','countdown_toggle','countdown_delete'],true)) {
+        try { customCountdownAction($action); }
+        catch (DomainException $error) { if ($action === 'countdown_save') rememberCountdownForm(); throw $error; }
+        unset($_SESSION['countdown_form']);
     } elseif ($action==='employee_delete') {
         db()->prepare('DELETE FROM employees WHERE id=?')->execute([employeeId($_POST['id']??0)]); touchRevision();
     } elseif ($action==='gallery_add') {
@@ -66,7 +70,7 @@ function handleAction(string $action): void {
             setSetting('show_sunday',isset($_POST['show_sunday']));
             setSetting('seasonal_decorations',isset($_POST['seasonal_decorations']));
             setSetting('carnival_dates',$carnival);
-            if (isset($_POST['countdowns_present'])) setSetting('countdowns', countdownPreferences($_POST['countdowns'] ?? []));
+            if (isset($_POST['countdowns_present'])) setSetting('countdowns', countdownPreferences($_POST['countdowns'] ?? [], null, is_array($_POST['countdown_ids'] ?? null) ? $_POST['countdown_ids'] : ['gta','doomsday']));
             setSetting('update_auto',isset($_POST['update_auto'])); setSetting('update_hour',$hour);
             if($url!==setting('update_url','')) setSetting('update_state',[]);
             setSetting('update_url',$url); touchRevision(); db()->commit();

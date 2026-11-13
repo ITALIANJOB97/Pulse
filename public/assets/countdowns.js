@@ -3,7 +3,7 @@
   function visible(data,now){
     if(data.archive)return [];
     return (Array.isArray(data.countdowns)?data.countdowns:[]).filter(function(event){
-      return ['gta','doomsday'].includes(event.id)&&event.enabled!==false&&Number.isFinite(event.ends_at)&&now<event.ends_at;
+      return (['gta','doomsday'].includes(event.id)||/^custom_[a-f0-9]{16}$/.test(event.id))&&event.enabled!==false&&Number.isFinite(event.ends_at)&&now<event.ends_at;
     });
   }
   function parts(end,now){
@@ -12,9 +12,9 @@
   }
   function signature(data,now){return visible(data,now).map(function(e){return e.id;}).join(',');}
   function createBackgroundSelector(random){
-    random=random||Math.random;const states={};
+    random=random||Math.random;const states=Object.create(null);
     return function(event){
-      const images=(event.images||[]).filter(function(path){return /^\/assets\/countdowns\/(gta|doomsday)-\d{2}\.jpg$/.test(path);});
+      const images=(event.images||[]).filter(function(path){return /^\/assets\/countdowns\/(gta|doomsday)-\d{2}\.jpg$/.test(path)||(/^custom_[a-f0-9]{16}$/.test(event.id)&&/^\/media\?id=[1-9]\d*$/.test(path));});
       if(!images.length)return '';
       const fingerprint=images.join('|');let state=states[event.id];
       if(!state||state.fingerprint!==fingerprint)state=states[event.id]={fingerprint:fingerprint,bag:[],last:''};

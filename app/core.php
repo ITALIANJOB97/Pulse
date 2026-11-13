@@ -287,7 +287,8 @@ function uploadImage(string $field, string $kind, string $label): ?int {
     if (!imagejpeg($out, storage('media/' . $filename), 86)) throw new RuntimeException('Image could not be saved.');
     @chmod(storage('media/' . $filename), 0640);
     $q = db()->prepare('INSERT INTO media(filename,label,kind,created_at) VALUES(?,?,?,?)');
-    $q->execute([$filename, $label, $kind, gmdate('c')]);
+    try { $q->execute([$filename, $label, $kind, gmdate('c')]); }
+    catch (Throwable $error) { @unlink(storage('media/'.$filename)); throw $error; }
     return (int)db()->lastInsertId();
 }
 function mediaFile(int $id): ?string {

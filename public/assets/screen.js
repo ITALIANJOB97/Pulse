@@ -55,9 +55,12 @@
     const key=slide.key,c=data.content[key]||[];
     if(slide.event){
       const event=slide.event;
-      const date=new Intl.DateTimeFormat(data.language,{day:'numeric',month:'long',year:'numeric',timeZone:data.timezone}).format(new Date(event.ends_at*1000));
-      const title=event.id==='gta'?'<span class="countdown-title-gta">grand theft auto <b>VI</b></span>':'<span class="countdown-title-doom"><small>AVENGERS</small>DOOMSDAY</span>';
-      return '<section class="countdown-scene" aria-label="'+esc(event.title)+'"><div class="countdown-intro"><span class="countdown-kicker">'+esc(label('countdown_kicker'))+'</span><h1>'+title+'</h1><p>'+esc(date)+' <span>· '+esc(label(event.id==='doomsday'?'countdown_cinema':'countdown_launch'))+'</span></p></div><div class="countdown-panel"><span class="countdown-until">'+esc(label('countdown_until'))+'</span><div class="countdown-digits" role="timer" aria-live="off">'+['days','hours','minutes','seconds'].map(function(unit,i){return '<div class="countdown-unit"><strong data-countdown-unit="'+i+'">00</strong><span>'+esc(label('countdown_'+unit))+'</span></div>';}).join('')+'</div><div class="countdown-line" aria-hidden="true"></div></div></section>';
+      const custom=event.kind==='custom';
+      const dateOptions={day:'numeric',month:'long',year:'numeric',timeZone:data.timezone};
+      if(custom)Object.assign(dateOptions,{hour:'2-digit',minute:'2-digit',timeZoneName:'short'});
+      const date=new Intl.DateTimeFormat(data.language,dateOptions).format(new Date(event.ends_at*1000));
+      const title=custom?'<span class="countdown-title-custom">'+esc(event.title)+'</span>':event.id==='gta'?'<span class="countdown-title-gta">grand theft auto <b>VI</b></span>':'<span class="countdown-title-doom"><small>AVENGERS</small>DOOMSDAY</span>';
+      return '<section class="countdown-scene" aria-label="'+esc(event.title)+'"><div class="countdown-intro"><span class="countdown-kicker">'+esc(label(custom?'countdown_team_kicker':'countdown_kicker'))+'</span><h1>'+title+'</h1>'+(custom&&event.caption?'<p class="countdown-caption">'+esc(event.caption)+'</p>':'')+'<p class="countdown-date">'+esc(date)+(custom?'':' <span>· '+esc(label(event.id==='doomsday'?'countdown_cinema':'countdown_launch'))+'</span>')+'</p></div><div class="countdown-panel"><span class="countdown-until">'+esc(label('countdown_until'))+'</span><div class="countdown-digits" role="timer" aria-live="off">'+['days','hours','minutes','seconds'].map(function(unit,i){return '<div class="countdown-unit"><strong data-countdown-unit="'+i+'">00</strong><span>'+esc(label('countdown_'+unit))+'</span></div>';}).join('')+'</div><div class="countdown-line" aria-hidden="true"></div></div></section>';
     }
     if(key==='spotlight'){
       const winners=PulsePeople.awardPeople(c,data.employees);if(!winners.length)return empty();
@@ -179,6 +182,8 @@
     return '<div class="hall-heading"><svg class="hall-crest" viewBox="0 0 180 90" aria-hidden="true"><g fill="#f3d768" stroke="#f3d768" stroke-width="1">'+branch+'<g transform="translate(180 0) scale(-1 1)">'+branch+'</g></g><path d="M90 21L97 41L118 41L101 54L108 75L90 62L72 75L79 54L62 41L83 41Z" fill="#fff0b4"/></svg><div><span>'+esc(label(slide.key==='hall_story'?'hall_legacy':'hall_subtitle'))+'</span><h1>HALL OF FAME</h1></div>'+(slide.parts>1?'<small>'+slide.part+' / '+slide.parts+'</small>':'')+'</div>';
   }
   function fitPeople(){
+    const countdownTitle=main.querySelector('.countdown-title-custom');
+    if(countdownTitle)for(let size=72;size>=36;size-=2){countdownTitle.style.fontSize=size+'px';if(countdownTitle.scrollHeight<=230)break;}
     const featureName=main.querySelector('.hall-feature h2');
     if(featureName)for(let size=67;size>=28;size-=3){featureName.style.fontSize=size+'px';if(featureName.scrollHeight<=featureName.clientHeight+1)break;}
     const quote=main.querySelector('.hall-quote'),text=quote&&quote.querySelector('p');
@@ -195,7 +200,7 @@
     document.documentElement.lang=data.language;
     document.getElementById('store').textContent=data.store;
     main.dataset.page=slide.key;
-    root.dataset.countdown=slide.event?slide.event.id:'';
+    root.dataset.countdown=slide.event?(slide.event.kind==='custom'?'custom':slide.event.id):'';
     const background=slide.event?selectBackground(slide.event):'';
     root.style.setProperty('--countdown-image',background?'url("'+background+'")':'none');
     main.classList.toggle('motion',Boolean(data.effects)&&!reduced.matches);
@@ -203,7 +208,7 @@
     const period=['transfers','motto'].includes(slide.key)?data.week:slide.key==='daily'?data.date:data.month;
     document.getElementById('period').textContent=(data.archive?label('archive')+' · ':'')+period;
     document.getElementById('page-count').textContent=String(index+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
-    pageNav.innerHTML=slides.map(function(s,i){return '<button type="button" data-page="'+i+'" aria-label="'+esc(label(s.key))+' '+s.part+'" aria-current="'+(i===index)+'"></button>';}).join('');
+    pageNav.innerHTML=slides.map(function(s,i){return '<button type="button" data-page="'+i+'" aria-label="'+esc(s.event?s.event.title:label(s.key))+' '+s.part+'" aria-current="'+(i===index)+'"></button>';}).join('');
     fitTeam();fitMotto();fitPeople();celebrate(slide.key);schedule();seasonal.tick();clock();
   }
   function schedule(){
@@ -222,7 +227,7 @@
       const next=slides.findIndex(function(s){return s.key===previous.key&&s.part===previous.part;});index=next>=0?next:Math.min(index,slides.length-1);show();return;
     }
     const event=slides[index]&&slides[index].event;
-    if(event){const parts=PulseCountdowns.parts(event.ends_at,seasonal.now());main.querySelectorAll('[data-countdown-unit]').forEach(function(el,i){el.textContent=String(parts[i]).padStart(2,'0');});}
+    if(event){const parts=PulseCountdowns.parts(event.ends_at,seasonal.now());main.querySelectorAll('[data-countdown-unit]').forEach(function(el,i){el.textContent=String(parts[i]).padStart(2,'0');el.dataset.digits=el.textContent.length;});}
     const visible=PulseSeasonal.mottoVisible(data,seasonal.now());
     if(visible!==mottoWasVisible){mottoWasVisible=visible;slides=buildSlides();index=0;show();return;}
     document.getElementById('clock').textContent=new Intl.DateTimeFormat(data.language,{hour:'2-digit',minute:'2-digit',timeZone:data.timezone}).format(new Date());

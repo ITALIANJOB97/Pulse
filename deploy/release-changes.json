@@ -1,15 +1,17 @@
 {
   "features": [
-    "Temporary countdowns for GTA VI (19 November 2026) and Avengers: Doomsday (Swiss release, 16 December 2026).",
-    "29 bundled backgrounds, dedicated visual themes and live countdowns in EN/DE/FR.",
-    "Independent admin switches disappear with each page at midnight Europe/Zurich on its release date."
+    "Admin-created countdowns with uploaded image, title, caption, date and optional local time.",
+    "Create, edit, show, hide and delete up to 20 custom countdowns.",
+    "Expired events disappear from TV but remain available for administration and reuse."
   ],
   "improvements": [
-    "Expiry works on an open TV, including paused rotation and interrupted network access.",
-    "No recurring yearly events or countdowns in historical snapshots.",
-    "Optimized local images and updated EN/DE/FR guides; existing data and accounts preserved."
+    "Adaptable blue TV theme, long text and five-digit day counts.",
+    "Retain form text after validation errors and preserve unseen events when an older Settings form is saved.",
+    "Custom data and images included in existing backups; restore verified.",
+    "EN/DE/FR user guides and deployment documentation updated."
   ],
   "fixes": [
-    "Release builder preserves JPEG bytes and verifies package checksums."
+    "Clean up newly generated image files when a database write fails.",
+    "Preserve image history, existing themed countdowns and accounts without a schema migration."
   ]
 }

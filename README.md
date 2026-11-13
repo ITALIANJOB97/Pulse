@@ -1,4 +1,6 @@
-# PULSE 0.3.1
+# PULSE 0.3.2
+
+Countdown personalizzati: crea e modifica fino a 20 eventi con immagine, titolo, didascalia, data e ora. Visibilità indipendente sulla TV, scadenza automatica e gestione degli scaduti nell’amministrazione. [Guida ai countdown personalizzati](docs/COUNTDOWN_PERSONALIZZATI.md).
 
 Due countdown temporanei per GTA VI (19 novembre 2026) e Avengers: Doomsday (16 dicembre 2026 in Svizzera), con 29 sfondi locali, temi dedicati e controlli indipendenti. Pagine e interruttori spariscono alla scadenza. [Guida ai countdown](docs/COUNTDOWN_TEMPORANEI.md).
 
@@ -10,7 +12,7 @@ Novità: guida DE/EN/FR, domenica opzionale, aggiornamenti notturni firmati con 
 
 # PULSE · Dietikon
 
-Applicazione PHP 0.3.1 per TV orizzontale Full HD, con gestione da browser.
+Applicazione PHP 0.3.2 per TV orizzontale Full HD, con gestione da browser.
 Linux Mint 22.x amd64 con PHP 8.3; Raspberry Pi OS 64 bit con PHP 8.4+.
 
 ## Aggiornamenti: protocollo update.json e compatibilità
@@ -127,7 +129,7 @@ la verifica sul dispositivo reale.
 
 ## Pacchetto Linux Mint
 
-Versione 0.3.1, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
+Versione 0.3.2, Mint 22.x amd64. Per rigenerare lo ZIP su una workstation:
 
     python bin/build-linux-mint-zip.py
 

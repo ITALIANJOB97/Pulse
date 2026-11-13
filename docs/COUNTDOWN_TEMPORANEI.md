@@ -1,5 +1,7 @@
 # Countdown temporanei · PULSE 0.3.1
 
+Dalla versione 0.3.2 è disponibile anche la [creazione di countdown personalizzati](COUNTDOWN_PERSONALIZZATI.md). Questa pagina descrive i due eventi a tema inclusi nell’app.
+
 Due pagine TV dedicate a Grand Theft Auto VI e Avengers: Doomsday, disponibili solo prima della rispettiva uscita. Non modificano i contenuti, i premi o il calendario delle altre pagine.
 
 ## Date e fonti

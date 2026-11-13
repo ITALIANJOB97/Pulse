@@ -21,3 +21,14 @@ assert.equal(choose({id:'gta',images:['https://example.invalid/pixel','/assets/c
 assert.equal(choose({id:'gta',images:[]}), '');
 assert.equal(choose({id:'gta',images:['/assets/countdowns/../../secret.jpg']}), '');
 console.log('15 countdown runtime checks passed.');
+const custom={id:'custom_0123456789abcdef',kind:'custom',title:'Team <event>',caption:'Our next moment',ends_at:300,enabled:true,images:['/media?id=42']};
+assert.equal(countdown.signature({countdowns:[...events,custom]},201),custom.id);
+assert.equal(countdown.signature({countdowns:[custom]},300),'');
+assert.equal(choose(custom),'/media?id=42');
+assert.equal(choose({...custom,images:['https://example.invalid/image.jpg','/media?id=42&other=1','/media?id=0']}),'');
+assert.equal(countdown.signature({countdowns:[{...custom,id:'custom_<script>'}]},0),'');
+assert.equal(countdown.signature({countdowns:[{...custom,enabled:false}]},0),'');
+assert.deepEqual(countdown.parts(20000*86400+61,0),[20000,0,1,1]);
+assert.deepEqual(countdown.visible({countdowns:[custom],archive:true},0),[]);
+assert.equal(choose({...custom,images:['/media?id=43']}),'/media?id=43','Replacement photo takes effect without stale selection state');
+console.log('9 custom countdown runtime checks passed.');

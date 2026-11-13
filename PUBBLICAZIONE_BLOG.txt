@@ -1,31 +1,30 @@
-PULSE 0.3.1 — FILE DA CARICARE SUL BLOG
+PULSE 0.3.2 — FILE DA CARICARE SUL BLOG
 ======================================
 NOVITÀ
-Due countdown temporanei per GTA VI (19.11.2026) e Avengers: Doomsday
-(16.12.2026, Svizzera). 29 sfondi ottimizzati, temi dedicati e interruttori
-indipendenti nelle Impostazioni. Pagine e controlli spariscono a mezzanotte
-Europe/Zurich del giorno di uscita, anche dalla TV già aperta.
+Nuovo menu Countdowns: crea, modifica, mostra, nascondi o elimina i tuoi
+countdown con immagine, titolo, didascalia, data e ora facoltativa.
+Le pagine scadute spariscono dalla TV e restano gestibili dall’admin.
 Guide EN/DE/FR aggiornate. Dati e storico conservati, nessuna migrazione.
 
 CARICAMENTO SU ARUBA
-1. Estrai PULSE-Blog-0.3.1.zip sul tuo computer.
+1. Estrai PULSE-Blog-0.3.2.zip sul tuo computer.
 2. Apri sul hosting /myfile/Pulse/ del dominio www.luigipranzo.com.
 3. Carica il CONTENUTO della cartella Pulse estratta:
-       pulse-0.3.1.zip
+       pulse-0.3.2.zip
        stable.json
        stable.json.sig
        update.json
        update.json.sig
        guide/ (sovrascrivi i file della guida esistente)
-4. Carica prima pulse-0.3.1.zip e guide/, poi i due file .sig.
+4. Carica prima pulse-0.3.2.zip e guide/, poi i due file .sig.
    Carica stable.json e update.json PER ULTIMI, sovrascrivendo i precedenti.
-   pulse-0.3.1.zip deve RESTARE COMPRESSO sul sito. Non creare Pulse/Pulse/
-   e non caricare soltanto lo ZIP esterno PULSE-Blog-0.3.1.zip.
-5. Apri entrambi i JSON e verifica versione 0.3.1. Sono firmati: non modificarli.
+   pulse-0.3.2.zip deve RESTARE COMPRESSO sul sito. Non creare Pulse/Pulse/
+   e non caricare soltanto lo ZIP esterno PULSE-Blog-0.3.2.zip.
+5. Apri entrambi i JSON e verifica versione 0.3.2. Sono firmati: non modificarli.
    Escludi manifest e rispettive firme dalla cache/CDN e svuota la cache.
 
 URL FINALI
-https://www.luigipranzo.com/myfile/Pulse/pulse-0.3.1.zip
+https://www.luigipranzo.com/myfile/Pulse/pulse-0.3.2.zip
 https://www.luigipranzo.com/myfile/Pulse/stable.json
 https://www.luigipranzo.com/myfile/Pulse/stable.json.sig
 https://www.luigipranzo.com/myfile/Pulse/update.json
@@ -35,7 +34,7 @@ Accesso diretto senza login o redirect www/non-www.
 
 INSTALLARE SUBITO, SENZA ASPETTARE LA NOTTE
 Con servizio v4: amministrazione > Updates > Controlla aggiornamenti >
-Scarica e installa ora, poi conferma la 0.3.1. Il comando supera la finestra
+Scarica e installa ora, poi conferma la 0.3.2. Il comando supera la finestra
 notturna, il rinvio precedente e l'impostazione automatica disattivata.
 Se il pulsante manca o il servizio è vecchio/guasto: scarica lo ZIP programma
 dal blog, estrailo sul Mint, apri il terminale nella cartella estratta e lancia:

@@ -1,3 +1,12 @@
+## 0.3.2 — 2026-11-13
+
+- Nuovo menu Countdowns per creare e modificare fino a 20 countdown personali con immagine, titolo (100 caratteri), didascalia (280), data e ora facoltativa, nel fuso Europe/Zurich.
+- Comandi indipendenti per mostrare/nascondere sulla TV ed eliminare. Gli scaduti spariscono dalla TV e dai controlli di visibilità; restano consultabili e modificabili nell’amministrazione.
+- Immagini JPEG/PNG/WebP caricate con la normalizzazione esistente, sfondo a schermo intero, tema blu e testo adattabile; supporto a conteggi fino a cinque cifre per i giorni.
+- Valori inseriti conservati quando la validazione fallisce. Date inesistenti, passate o saltate dal cambio d’ora rifiutate. Una vecchia pagina Impostazioni non disattiva countdown creati nel frattempo.
+- Foto precedenti conservate per storico e backup; salvataggi atomici e pulizia delle nuove immagini in caso di errore. Test di backup e ripristino con metadata, immagini, utenti e team.
+- Schema database invariato; countdown GTA VI e Doomsday e preferenze esistenti preservati. Guide EN/DE/FR e Docs aggiornati.
+
 ## 0.3.1 — 2026-11-13
 
 - Countdown temporanei GTA VI (19 novembre 2026) e Avengers: Doomsday (16 dicembre 2026, uscita svizzera).

@@ -79,7 +79,7 @@ function renderDisplay(array $data,bool $archive=false): void {
 }
 function renderAdmin(): void {
     require __DIR__.'/views_admin.php';
-    $tabs=['overview','content','employees','hall','gallery','settings','administrators','backups','updates'];
+    $tabs=['overview','content','employees','hall','gallery','countdowns','settings','administrators','backups','updates'];
     $tab=is_string($_GET['tab']??null)?$_GET['tab']:'overview';if(!in_array($tab,$tabs,true))$tab='overview';
     pageStart(t($tab),'admin-page');
     echo '<div data-update-background data-csrf="'.e($_SESSION['csrf']).'" hidden></div>';
@@ -91,7 +91,7 @@ function renderAdmin(): void {
     if($update['available']&&$tab!=='updates')echo '<a class="notice update-link" href="/admin?tab=updates">'.e(t('update_available')).' · v'.e($update['version']).' →</a>';
     match($tab){
         'overview'=>adminOverview(),'content'=>adminContent(),'employees'=>adminEmployees(),'hall'=>adminHall(),'gallery'=>adminGallery(),
-        'settings'=>adminSettings(),'administrators'=>adminAccounts(),'backups'=>adminBackups(),'updates'=>adminUpdates(),
+        'countdowns'=>adminCountdowns(),'settings'=>adminSettings(),'administrators'=>adminAccounts(),'backups'=>adminBackups(),'updates'=>adminUpdates(),
     };
     echo '</main></div>';pageEnd();
 }

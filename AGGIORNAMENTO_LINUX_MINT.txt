@@ -1,10 +1,10 @@
-PULSE 0.3.1 — AGGIORNARE SUBITO UN MINT ESISTENTE
+PULSE 0.3.2 — AGGIORNARE SUBITO UN MINT ESISTENTE
 ================================================
-Countdown temporanei GTA VI e Doomsday, sfondi e controlli amministratore.
+Countdown personalizzati con immagine, titolo, didascalia, data e ora.
 Conserva dati, utenti, foto e storico senza migrazioni dello schema.
 
 ABILITARE IL PULSANTE CON DASHBOARD 0.2.7 E SERVIZIO PRECEDENTE
-Dopo avere estratto la release 0.3.1 sul Mint, aprire il terminale nella
+Dopo avere estratto la release 0.3.2 sul Mint, aprire il terminale nella
 cartella contenente deploy/ ed eseguire, per il canale GitHub:
     sudo python3 deploy/updater.py bootstrap --source "$PWD" --channel github
 Attendere il termine senza errori, ricaricare Updates e premere Controlla
@@ -14,7 +14,7 @@ Questo aggiorna solo il servizio. Dettagli: docs/ABILITARE_AGGIORNAMENTO_IMMEDIA
 SE È GIÀ PRESENTE IL SERVIZIO V4
 1. Pubblica la release sulla fonte usata dal Mint (blog o GitHub).
 2. Apri amministrazione > Updates e premi Controlla aggiornamenti.
-3. Verifica la versione 0.3.1 e premi Scarica e installa ora (nella lingua
+3. Verifica la versione 0.3.2 e premi Scarica e installa ora (nella lingua
    selezionata). Conferma: il servizio scarica e installa anche di giorno,
    con installazione automatica disattivata o rinvio precedente.
 4. Attendi il backup, la verifica e la conferma di versione installata.
@@ -26,10 +26,10 @@ SE IL PULSANTE MANCA O IL SERVIZIO È PRECEDENTE/GUASTO
 Il caricamento sul blog non sostituisce il servizio root. Per aggiornare ORA,
 senza attendere la notte, sul PC Mint:
 1. Scarica il pacchetto pubblicato:
-   https://www.luigipranzo.com/myfile/Pulse/pulse-0.3.1.zip
-   Oppure trasferisci via USB PULSE-Dietikon-Linux-Mint-0.3.1.zip.
+   https://www.luigipranzo.com/myfile/Pulse/pulse-0.3.2.zip
+   Oppure trasferisci via USB PULSE-Dietikon-Linux-Mint-0.3.2.zip.
 2. Estrai lo ZIP e apri il terminale nella cartella
-   PULSE-Dietikon-Linux-Mint-0.3.1 (contiene deploy/).
+   PULSE-Dietikon-Linux-Mint-0.3.2 (contiene deploy/).
 3. Per usare il blog esegui:
        sudo bash deploy/upgrade-mint.sh --channel blog
    Per mantenere il canale GitHub esegui invece:
@@ -37,12 +37,12 @@ senza attendere la notte, sul PC Mint:
    Scegli lo stesso canale indicato nelle impostazioni del Mint.
 4. Il comando aggiorna subito l'applicazione e installa il servizio v4.
    Apri http://127.0.0.1:8080/admin con le credenziali esistenti.
-5. Controlla la versione 0.3.1, verifica team e foto esistenti, quindi apri
+5. Controlla la versione 0.3.2, verifica team e foto esistenti, quindi apri
    Hall of Fame e il modulo Mitarbeiter del mese. Il rapporto è in diagnostica/ accanto al
    pacchetto estratto. I futuri aggiornamenti usano Scarica e installa ora.
 Non eseguire install-mint.sh, non ripetere setup e non cancellare i dati.
 
-SE 0.3.1 È GIÀ INSTALLATA MA MANCA ANCORA IL SERVIZIO V4
+SE 0.3.2 È GIÀ INSTALLATA MA MANCA ANCORA IL SERVIZIO V4
 L'installazione rifiuta la stessa versione per evitare reinstallazioni.
 Dalla release estratta, solo per attivare il servizio aggiornamenti:
     sudo python3 deploy/updater.py bootstrap --source "$PWD" --channel blog
