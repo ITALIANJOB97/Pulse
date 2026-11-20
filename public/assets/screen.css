@@ -59,3 +59,51 @@
 /* Seasonal celebrations keep motion on transforms/opacity and stop with TV pause. */
 .season-roamer{left:0;top:0;transform:translate3d(var(--rest-x),0,0);opacity:.85;will-change:transform}.season-lights{position:absolute;top:0;left:0;width:1920px;height:42px}.season-light{animation:season-twinkle 4s var(--delay,0s) ease-in-out infinite alternate}.season-snow{opacity:.55}.season-petal{opacity:.5}.season-confetti{position:absolute;width:8px;height:15px;border-radius:2px;opacity:.65}.season-confetti:nth-child(3n){width:7px;height:7px;border-radius:50%}.season-bunny{animation:season-bunny 9s var(--delay,0s) ease-in-out infinite}.season-still .season-bunny{animation:none}.seasonal-layer .season-fall{animation-name:season-drift-fall}@keyframes season-drift-fall{0%{transform:translate3d(0,-40px,0) rotate(0);opacity:0}8%{opacity:.6}85%{opacity:.6}100%{transform:translate3d(var(--drift,30px),1140px,0) rotate(220deg);opacity:0}}@keyframes season-twinkle{from{opacity:.5}to{opacity:1}}@keyframes season-bunny{0%,35%,100%{transform:translateY(0) rotate(0)}43%,58%{transform:translateY(-20px) rotate(-4deg)}50%{transform:translateY(-3px) rotate(4deg)}}
 @media(prefers-reduced-motion:reduce){.season-roamer{will-change:auto}.season-bunny,.season-light{animation:none!important}.season-snow,.season-petal,.season-confetti{opacity:.45}}
+
+/* Christmas: dimensional ornaments, jointed toys and a softly lit pine frame. */
+.christmas-garland{position:absolute;inset:0 auto auto 0;width:1920px;height:48px}
+.christmas-light{animation:christmas-glimmer 4.4s var(--delay,0s) ease-in-out infinite}
+.christmas-photo{position:absolute;display:block;width:var(--width);height:var(--height);transform-origin:50% 10%}
+.christmas-figure{position:absolute;inset:0;display:block;filter:drop-shadow(0 3px 2px #00274766)}
+.christmas-photo img{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;user-select:none}
+.christmas-cane{animation:christmas-cane-dance 3.8s var(--delay,0s) ease-in-out infinite}
+.christmas-bells{transform-origin:50% 15%;animation:christmas-bells 8s var(--delay,0s) ease-in-out infinite}
+.christmas-visitor{left:0;top:0;opacity:0;transform:translate3d(-220px,0,0);will-change:transform}
+.christmas-nutcracker .christmas-figure{transform-origin:50% 98%;animation:christmas-toy-step .85s ease-in-out infinite}
+.nutcracker-body{clip-path:polygon(0 0,100% 0,100% 100%,74% 100%,74% 70%,30% 70%,30% 100%,0 100%)}
+.nutcracker-leg-left{clip-path:polygon(30% 70%,51% 70%,51% 100%,30% 100%);transform-origin:40% 70%;animation:christmas-march .85s ease-in-out infinite}
+.nutcracker-leg-right{clip-path:polygon(51% 70%,74% 70%,74% 100%,51% 100%);transform-origin:62% 70%;animation:christmas-march .85s ease-in-out infinite reverse}
+.christmas-nutcracker[data-behaviour=peek] .christmas-figure,.christmas-nutcracker[data-behaviour=peek] img{animation-duration:1.4s}
+.christmas-reindeer .christmas-figure{transform-origin:50% 95%;animation:christmas-breathe 1.6s ease-in-out infinite}
+.reindeer-body{clip-path:polygon(0 42%,49% 43%,73% 49%,100% 42%,100% 100%,0 100%)}
+.reindeer-head{clip-path:polygon(0 0,100% 0,100% 42%,73% 49%,49% 43%,0 42%);transform-origin:62% 46%;animation:christmas-deer-look 2.8s ease-in-out infinite}
+.christmas-tree .christmas-figure:after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 48% 25%,#fff5bd 0 1px,#ffda7c55 2px,transparent 6px),radial-gradient(circle at 33% 49%,#fff5bd 0 1px,#ffda7c55 2px,transparent 6px),radial-gradient(circle at 62% 61%,#fff5bd 0 1px,#ffda7c55 2px,transparent 6px),radial-gradient(circle at 28% 76%,#fff5bd 0 1px,transparent 5px);animation:christmas-glimmer 3.7s var(--delay,0s) ease-in-out infinite}
+.christmas-hanging{position:absolute;top:0;width:42px;height:80px;transform-origin:top center;animation:christmas-pendulum 8s var(--delay,0s) ease-in-out infinite}
+.christmas-cord{position:absolute;left:50%;top:0;height:var(--cord);width:1px;background:#e5c38099}
+.christmas-ornament{top:var(--cord);left:50%;transform:translateX(-50%)}
+.christmas-sparkle{transform-origin:center;animation:christmas-sparkle 5.8s var(--delay,0s) ease-in-out infinite}
+.christmas-snow-dot{position:absolute;width:var(--size);height:var(--size);border-radius:50%;background:#e7f6ff}
+.seasonal-layer[data-season=christmas] .season-fall{animation-name:christmas-snowfall}
+.christmas-sleigh{transform:translate3d(1450px,840px,0);opacity:1}
+.christmas-sleigh .christmas-figure{animation:christmas-sleigh-float 5s ease-in-out infinite}
+.sleigh-body{clip-path:polygon(0 0,34% 0,34% 26%,45% 26%,45% 0,100% 0,100% 100%,0 100%)}
+.sleigh-mitten{clip-path:polygon(34% 0,45% 0,45% 26%,34% 26%);transform-origin:36% 25%;animation:christmas-wave 2.4s ease-in-out infinite}
+.christmas-sleigh .christmas-figure:after{content:'';position:absolute;left:-75px;bottom:19px;width:100px;height:22px;background:radial-gradient(circle at 90% 20%,#fff2b9 0 2px,transparent 4px),radial-gradient(circle at 62% 60%,#ffe4a3 0 1px,transparent 3px),radial-gradient(circle at 35% 40%,#ffe4a3 0 1px,transparent 3px),radial-gradient(circle at 10% 80%,#ffe4a3 0 1px,transparent 2px);animation:christmas-glimmer 2.1s ease-in-out infinite}
+.season-still .christmas-sparkle,.season-still .christmas-light{animation:none;opacity:.8}
+.season-still .christmas-sleigh{transform:translate3d(1490px,840px,0)}
+.season-still .christmas-visitor{opacity:1;transform:translate3d(var(--rest-x),var(--rest-y),0);will-change:auto}
+.season-still .nutcracker-leg-left,.season-still .nutcracker-leg-right,.season-still .reindeer-head,.season-still .sleigh-mitten{animation:none;transform:none}
+.season-paused .christmas-figure:after,.season-still .christmas-figure:after{animation-play-state:paused!important}
+@keyframes christmas-glimmer{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes christmas-pendulum{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes christmas-cane-dance{0%,100%{transform:translateY(0) rotate(-12deg)}50%{transform:translateY(12px) rotate(12deg)}}
+@keyframes christmas-bells{0%,55%,100%{transform:rotate(-3deg)}62%,78%{transform:rotate(9deg)}70%,86%{transform:rotate(-9deg)}94%{transform:rotate(2deg)}}
+@keyframes christmas-toy-step{0%,100%{transform:translateY(-3px) rotate(-3deg)}25%,75%{transform:translateY(0) rotate(0)}50%{transform:translateY(-3px) rotate(3deg)}}
+@keyframes christmas-march{0%,100%{transform:rotate(-10deg)}50%{transform:rotate(10deg)}}
+@keyframes christmas-breathe{0%,100%{transform:translateY(0) scaleY(1)}50%{transform:translateY(-5px) scaleY(1.025)}}
+@keyframes christmas-deer-look{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@keyframes christmas-sleigh-float{0%,100%{transform:translateY(-3px)}50%{transform:translateY(3px)}}
+@keyframes christmas-wave{0%,100%{transform:rotate(-12deg)}25%,75%{transform:rotate(10deg)}50%{transform:rotate(-12deg)}}
+@keyframes christmas-sparkle{0%,100%{opacity:.15;transform:scale(.65) rotate(-8deg)}50%{opacity:.85;transform:scale(1.08) rotate(8deg)}}
+@keyframes christmas-snowfall{0%{transform:translate3d(0,-40px,0) rotate(0);opacity:0}8%{opacity:var(--snow-alpha,.4)}85%{opacity:var(--snow-alpha,.4)}100%{transform:translate3d(var(--drift,30px),1140px,0) rotate(180deg);opacity:0}}
+@media(prefers-reduced-motion:reduce){.christmas-sleigh{transform:translate3d(1490px,840px,0)}.christmas-sparkle,.christmas-light{opacity:.8}.christmas-photo img{transform:none!important}}

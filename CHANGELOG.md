@@ -1,3 +1,11 @@
+## 0.3.3 — 2026-11-20
+
+- Nuova scena natalizia con cinque illustrazioni trasparenti locali: Babbo Natale su slitta, renna, schiaccianoci, Zuckerstangen e alberi con regali; ghirlanda illuminata, campanelle, stelle, palline e neve.
+- Renna e schiaccianoci entrano ed escono da lati casuali: salti, marcia o capolino. Percorsi e altezze cambiano a ogni apparizione, con intervalli invisibili di 5–15 secondi.
+- Babbo Natale saluta durante il volo lungo il bordo inferiore; gambe, testa e bastoncini hanno movimenti più evidenti. Le animazioni concluse vengono rilasciate prima del passaggio successivo.
+- Pausa, scheda nascosta, movimento ridotto e disattivazione degli effetti rispettati. Decorazioni assenti su countdown e archivi. Calendario invariato: 1 dicembre–6 gennaio compresi, Europe/Zurich.
+- PNG inclusi senza alterazioni nel pacchetto firmato; guida EN/DE/FR e Docs aggiornati. Schema, servizio aggiornamenti, utenti, foto e storico invariati.
+
 ## 0.3.2 — 2026-11-13
 
 - Nuovo menu Countdowns per creare e modificare fino a 20 countdown personali con immagine, titolo (100 caratteri), didascalia (280), data e ora facoltativa, nel fuso Europe/Zurich.

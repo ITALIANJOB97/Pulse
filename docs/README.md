@@ -1,8 +1,13 @@
 # Documentazione PULSE
 
-Versione di riferimento: **0.3.2**, 13 novembre 2026.
+Versione di riferimento: **0.3.3**, 20 novembre 2026.
 
 ## Release e file sul NAS
+
+- [PULSE 0.3.3 su GitHub](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.3.3).
+- [Decorazioni natalizie animate](DECORAZIONI_STAGIONALI.md).
+- [Novità per il blog](BLOG_0.3.3.md).
+- [Verifiche 0.3.3](VERIFICHE_0.3.3.md).
 
 - [PULSE 0.3.2 su GitHub](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.3.2).
 - [Creare countdown personalizzati](COUNTDOWN_PERSONALIZZATI.md).

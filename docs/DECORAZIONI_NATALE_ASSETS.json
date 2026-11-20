@@ -1,0 +1,44 @@
+{
+  "method": "Built-in image_gen, transparent_background=true; original PNG outputs copied unchanged",
+  "integrated_on": "2026-11-20",
+  "style": "Dimensional Christmas collectible illustrations, animated with CSS layers and Web Animations; no runtime generation",
+  "assets": [
+    {
+      "path": "public/assets/christmas/santa-sleigh.png",
+      "source": "exec-55951fde-f8b6-45c1-9766-fbe72734ea40.png",
+      "prompt": "A premium Christmas decoration cutout for a 1920x1080 dashboard. Single coherent miniature scene: a warm, charming, detailed Santa Claus with expressive kindly face, realistic curly white beard, rich velvet red suit with fluffy ivory fur, sitting in a luxurious red lacquer sleigh with polished brass scroll runners, a sack of wrapped presents behind him. Santa raises one mitten in a greeting. Sleigh on the LEFT, one handsome reindeer pulling it on the RIGHT, all facing RIGHT. Reindeer has elegant antlers, warm brown fur, red leather harness and gold bells, four anatomically correct legs stretched in flight. The whole vehicle and animal are fully visible, not cropped. Wide landscape composition roughly 2.5:1, centered, fills frame with minimal transparent padding. Sophisticated stylized 3D CGI / handcrafted collectible Christmas figurine look with physically believable materials, soft studio lighting from top left, crisp silhouette, beautiful rich details readable at small size. NOT flat vector, NOT emoji, NOT crude cartoon. No text, no watermark, no background scenery, no floor shadow plane. True transparent background. Single scene only, no variants.",
+      "sha256": "1f218c85925ebd76648297071ba97fd705a887898b87089b0c21b41110aee8d6",
+      "bytes": 2163456
+    },
+    {
+      "path": "public/assets/christmas/nutcracker.png",
+      "source": "exec-625a943f-8551-4645-bd3c-ad7565f9751c.png",
+      "prompt": "Single luxurious traditional Christmas nutcracker soldier figurine, full body from hat to boots, front view isolated on true transparent background. Beautiful classic Erzgebirge wooden toy craftsmanship, ruby red lacquer jacket with gold braids and buttons, emerald cuffs, midnight navy trousers, tall black and gold ceremonial hat, polished black boots, white hair and curled moustache, expressive kind blue eyes and realistic carved painted face. Holds a thin gold ceremonial staff in his right hand. Rigid wooden toy joints clearly visible at shoulders, wrists and knees so it reads as a beautifully made nutcracker. Rich dimensional physically based stylized 3D product render, warm soft upper-left studio lighting, polished wood grain subtle, charming Christmas collectible, crisp detailed silhouette. Elegant not frightening, not emoji or flat vector. Entire figure visible no crop, portrait 1:2, minimal transparent margin, no floor, no background, no text, no watermark.",
+      "sha256": "c9b13fb787d44c56c330678c520ad19ff244ec5835788a61d6db227234c7135c",
+      "bytes": 1614712
+    },
+    {
+      "path": "public/assets/christmas/reindeer.png",
+      "source": "exec-a214f8f8-f1fd-47fc-9230-5d8b5c16e659.png",
+      "prompt": "Transparent PNG game asset: one premium 3D Christmas reindeer collectible toy, standing, full body, with a red collar and golden bells, polished warm brown painted wood and fine sculpted fur detail, friendly expressive eyes and beautiful antlers. Raised front hoof. Highly detailed, warm realistic lighting on the OBJECT ONLY. NO BACKGROUND AT ALL. Background must be fully transparent. No scene, no bokeh, no glow behind it, no floor. Only the isolated object with transparent pixels all around it. Centered front three-quarter view. Full silhouette. Charming elegant realistic Christmas ornament.",
+      "sha256": "053ab6cfebb9ab4a672210d5bc5a09ae43e32311bf630b650f84fbdca6d2d001",
+      "bytes": 1289520
+    },
+    {
+      "path": "public/assets/christmas/candy-cane.png",
+      "source": "exec-1ca48441-777b-416b-8e64-d8abc396cc12.png",
+      "prompt": "A single gorgeous Christmas candy cane ornament (Zuckerstange) full length isolated on true transparent background, upright hooked cane, glossy ivory hard candy with smooth diagonal ruby red spiral stripes wrapping around its real cylindrical surface. A lush deep emerald satin ribbon tied into a beautiful bow around lower third, tiny sprig of realistic holly leaves and three red berries at the knot. Premium handcrafted glass and candy Christmas ornament, elegant dimensional stylized 3D product render, warm soft studio light from upper left, crisp specular highlights and believable shading, charming but sophisticated. Entire object visible, portrait aspect ratio 1:2, centered with small transparent margin. No floor, no cast-shadow plane, no text, no watermark, no extra objects, not flat illustration, not emoji.",
+      "sha256": "b9c33905c008f9cd2e1ebc63e56264918ccca85520324bf672f2c5d1d958596d",
+      "bytes": 1252951
+    },
+    {
+      "path": "public/assets/christmas/tree.png",
+      "source": "exec-29e7382a-bc1e-4b88-bb6d-c7251cc0c13d.png",
+      "reference": "exec-beb0d947-406b-49cf-9366-e24ac9faafca.png",
+      "generation_prompt": "A single elegant miniature decorated Christmas fir tree, full tree from gold star topper to bottom branches and a tiny cluster of three wrapped presents at the base, isolated on a truly transparent alpha background. Photorealistic handcrafted Christmas collectible / premium stylized 3D product render. Dense realistic deep evergreen needles, warm white fairy lights, polished burgundy glass baubles and brushed gold ornaments, delicate champagne ribbon spiraling around the tree. Presents wrapped in red velvet and forest green paper with tiny gold bows. Soft upper left studio lighting, crisp dimensional materials with subtle self shadows. No room or background, no ground or cast-shadow plane, no text or watermark, no crop. Portrait composition 2:3, centered, only one tree, small transparent margins.",
+      "prompt": "Background removal. Cut out the Christmas tree, its star and the gifts precisely. Remove the entire green brown black blurred backdrop and all background haze. Output an isolated transparent PNG with only the tree and presents. Keep the tree unchanged. No new background, no glow behind the silhouette.",
+      "sha256": "777aeb58be200e631ad5ca88e8ee6d6732e8ca17ce5d9e8e3400ce599df296b4",
+      "bytes": 2767265
+    }
+  ]
+}
