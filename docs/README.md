@@ -7,6 +7,7 @@ Resta da collaudare sull'hardware; il canale stabile Mint rimane **0.3.3**.
 - [Nuove filiali e Raspberry Pi](FILIALI_RASPBERRY.md).
 - [Installazione Raspberry e consegna](../INSTALLAZIONE_RASPBERRY.txt).
 - [Installazione Raspberry automatica da terminale](INSTALLAZIONE_ONLINE_RASPBERRY.md).
+- [Priorità LAN e Wi-Fi automatico sui Raspberry](RASPBERRY_LAN_WIFI.md).
 - [Verifiche e limiti del collaudo](VERIFICHE_0.4.0.md).
 
 Ultima release pubblicata di riferimento: **0.3.3**.

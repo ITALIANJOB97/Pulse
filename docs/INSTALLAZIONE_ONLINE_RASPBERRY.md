@@ -4,6 +4,10 @@
 Download anonimo dell'installer e dello ZIP verificati, inclusi SHA256 ed estrazione.
 La release stabile rimane la 0.3.3 (Mint).
 
+Per spegnere automaticamente il Wi-Fi quando è pronta la LAN e riaccenderlo quando
+si scollega il cavo: [comando opzionale LAN/Wi-Fi](RASPBERRY_LAN_WIFI.md).
+Si installa separatamente anche sui Raspberry già configurati.
+
 ## Prerequisiti
 
 Raspberry Pi OS **Desktop 64 bit Trixie**, installazione nuova, collegamento a

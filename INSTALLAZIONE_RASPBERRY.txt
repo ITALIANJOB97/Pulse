@@ -66,6 +66,12 @@ una rete aziendale con VLAN/firewall può richiedere l'abilitazione interna
 TCP 8080 da parte dell'IT. Internet serve per scaricare gli aggiornamenti;
 la Dashboard continua a mostrare i dati locali anche senza Internet.
 
+PRIORITA AUTOMATICA ALLA LAN (OPZIONALE)
+Vedere docs/RASPBERRY_LAN_WIFI.md per il comando da terminale. Quando la LAN
+ha un IPv4 valido spegne il Wi-Fi; togliendo il cavo lo riaccende solo se era
+stato spento dall'automatismo. La regola rimane attiva dopo il riavvio.
+Si aggiunge anche a PULSE già installato, senza modificare dati o foto.
+
 PRIMO ACCESSO SENZA CODICE — ATTIVAZIONE ESPLICITA
 --branch-setup è riservato ai due nuovi dispositivi predisposti. Fino al
 primo setup qualsiasi persona che li raggiunga direttamente sulla rete
