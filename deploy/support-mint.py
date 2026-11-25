@@ -214,7 +214,7 @@ def probe_http(report: Report, url: str):
         report.write(f"Richiesta fallita: {error}")
 
 
-def diagnose(report: Report):
+def diagnose(report: Report, php_version="8.3"):
     report.section("Sistema")
     report.write("Architettura: " + platform.machine())
     report.write("Permessi diagnostica: " + ("root" if os.geteuid() == 0 else "limitati; usare sudo per i log"))
@@ -232,22 +232,22 @@ def diagnose(report: Report):
         report.write(str(error))
     for action in ("is-active", "is-enabled"):
         command(report, "Servizi: " + action,
-                ["systemctl", action, "nginx", "php8.3-fpm",
+                ["systemctl", action, "nginx", "php" + php_version + "-fpm",
                  "pulse-backup-daily.timer", "pulse-backup-weekly.timer", "pulse-updates.timer"])
-    command(report, "Stato processi web", ["systemctl", "show", "nginx", "php8.3-fpm",
+    command(report, "Stato processi web", ["systemctl", "show", "nginx", "php" + php_version + "-fpm",
             "--property=Id,ActiveState,SubState,Result,ExecMainStatus"])
     command(report, "Test configurazione Nginx", ["nginx", "-t"])
-    command(report, "Test configurazione PHP-FPM", ["php-fpm8.3", "-t"])
+    command(report, "Test configurazione PHP-FPM", ["php-fpm" + php_version, "-t"])
     command(report, "Porta HTTP locale 8080", ["ss", "-H", "-ltnp", "sport = :8080"])
     command(report, "Socket PHP", ["ss", "-H", "-lxnp", "src", "/run/php/pulse.sock"])
     report.section("Percorsi e permessi (nessun contenuto dati)")
     for name in ("/opt/pulse", "/opt/pulse/current", "/opt/pulse/current/public",
                  "/opt/pulse/current/public/index.php", "/opt/pulse/current/app/bootstrap.php",
-                 "/etc/nginx/sites-enabled/pulse", "/etc/php/8.3/fpm/pool.d/pulse.conf",
+                 "/etc/nginx/sites-enabled/pulse", "/etc/php/" + php_version + "/fpm/pool.d/pulse.conf",
                  "/run/php/pulse.sock", "/var/lib/pulse", "/var/lib/pulse/pulse.sqlite",
                  "/var/lib/pulse/sessions", "/var/lib/pulse/logs"):
         path_info(report, Path(name))
-    php = shutil.which("php8.3") or shutil.which("php")
+    php = shutil.which("php" + php_version) or shutil.which("php")
     if php:
         command(report, "Versione PHP CLI", [php, "-v"])
         command(report, "Estensioni PHP CLI", [php, "-m"])
@@ -274,7 +274,7 @@ def diagnose(report: Report):
         tail_log(report, Path(path))
     command(report, "Ultimi messaggi dei servizi web", [
         "journalctl", "--no-pager", "-o", "cat", "-n", "50",
-        "-u", "nginx", "-u", "php8.3-fpm", "-u", "pulse-updates", "-u", "pulse-update-recover"
+        "-u", "nginx", "-u", "php" + php_version + "-fpm", "-u", "pulse-updates", "-u", "pulse-update-recover"
     ])
     report.section("Fine diagnosi")
     report.write("Controlli terminati. Errori e file mancanti nel rapporto sono informazioni utili.")
@@ -309,8 +309,14 @@ def main() -> int:
     parser.add_argument("mode", choices=["diagnose", "install", "upgrade"])
     parser.add_argument("--source", type=Path, default=Path(__file__).resolve().parent.parent)
     parser.add_argument("--output-dir", type=Path, default=Path.cwd() / "diagnostica")
-    parser.add_argument("--channel", choices=["blog", "github"], default="blog")
+    parser.add_argument("--channel", choices=["blog", "github"])
+    parser.add_argument("--platform", choices=["mint", "raspberry"], default="mint")
+    parser.add_argument("--branch-setup", action="store_true")
     args = parser.parse_args()
+    if args.branch_setup and args.mode != "install":
+        parser.error("--branch-setup is only for a fresh installation")
+    args.channel = args.channel or ("github" if args.platform == "raspberry" else "blog")
+    php_version = "8.4" if args.platform == "raspberry" else "8.3"
     try:
         report = Report(args.output_dir, "AGGIORNAMENTO" if args.mode == "upgrade" else ("INSTALLAZIONE" if args.mode == "install" else "DIAGNOSI"))
     except OSError as error:
@@ -325,13 +331,13 @@ def main() -> int:
                 print("Eseguire: sudo bash deploy/install-mint.sh", file=sys.stderr)
                 status = 1
             else:
-                worker = args.source.resolve() / ("deploy/upgrade-mint-server.sh" if args.mode == "upgrade" else "deploy/install-mint-server.sh")
-                status = record_installer(report, worker, ["--channel", args.channel]) if args.mode == "upgrade" else record_installer(report, worker)
+                worker = args.source.resolve() / ("deploy/" + ("upgrade" if args.mode == "upgrade" else "install") + "-" + args.platform + "-server.sh")
+                status = record_installer(report, worker, ["--channel", args.channel]) if args.mode == "upgrade" else record_installer(report, worker, ["--branch-setup"] if args.branch_setup else [])
                 report.write(f"Esito installer: {status}")
                 print("\nRaccolta verifiche finali; attendere il rapporto...", flush=True)
-                diagnose(report)
+                diagnose(report, php_version)
         else:
-            diagnose(report)
+            diagnose(report, php_version)
     except KeyboardInterrupt:
         status = 130
         report.write("Raccolta interrotta; rapporto parziale conservato.")

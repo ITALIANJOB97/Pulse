@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""PULSE trusted deployment service. Python standard library; Mint 22/PHP 8.3.
+"""PULSE trusted deployment service. Mint 22/PHP 8.3 and Pi OS Trixie/PHP 8.4.
 Installed outside the releases. Downloaded PHP is only executed as www-data.
 """
 from __future__ import annotations
@@ -31,7 +31,21 @@ import update_protocol as protocol
 from update_protocol import NoRedirect
 from recovery_backup import retire_inactive_release
 
-UPDATER_VERSION = 4
+UPDATER_VERSION = 5
+PROFILES = {
+    "linuxmint22-amd64": {"php": "8.3", "manifest": "stable.json", "package": "pulse-"},
+    "raspberrypi-trixie-arm64": {"php": "8.4", "manifest": "stable-raspberry.json", "package": "pulse-raspberry-"},
+}
+
+def host_profile(os_release, architecture):
+    values = dict(re.findall(r'^([A-Z_]+)=[\"\']?([^\"\'\n]+)[\"\']?$', os_release, re.M))
+    if (values.get("ID") == "linuxmint" and re.fullmatch(r"22(?:\.\d+)?", values.get("VERSION_ID", ""))
+            and values.get("UBUNTU_CODENAME") == "noble" and architecture == "amd64"):
+        return "linuxmint22-amd64"
+    if (values.get("ID") in ("debian", "raspbian") and values.get("VERSION_CODENAME") == "trixie"
+            and values.get("VERSION_ID") == "13" and architecture == "arm64"):
+        return "raspberrypi-trixie-arm64"
+    raise ValueError("Supported systems: Mint 22.x amd64 or Raspberry Pi OS Trixie arm64")
 MAX_ZIP = 100 * 1024 * 1024
 MAX_EXPANDED = 300 * 1024 * 1024
 REPOSITORY = protocol.SOURCE["repository"]
@@ -84,7 +98,7 @@ def read_json(path, default=None, limit=131072):
 def allowed_url(url, origin=ORIGIN):
     # Initial requests are bound to one repository and versioned release assets.
     return (isinstance(url, str) and origin == ORIGIN and bool(re.fullmatch(
-        re.escape(ORIGIN) + r"v" + VERSION_RE + r"/(?:stable\.json(?:\.sig)?|pulse-" + VERSION_RE + r"\.zip)", url)))
+        re.escape(ORIGIN) + r"v" + VERSION_RE + r"/(?:stable(?:-raspberry)?\.json(?:\.sig)?|pulse-(?:raspberry-)?" + VERSION_RE + r"\.zip)", url)))
 
 def github_api_asset(url):
     return isinstance(url, str) and bool(re.fullmatch(
@@ -138,7 +152,8 @@ def download(url, target, limit, origin=ORIGIN, token=None, cancelled=None, prog
         os.fsync(out.fileno())
     return count
 
-def release_asset_urls(data):
+def release_asset_urls(data, platform="linuxmint22-amd64"):
+    profile = PROFILES[platform]
     if not isinstance(data, dict) or data.get("draft") is not False or data.get("prerelease") is not False:
         raise ValueError("Only published stable GitHub releases are supported")
     tag = data.get("tag_name", "")
@@ -148,7 +163,7 @@ def release_asset_urls(data):
     if not isinstance(assets, list):
         raise ValueError("Missing GitHub release assets")
     urls = {}
-    for name in ("stable.json", "stable.json.sig", "pulse-" + tag[1:] + ".zip"):
+    for name in (profile["manifest"], profile["manifest"] + ".sig", profile["package"] + tag[1:] + ".zip"):
         matches = [a for a in assets if isinstance(a, dict) and a.get("name") == name]
         expected = ORIGIN + tag + "/" + name
         if len(matches) != 1 or matches[0].get("state") != "uploaded" or matches[0].get("browser_download_url") != expected:
@@ -159,7 +174,7 @@ def release_asset_urls(data):
         urls[name] = api_url
     return tag[1:], urls
 
-def validate_manifest(data, origin=ORIGIN, clock=None):
+def validate_manifest(data, origin=ORIGIN, clock=None, platform="linuxmint22-amd64"):
     clock = clock or now()
     if data.get("app") != "pulse-dietikon" or data.get("schema") != 1 or data.get("channel") != "stable":
         raise ValueError("Wrong application or manifest format")
@@ -168,7 +183,7 @@ def validate_manifest(data, origin=ORIGIN, clock=None):
     if type(data.get("min_updater")) is not int or type(data.get("db_schema")) is not int or not 1 <= data["db_schema"] <= 1000:
         raise ValueError("Invalid requirements")
     version(data.get("php_min"))
-    if data.get("platform") != "linuxmint22-amd64":
+    if platform not in PROFILES or data.get("platform") != platform:
         raise ValueError("Unsupported platform")
     for key in ("published_at", "expires_at"):
         parsed = dt.datetime.fromisoformat(data[key].replace("Z", "+00:00"))
@@ -182,7 +197,7 @@ def validate_manifest(data, origin=ORIGIN, clock=None):
         raise ValueError("Invalid package size")
     if not re.fullmatch(r"[a-f0-9]{64}", data.get("sha256", "")) or not allowed_url(data.get("url"), origin):
         raise ValueError("Invalid package URL or checksum")
-    if data["url"] != ORIGIN + "v" + data["version"] + "/pulse-" + data["version"] + ".zip":
+    if data["url"] != ORIGIN + "v" + data["version"] + "/" + PROFILES[platform]["package"] + data["version"] + ".zip":
         raise ValueError("Package URL does not match release version")
     notes = data.get("notes")
     if not isinstance(notes, dict) or any(not isinstance(notes.get(lang), str) or len(notes[lang]) > 2000 for lang in ("en", "de", "fr")):
@@ -274,12 +289,15 @@ def next_window(clock, hour, postpone_until=0):
     return start.astimezone(dt.timezone.utc)
 
 class Updater:
-    def __init__(self, state=Path("/var/lib/pulse-updater"), base=Path("/opt/pulse"), data=Path("/var/lib/pulse"), config=Path("/etc/pulse/updater.json"), control=Path("/usr/local/lib/pulse")):
+    def __init__(self, state=Path("/var/lib/pulse-updater"), base=Path("/opt/pulse"), data=Path("/var/lib/pulse"), config=Path("/etc/pulse/updater.json"), control=Path("/usr/local/lib/pulse"), platform="linuxmint22-amd64"):
         self.state, self.base, self.data, self.config, self.control = map(Path, (state, base, data, config, control))
         self.status_file = self.state / "status.json"
         self.journal = self.state / "transaction.json"
         self.maintenance = self.state / "maintenance"
-        self.php = "/usr/bin/php8.3"
+        self.platform = platform
+        self.profile = PROFILES[platform]
+        self.php = "/usr/bin/php" + self.profile["php"]
+        self.fpm = "php" + self.profile["php"] + "-fpm"
         self.account = pwd.getpwnam("www-data")
     def run(self, args, as_web=False, timeout=300, check=True):
         env = {"PATH": "/usr/sbin:/usr/bin:/sbin:/bin", "PULSE_STORAGE": str(self.data), "PULSE_UPDATER_STATE": str(self.state), "PULSE_UPDATER_CONFIG": str(self.config), "PULSE_UPDATE_WORKER": "1", "LANG": "C.UTF-8"}
@@ -340,6 +358,8 @@ class Updater:
             if path.is_symlink() or info.st_uid != 0 or info.st_mode & 0o022:
                 raise ValueError("Untrusted updater configuration")
         config = read_json(self.config)
+        if self.platform != "linuxmint22-amd64" and config != GITHUB_CONFIG:
+            raise ValueError("Raspberry installations require the public GitHub channel")
         # Repository changes require an operator-run upgrade of the trusted service.
         if config not in (BLOG_CONFIG, GITHUB_CONFIG, PRIVATE_GITHUB_CONFIG):
             raise ValueError("Unsupported trusted update source")
@@ -383,10 +403,10 @@ class Updater:
             protocol.fetch(release["url"], target, release.get("size") or MAX_ZIP, cancelled=cancelled, progress=progress)
         else:
             metadata = read_json(self.state / "downloads/github-release.json")
-            expected_version, assets = release_asset_urls(metadata)
+            expected_version, assets = release_asset_urls(metadata, self.platform)
             if expected_version != release["version"]:
                 raise ValueError("GitHub package version differs from signed manifest")
-            download(assets["pulse-" + expected_version + ".zip"], target, release["size"], token=self.github_token(), cancelled=cancelled, progress=progress)
+            download(assets[self.profile["package"] + expected_version + ".zip"], target, release["size"], token=self.github_token(), cancelled=cancelled, progress=progress)
         # Honour cancellation even if it arrives at the end of a small download.
         last_poll[0] = 0
         if cancelled():
@@ -431,13 +451,13 @@ class Updater:
         if fresh:
             metadata = self.state / "downloads/github-release.json"
             download(LATEST_URL, metadata, 131072, token=self.github_token())
-            expected_version, assets = release_asset_urls(read_json(metadata))
-            for name, target, limit in (("stable.json", manifest, 65536), ("stable.json.sig", signature, 256)):
+            expected_version, assets = release_asset_urls(read_json(metadata), self.platform)
+            for name, target, limit in ((self.profile["manifest"], manifest, 65536), (self.profile["manifest"] + ".sig", signature, 256)):
                 tmp = target.with_suffix(target.suffix + ".partial")
                 download(assets[name], tmp, limit, token=self.github_token())
                 os.replace(tmp, target)
         self.run([self.php, self.control / "verify-release.php", manifest, signature, self.control / "release-public.key"])
-        release = validate_manifest(read_json(manifest))
+        release = validate_manifest(read_json(manifest), platform=self.platform)
         if expected_version is not None and release["version"] != expected_version:
             raise ValueError("GitHub tag and signed manifest version differ")
         return release
@@ -512,14 +532,14 @@ class Updater:
             return
         if tx["phase"] != "committed":
             if not boot:
-                self.systemctl("stop", "php8.3-fpm")
+                self.systemctl("stop", self.fpm)
                 self.systemctl("stop", "pulse-backup@daily.service", "pulse-backup@weekly.service", check=False)
             self.restore(tx)
             self.save_status(phase="rolled_back", error="interrupted_update", failed_version=tx["target"], scheduled_for=None)
         self.maintenance.unlink(missing_ok=True)
         self.journal.unlink()
         if not boot:
-            self.systemctl("start", "php8.3-fpm")
+            self.systemctl("start", self.fpm)
     def install(self, source, release=None):
         old = self.current()
         target_version = validate_tree(source)
@@ -564,7 +584,7 @@ class Updater:
             stage.rename(target)
             self.maintenance.write_text("PULSE update in progress\n")
             self.systemctl("stop", "pulse-backup-daily.timer", "pulse-backup-weekly.timer")
-            self.systemctl("stop", "php8.3-fpm")
+            self.systemctl("stop", self.fpm)
             stopped = True
             self.systemctl("stop", "pulse-backup@daily.service", "pulse-backup@weekly.service", check=False)
             backup = self.make_backup(old)
@@ -574,7 +594,7 @@ class Updater:
             self.run([self.php, target / "bin/console.php", "migrate"], as_web=True, timeout=600)
             self.switch(target)
             self.expected_schema = release["db_schema"] if release else 1
-            self.systemctl("start", "php8.3-fpm")
+            self.systemctl("start", self.fpm)
             self.health(target)
             # Commit is durable before removing maintenance and allowing administrators to write.
             tx["phase"] = "committed"
@@ -587,18 +607,18 @@ class Updater:
             print(f"PULSE {target_version} installato. Backup protetto: {backup}")
         except Exception:
             if tx is not None and tx["phase"] != "committed":
-                self.systemctl("stop", "php8.3-fpm")
+                self.systemctl("stop", self.fpm)
                 self.restore(tx)
                 self.save_status(phase="rolled_back", failed_version=target_version, error="installation_failed", scheduled_for=None)
                 self.maintenance.unlink(missing_ok=True)
                 self.journal.unlink()
-                self.systemctl("start", "php8.3-fpm")
+                self.systemctl("start", self.fpm)
                 print("Aggiornamento annullato. Versione precedente e dati ripristinati.", file=sys.stderr)
             elif tx is None:
                 self.maintenance.unlink(missing_ok=True)
                 self.save_status(phase="failed", failed_version=target_version, error="preflight_or_backup_failed", scheduled_for=None)
                 if stopped:
-                    self.systemctl("start", "php8.3-fpm")
+                    self.systemctl("start", self.fpm)
             # Failed rollback deliberately leaves the journal/maintenance for recovery.
             raise
         finally:
@@ -744,6 +764,8 @@ class Updater:
 
 
 def bootstrap(updater, source, channel="blog"):
+    if updater.platform != "linuxmint22-amd64" and channel != "github":
+        raise ValueError("Use --channel github for Raspberry Pi")
     destination_config = BLOG_CONFIG if channel == "blog" else GITHUB_CONFIG
     # Explicit, operator-run bootstrap only. Automated updates never replace this root code.
     for name in ("updater.py", "update_protocol.py", "recovery_backup.py", "update-source.json", "restore-update.py", "verify-release.php", "release-public.key"):
@@ -780,14 +802,15 @@ def bootstrap(updater, source, channel="blog"):
     updater.save_status(checked_epoch=0, release=None, scheduled_for=None, phase="waiting", error=None)
     updater.configuration()
     for name in ("pulse-updates.service", "pulse-updates.timer", "pulse-update-recover.service"):
-        shutil.copyfile(source / "deploy" / name, Path("/etc/systemd/system") / name)
-    dropin = Path("/etc/systemd/system/php8.3-fpm.service.d")
+        unit = (source / "deploy" / name).read_text().replace("php8.3-fpm.service", updater.fpm + ".service")
+        (Path("/etc/systemd/system") / name).write_text(unit)
+    dropin = Path("/etc/systemd/system") / (updater.fpm + ".service.d")
     dropin.mkdir(exist_ok=True)
     (dropin / "pulse-recovery.conf").write_text("[Unit]\nRequires=pulse-update-recover.service\nAfter=pulse-update-recover.service\n")
     # Guard legacy 0.1.x backup jobs during the bootstrap transaction as well.
     backup_unit = (source / "deploy/pulse-backup@.service").read_text()
     backup_unit = backup_unit.replace("After=local-fs.target", "After=local-fs.target pulse-update-recover.service\nRequires=pulse-update-recover.service")
-    backup_unit = backup_unit.replace("ExecStart=/usr/bin/php ", "ExecCondition=/usr/bin/test ! -e /var/lib/pulse-updater/maintenance\nExecStart=/usr/bin/php8.3 ")
+    backup_unit = backup_unit.replace("ExecStart=/usr/bin/php ", "ExecCondition=/usr/bin/test ! -e /var/lib/pulse-updater/maintenance\nExecStart=" + updater.php + " ")
     Path("/etc/systemd/system/pulse-backup@.service").write_text(backup_unit)
     updater.systemctl("daemon-reload")
     updater.systemctl("start", "pulse-update-recover.service")
@@ -797,12 +820,15 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("command", choices=["tick", "recover", "install", "bootstrap"])
     parser.add_argument("--source", type=Path)
-    parser.add_argument("--channel", choices=["blog", "github"], default="blog")
+    parser.add_argument("--channel", choices=["blog", "github"])
     args = parser.parse_args()
     if os.geteuid() != 0:
         raise SystemExit("Eseguire con sudo.")
     os.umask(0o027)
-    updater = Updater()
+    architecture = subprocess.run(["/usr/bin/dpkg", "--print-architecture"], text=True, capture_output=True, check=True).stdout.strip()
+    platform = host_profile(Path("/etc/os-release").read_text(), architecture)
+    updater = Updater(platform=platform)
+    args.channel = args.channel or ("blog" if platform == "linuxmint22-amd64" else "github")
     updater.prepare()
     if args.command in ("install", "bootstrap"):
         updater.systemctl("stop", "pulse-updates.timer", "pulse-updates.service", check=False)
@@ -813,12 +839,7 @@ def main():
                 raise ValueError("Package source is required")
             source = args.source.resolve(strict=True)
             validate_tree(source)
-            # Mint platform and runtime checks before any deployed code changes.
-            os_release = Path("/etc/os-release").read_text()
-            if not re.search(r'^ID=(?:\"linuxmint\"|linuxmint)$', os_release, re.M) or not re.search(r'^VERSION_ID=\"?22(?:\.\d+)?\"?$', os_release, re.M):
-                raise ValueError("This updater requires Linux Mint 22.x")
-            if updater.run(["/usr/bin/dpkg", "--print-architecture"]).stdout.strip() != "amd64":
-                raise ValueError("Mint amd64 required")
+            # The host profile was checked before touching deployment state.
             updater.run([updater.php, "-r", "foreach(['pdo_sqlite','sqlite3','gd','fileinfo','zip','curl','mbstring','intl','sodium'] as $e)if(!extension_loaded($e))exit(1);"])
             if args.command == "install":
                 # Reject reinstall/downgrade before altering the bootstrap service.

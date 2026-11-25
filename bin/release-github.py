@@ -16,7 +16,7 @@ import sys
 ROOT=Path(__file__).resolve().parent.parent
 REPO='ITALIANJOB97/Pulse'
 GIT=['git','-c','safe.directory='+ROOT.as_posix(),'-C',str(ROOT)]
-ASSETS=('stable.json','stable.json.sig','blog-stable.json','blog-stable.json.sig')
+ASSETS=('stable.json','stable.json.sig','blog-stable.json','blog-stable.json.sig','stable-raspberry.json','stable-raspberry.json.sig')
 
 
 def run(args, *, env=None, capture=False):
@@ -64,11 +64,11 @@ def main():
     existing=subprocess.run(gh+['release','view',tag,'--repo',REPO,'--json','isDraft'],capture_output=True,text=True,env=env)
     if existing.returncode==0:raise RuntimeError('Release '+tag+' already exists. Do not overwrite it; review any draft or increment VERSION.')
     # Application tests are isolated in system temporary folders.
-    for test in ('core.php','features-020.php','podium-decimals.php','targets-decimals.php','hall-awards.php','countdowns.php','custom-countdowns.php','seasonal-motto.php','update-protocol.php','blog-relay.php','signatures.php'):
+    for test in ('core.php','onboarding.php','features-020.php','podium-decimals.php','targets-decimals.php','hall-awards.php','countdowns.php','custom-countdowns.php','seasonal-motto.php','update-protocol.php','blog-relay.php','signatures.php'):
         run([args.php,'-d','extension=sodium',ROOT/'tests'/test])
     run([sys.executable,ROOT/'bin/build-linux-mint-zip.py'])
     directory=ROOT/'dist/GitHub'/tag
-    if not all((directory/name).is_file() for name in (*ASSETS,'pulse-'+version+'.zip')):
+    if not all((directory/name).is_file() for name in (*ASSETS,'pulse-'+version+'.zip','pulse-raspberry-'+version+'.zip')):
         run([args.php,'-d','extension=sodium',ROOT/'bin/publish-release.php','publish-blog'])
     # Reuse prepared manifests after a clean build only when the signed ZIP is unchanged.
     archive=ROOT/f'dist/PULSE-Dietikon-Linux-Mint-{version}.zip'
@@ -79,9 +79,19 @@ def main():
         m=json.loads((directory/name).read_text(encoding='utf-8'))
         if m['version']!=version or m['sha256']!=digest or m['size']!=archive.stat().st_size:raise RuntimeError('Release manifest mismatch.')
         run([args.php,'-d','extension=sodium',ROOT/'deploy/verify-release.php',directory/name,directory/(name+'.sig'),ROOT/'deploy/release-public.key'])
+    pi_archive=ROOT/f'dist/PULSE-Raspberry-Pi-{version}.zip'
+    pi_digest=hashlib.sha256(pi_archive.read_bytes()).hexdigest()
+    if hashlib.sha256((directory/('pulse-raspberry-'+version+'.zip')).read_bytes()).hexdigest()!=pi_digest:
+        raise RuntimeError('Raspberry release differs from the source build.')
+    pi_manifest=json.loads((directory/'stable-raspberry.json').read_text(encoding='utf-8'))
+    if (pi_manifest['version']!=version or pi_manifest['sha256']!=pi_digest or pi_manifest['size']!=pi_archive.stat().st_size
+            or pi_manifest['platform']!='raspberrypi-trixie-arm64' or pi_manifest['min_updater']!=5
+            or pi_manifest['url']!=f'https://github.com/{REPO}/releases/download/{tag}/pulse-raspberry-{version}.zip'):
+        raise RuntimeError('Raspberry manifest mismatch.')
+    run([args.php,'-d','extension=sodium',ROOT/'deploy/verify-release.php',directory/'stable-raspberry.json',directory/'stable-raspberry.json.sig',ROOT/'deploy/release-public.key'])
     commit=run(GIT+['rev-parse','HEAD'],capture=True)
     run(GIT+['push','origin','HEAD:main'],env=env)
-    files=[directory/('pulse-'+version+'.zip'),*[directory/name for name in ASSETS]]
+    files=[directory/('pulse-'+version+'.zip'),directory/('pulse-raspberry-'+version+'.zip'),*[directory/name for name in ASSETS]]
     run(gh+['release','create',tag,*files,'--repo',REPO,'--target',commit,'--draft','--title','PULSE '+version,'--notes-file',directory/'release-notes.md'],env=env)
     draft=json.loads(run(gh+['release','view',tag,'--repo',REPO,'--json','isDraft,assets'],env=env,capture=True))
     if draft.get('isDraft') is not True or {a['name'] for a in draft['assets']}!={p.name for p in files}:raise RuntimeError('Incomplete release left as draft; it will not be installed.')

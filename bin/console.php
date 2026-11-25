@@ -11,6 +11,12 @@ try{
     }elseif($command==='setup-token'){
         if(installed())throw new RuntimeException('Setup already completed.');
         echo setupToken().PHP_EOL;
+    }elseif($command==='prepare-branch'){
+        prepareBranchSetup();
+        echo "Branch delivery ready. First setup from the private network needs no installation code.\n";
+    }elseif($command==='cancel-branch'){
+        cancelBranchSetup();
+        echo "Branch delivery disabled. Normal installation code required.\n";
     }elseif($command==='migrate'){
         echo 'Schema ready. PULSE '.version().PHP_EOL;
     }elseif($command==='backup'){
@@ -24,7 +30,7 @@ try{
         if(!installed())throw new RuntimeException('Complete initial setup first.');
         snapshot($argv[2]??'daily');echo "Snapshot saved.\n";
     }else{
-        echo "PULSE commands:\n  setup-token\n  migrate\n  backup [daily|weekly|manual]\n  snapshot [daily|weekly]\n  check-updates\n";
+        echo "PULSE commands:\n  setup-token\n  prepare-branch\n  cancel-branch\n  migrate\n  backup [daily|weekly|manual]\n  snapshot [daily|weekly]\n  check-updates\n";
         if($command!=='help')exit(1);
     }
 }catch(Throwable $error){fwrite(STDERR,$error->getMessage().PHP_EOL);exit(1);}

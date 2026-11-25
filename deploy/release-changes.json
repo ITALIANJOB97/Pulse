@@ -1,15 +1,15 @@
 {
   "features": [
-    "Five detailed local Christmas illustrations with Santa, reindeer, nutcracker, candy canes and trees.",
-    "Random reindeer and nutcracker visits: hopping, marching or peeking from either side, followed by 5–15-second hidden intervals."
+    "Raspberry Pi OS Trixie ARM64 installer, USB diagnostics and dedicated signed GitHub update assets.",
+    "Opt-in new-branch setup without a copied installation code, automatically closed after first setup."
   ],
   "improvements": [
-    "Waving Santa, articulated legs and head, larger candy-cane movements, richer lights, bells, snow and ornaments.",
-    "Bounded animations with pause, reduced-motion and effects controls; unchanged 1 December–6 January calendar.",
-    "EN/DE/FR guides and release documentation updated."
+    "TV welcome page with local IP addresses and automatic dashboard transition.",
+    "One-worker PHP 8.4 pool for Raspberry Pi; separate PHP 8.3 profile for Mint.",
+    "Updated Raspberry deployment guide and EN/DE/FR first-start instructions."
   ],
   "fixes": [
-    "Release each completed animation before starting the next visit to avoid retaining finished animations.",
-    "Preserve bundled transparent PNGs as binary files in signed update packages."
+    "Kiosk can start before initial configuration instead of waiting for the configured screen API.",
+    "Reject packages intended for another platform before installation."
   ]
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
-function pageStart(string $title,string $class=''): void {
-    echo '<!doctype html><html lang="'.e(language()).'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>'.e($title).' · PULSE</title><link rel="stylesheet" href="/assets/app.css?v='.e(version()).'"></head><body class="'.e($class).'">';
+function pageStart(string $title,string $class='',int $refresh=0): void {
+    echo '<!doctype html><html lang="'.e(language()).'"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'.($refresh>0?'<meta http-equiv="refresh" content="'.$refresh.'">':'').'<title>'.e($title).' · PULSE</title><link rel="stylesheet" href="/assets/app.css?v='.e(version()).'"></head><body class="'.e($class).'">';
 }
 function authorCredit(): string { return '<a class="author-credit" href="https://www.luigipranzo.com/" target="_blank" rel="noopener noreferrer">By Luigi Juan Pranzo</a>'; }
 function pageEnd(): void { echo '<footer class="app-footer">'.authorCredit().'</footer><script src="/assets/admin.js?v='.e(version()).'" defer></script></body></html>'; }
@@ -42,16 +42,19 @@ function deleteButton(string $action,int $id,string $return): void {
     echo '<button class="danger subtle" data-confirm="'.e(t('confirm_delete')).'">'.e(t('delete')).'</button></form>';
 }
 function renderSetup(): void {
+    $automatic=branchSetupAllowed();
     pageStart(t('setup'),'auth-page');
-    echo '<header class="auth-top">';brand();languagePicker();echo '</header><main class="auth-layout"><section class="auth-intro"><span class="eyebrow">GALAXUS · DIETIKON</span><h1>'.e(t('setup_intro')).'</h1><p>'.e(t('setup_detail')).'</p><div class="orbit-art" aria-hidden="true"><span>P.</span></div></section><section class="auth-card"><div class="eyebrow">PULSE / '.e(t('setup')).'</div>';
+    echo '<header class="auth-top">';brand();languagePicker();echo '</header><main class="auth-layout"><section class="auth-intro"><span class="eyebrow">'.e(setting('store_name','GALAXUS')).'</span><h1>'.e(t('setup_intro')).'</h1><p>'.e(t('setup_detail')).'</p><div class="orbit-art" aria-hidden="true"><span>P.</span></div></section><section class="auth-card"><div class="eyebrow">PULSE / '.e(t('setup')).'</div>';
     showFlash();
     formStart('setup','/setup');echo '<div class="wizard" data-wizard><div class="wizard-progress" aria-label="'.e(t('setup')).'"><span class="current">01</span><span>02</span><span>03</span></div>';
     echo '<fieldset data-step><legend>'.e(t('requirements')).'</legend><ul class="checks">';
     foreach(requirements() as $label=>$ok)echo '<li><span>✓</span>'.e($label).'</li>';
-    echo '</ul>';field('token',t('setup_token'),'','text','required autocomplete="off" maxlength="64"');
-    echo '<p class="help">'.e(t('setup_token_hint')).'</p></fieldset>';
+    echo '</ul>';
+    if($automatic)echo '<p class="notice success">'.e(t('branch_setup_ready')).'</p>';
+    else{field('token',t('setup_token'),'','text','required autocomplete="off" maxlength="64"');echo '<p class="help">'.e(t('setup_token_hint')).'</p>';}
+    echo '</fieldset>';
     echo '<fieldset data-step><legend>'.e(t('store')).'</legend>';
-    field('store',t('store'),'PULSE · Dietikon','text','required maxlength="100"');
+    field('store',t('store'),$automatic?'':'PULSE · Dietikon','text','required maxlength="100"');
     languageSelect(language());field('duration',t('duration'),20,'number','required min="10" max="120"');
     echo '</fieldset><fieldset data-step><legend>'.e(t('administrator')).'</legend>';
     field('name',t('name'),'','text','required maxlength="100" autocomplete="name"');
@@ -61,9 +64,20 @@ function renderSetup(): void {
     echo '<p class="help">'.e(t('password_hint')).'</p></fieldset><div class="wizard-actions"><button type="button" data-back hidden>'.e(t('back')).'</button><button type="button" class="primary" data-next hidden>'.e(t('next')).'</button><button class="primary" data-finish>'.e(t('finish_setup')).'</button></div></div></form><p class="help">'.e(t('setup_only')).'</p></section></main>';
     pageEnd();
 }
+function renderBranchWelcome(): void {
+    $ip=branchDisplayIp();
+    pageStart(t('branch_welcome_title'),'branch-welcome',10);
+    echo '<header class="branch-welcome-header">';brand();languagePicker();echo '</header><main class="branch-welcome-main"><span class="eyebrow">PULSE / '.e(t('setup')).'</span><h1>'.e(t($ip!==''?'branch_welcome_title':'branch_network_title')).'</h1><p class="branch-lead">'.e(t($ip!==''?'branch_welcome_detail':'branch_network_detail')).'</p>';
+    if($ip!==''){
+        echo '<div class="branch-addresses" aria-label="'.e(t('branch_address')).'">';
+        echo '<div class="branch-address">'.e(branchSetupUrl($ip)).'</div>';
+        echo '</div><ol class="branch-steps"><li>'.e(t('branch_step_open')).'</li><li>'.e(t('branch_step_create')).'</li><li>'.e(t('branch_step_ready')).'</li></ol>';
+    }
+    echo '<p class="branch-note">'.e(t(branchSetupEnabled()?'branch_setup_ready':'setup_token_hint')).'</p></main><footer class="app-footer">'.authorCredit().'</footer></body></html>';
+}
 function renderLogin(): void {
     pageStart(t('login'),'auth-page');echo '<header class="auth-top">';brand();languagePicker();
-    echo '</header><main class="auth-layout"><section class="auth-intro"><span class="eyebrow">GALAXUS · DIETIKON</span><h1>'.e(t('welcome')).'</h1><p>'.e(t('copyright')).'</p><div class="orbit-art" aria-hidden="true"><span>P.</span></div></section><section class="auth-card"><div class="eyebrow">PULSE / '.e(t('administrator')).'</div><h2>'.e(t('login')).'</h2><p class="muted">'.e(t('login_detail')).'</p>';
+    echo '</header><main class="auth-layout"><section class="auth-intro"><span class="eyebrow">'.e(setting('store_name','GALAXUS')).'</span><h1>'.e(t('welcome')).'</h1><p>'.e(t('copyright')).'</p><div class="orbit-art" aria-hidden="true"><span>P.</span></div></section><section class="auth-card"><div class="eyebrow">PULSE / '.e(t('administrator')).'</div><h2>'.e(t('login')).'</h2><p class="muted">'.e(t('login_detail')).'</p>';
     showFlash();formStart('login','/login');
     field('email',t('email'),'','email','required autocomplete="username" maxlength="200"');
     field('password',t('password'),'','password','required autocomplete="current-password" maxlength="72"');

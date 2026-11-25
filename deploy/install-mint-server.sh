@@ -5,7 +5,12 @@ umask 0027
 fail() { printf 'PULSE: %s\n' "$*" >&2; exit 1; }
 trap 'printf "Installazione interrotta alla riga %s. Controllare il messaggio e la guida prima di riprovare.\n" "$LINENO" >&2' ERR
 [[ "$(id -u)" == 0 ]] || fail "Eseguire: sudo bash deploy/install-mint.sh"
-[[ $# == 0 ]] || fail "Questo script non accetta parametri."
+BRANCH_SETUP=0
+case "${1:-}" in
+    --branch-setup) [[ $# == 1 ]] || fail "Uso: install-mint.sh [--branch-setup]"; BRANCH_SETUP=1 ;;
+    "") [[ $# == 0 ]] || fail "Parametro non valido." ;;
+    *) fail "Uso: install-mint.sh [--branch-setup]" ;;
+esac
 [[ -r /etc/os-release ]] || fail "Sistema operativo non riconosciuto."
 # shellcheck disable=SC1091
 . /etc/os-release
@@ -62,6 +67,9 @@ for directory in media backups logs sessions; do
     install -d -o www-data -g www-data -m 0770 "/var/lib/pulse/$directory"
 done
 sudo -u www-data env PULSE_STORAGE=/var/lib/pulse /usr/bin/php8.3 "$TARGET/bin/console.php" migrate
+if [[ "$BRANCH_SETUP" == 1 ]]; then
+    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse /usr/bin/php8.3 "$TARGET/bin/console.php" prepare-branch
+fi
 ln -s "$TARGET" /opt/pulse/current
 install -m 0644 "$TARGET/deploy/php-fpm.conf" /etc/php/8.3/fpm/pool.d/pulse.conf
 install -m 0644 "$TARGET/deploy/nginx.conf" /etc/nginx/sites-available/pulse
@@ -80,8 +88,12 @@ systemctl enable --now pulse-backup-daily.timer pulse-backup-weekly.timer
 python3 "$TARGET/deploy/updater.py" bootstrap --source "$SOURCE"
 
 printf '\nPULSE %s installato. Configurazione: http://127.0.0.1:8080/setup\n' "$RELEASE_VERSION"
-printf 'Codice di prima installazione:\n'
-sudo -u www-data env PULSE_STORAGE=/var/lib/pulse /usr/bin/php8.3 "$TARGET/bin/console.php" setup-token
-printf '\nDopo il setup, dal desktop come utente normale (senza sudo):\n'
+if [[ "$BRANCH_SETUP" == 1 ]]; then
+    printf 'Preparato per la filiale: primo accesso dalla rete interna senza codice.\n'
+else
+    printf 'Codice di prima installazione:\n'
+    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse /usr/bin/php8.3 "$TARGET/bin/console.php" setup-token
+fi
+printf '\nPer mostrare indirizzo IP e dashboard, dal desktop come utente normale (senza sudo):\n'
 printf '  pulse-enable-kiosk\n  pulse-kiosk\n'
 printf 'Leggere INSTALLAZIONE_LINUX_MINT.txt per accesso automatico, schermo e manutenzione.\n'

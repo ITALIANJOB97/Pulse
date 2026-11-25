@@ -154,7 +154,7 @@ class SupportTests(unittest.TestCase):
         argv = ["support-mint.py", "install", "--source", str(self.directory), "--output-dir", str(output)]
         with mock.patch.object(sys, "argv", argv), mock.patch.object(support.os, "geteuid", return_value=0), \
              mock.patch.object(support, "record_installer", return_value=23), \
-             mock.patch.object(support, "diagnose", side_effect=lambda report: report.write("Diagnosis completed")), \
+             mock.patch.object(support, "diagnose", side_effect=lambda report, php_version="8.3": report.write("Diagnosis completed")), \
              contextlib.redirect_stdout(io.StringIO()):
             # On unprivileged CI, leave ownership unchanged while exercising the CLI.
             with mock.patch.object(support.os, "fchown"), mock.patch.object(support.os, "chown"):

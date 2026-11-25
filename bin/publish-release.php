@@ -21,6 +21,8 @@ try{
     if(!preg_match('/^\d+\.\d+\.\d+$/D',$version))throw new RuntimeException('Invalid version.');
     $zip=$root.'/dist/PULSE-Dietikon-Linux-Mint-'.$version.'.zip';
     if(!is_file($zip))throw new RuntimeException('Run bin/build-linux-mint-zip.py first.');
+    $piZip=$root.'/dist/PULSE-Raspberry-Pi-'.$version.'.zip';
+    if(!is_file($piZip))throw new RuntimeException('Build both Mint and Raspberry packages before publishing.');
     $secret=base64_decode(trim(file_get_contents($private)),true);$key=base64_decode(trim(file_get_contents($public)),true);
     if($secret===false||strlen($secret)!==SODIUM_CRYPTO_SIGN_SECRETKEYBYTES||!hash_equals(sodium_crypto_sign_publickey_from_secretkey($secret),$key))throw new RuntimeException('Signing key mismatch.');
     $dir=$root.'/dist/GitHub/v'.$version;if(!is_dir($dir))mkdir($dir,0755,true);
@@ -45,6 +47,20 @@ try{
     $sig=sodium_crypto_sign_detached($json,$secret);
     if(!sodium_crypto_sign_verify_detached($sig,$json,$key))throw new RuntimeException('Signature self-check failed.');
     file_put_contents($dir.'/stable.json',$json);file_put_contents($dir.'/stable.json.sig',base64_encode($sig).PHP_EOL);
+    // Separate signed ARM64 feed; existing Mint assets and blog protocol stay unchanged.
+    $piTarget=$dir.'/pulse-raspberry-'.$version.'.zip';
+    if(is_file($piTarget)&&hash_file('sha256',$piTarget)!==hash_file('sha256',$piZip))throw new RuntimeException('Raspberry package already differs. Increment VERSION.');
+    copy($piZip,$piTarget);
+    $piManifest=array_replace($manifest,[
+        'platform'=>'raspberrypi-trixie-arm64','min_from'=>'0.4.0','min_updater'=>5,'php_min'=>'8.4.0',
+        'url'=>'https://github.com/ITALIANJOB97/Pulse/releases/download/v'.$version.'/pulse-raspberry-'.$version.'.zip',
+        'size'=>filesize($piTarget),'sha256'=>hash_file('sha256',$piTarget),
+    ]);
+    $piJson=json_encode($piManifest,JSON_PRETTY_PRINT|JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE|JSON_THROW_ON_ERROR).PHP_EOL;
+    $piSig=sodium_crypto_sign_detached($piJson,$secret);
+    if(!sodium_crypto_sign_verify_detached($piSig,$piJson,$key))throw new RuntimeException('Raspberry signature self-check failed.');
+    file_put_contents($dir.'/stable-raspberry.json',$piJson);
+    file_put_contents($dir.'/stable-raspberry.json.sig',base64_encode($piSig).PHP_EOL);
     // The installed v1 service stays pinned to the blog. Sign a second manifest,
     // without changing its trusted code or distributing the private signing key.
     $blogManifest=$manifest;

@@ -1,6 +1,13 @@
 # Documentazione PULSE
 
-Versione di riferimento: **0.3.3**, 20 novembre 2026.
+Versione in preparazione: **0.4.0**, aggiornata il 25 novembre 2026 (locale, non pubblicata).
+
+- [Nuove filiali e Raspberry Pi](FILIALI_RASPBERRY.md).
+- [Installazione Raspberry e consegna](../INSTALLAZIONE_RASPBERRY.txt).
+- [Installazione Raspberry automatica da terminale](INSTALLAZIONE_ONLINE_RASPBERRY.md).
+- [Verifiche e limiti del collaudo](VERIFICHE_0.4.0.md).
+
+Ultima release pubblicata di riferimento: **0.3.3**.
 
 ## Release e file sul NAS
 

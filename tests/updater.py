@@ -129,6 +129,28 @@ class Deployment(unittest.TestCase):
         self.assertEqual(self.dbvalue("SELECT password_hash FROM admins"), "unchanged-password-hash")
         self.assertEqual(self.dbvalue("SELECT payload FROM content"), "existing tasks")
         self.assertEqual((self.data / "media" / self.image).read_bytes(), b"real immutable image fixture")
+    def use_raspberry(self):
+        self.agent.platform = "raspberrypi-trixie-arm64"
+        self.agent.profile = u.PROFILES[self.agent.platform]
+        self.agent.php = "/usr/bin/php8.4"
+        self.agent.fpm = "php8.4-fpm"
+    def test_raspberry_install_preserves_data_and_uses_84_service(self):
+        self.use_raspberry()
+        self.test_success_preserves_all_user_data_and_protected_backup()
+        self.assertIn(("stop", "php8.4-fpm"), self.agent.calls)
+        self.assertIn(("start", "php8.4-fpm"), self.agent.calls)
+        self.assertNotIn(("stop", "php8.3-fpm"), self.agent.calls)
+    def test_raspberry_failed_migration_rolls_back(self):
+        self.use_raspberry()
+        self.agent.migration_fails = True
+        with self.assertRaises(RuntimeError): self.agent.install(self.source)
+        self.assert_existing()
+        self.assertEqual(self.agent.current().name,"0.1.1")
+        self.assertIn(("start", "php8.4-fpm"), self.agent.calls)
+    def test_raspberry_rejects_blog_config(self):
+        self.use_raspberry()
+        self.agent.config.write_text(json.dumps(u.BLOG_CONFIG))
+        with self.assertRaises(ValueError): self.agent.configuration()
     def test_success_preserves_all_user_data_and_protected_backup(self):
         self.agent.install(self.source)
         self.assert_existing()
@@ -289,7 +311,17 @@ class Deployment(unittest.TestCase):
             self.preference("update_retry","retry-1")
             self.agent.tick()
         self.assertEqual(self.agent.current().name,"0.2.0")
+    def test_raspberry_bootstrap_units(self):
+        self.use_raspberry()
+        self.check_bootstrap_permissions("github")
+        units = self.root / "etc/systemd/system"
+        self.assertTrue((units / "php8.4-fpm.service.d/pulse-recovery.conf").is_file())
+        self.assertFalse((units / "php8.3-fpm.service.d").exists())
+        self.assertIn("Before=php8.4-fpm.service", (units / "pulse-update-recover.service").read_text())
+        self.assertIn("ExecStart=/usr/bin/php8.4 ", (units / "pulse-backup@.service").read_text())
     def test_bootstrap_permissions_with_production_umask(self):
+        self.check_bootstrap_permissions("blog")
+    def check_bootstrap_permissions(self, channel):
         shutil.rmtree(self.control)
         (self.source / "deploy").mkdir()
         for name in ("updater.py","update_protocol.py","recovery_backup.py","update-source.json","restore-update.py","verify-release.php","release-public.key","pulse-updates.service","pulse-updates.timer","pulse-update-recover.service","pulse-backup@.service"):
@@ -307,19 +339,19 @@ class Deployment(unittest.TestCase):
         (self.agent.state / "downloads/stable.json").write_text('old channel')
         old_mask=os.umask(0o027)
         try:
-            with patch.object(u,"Path",side_effect=redirected_path):u.bootstrap(self.agent,self.source)
+            with patch.object(u,"Path",side_effect=redirected_path):u.bootstrap(self.agent,self.source,channel=channel)
         finally:os.umask(old_mask)
         self.assertEqual(self.control.stat().st_mode & 0o777,0o755)
         self.assertEqual(self.agent.config.parent.stat().st_mode & 0o777,0o755)
         self.agent.run(["/usr/bin/test","-r",self.agent.config],as_web=True)
         self.assertTrue(self.agent.preferences()["auto"])
-        self.assertEqual(u.read_json(self.agent.config),u.BLOG_CONFIG)
+        self.assertEqual(u.read_json(self.agent.config),u.BLOG_CONFIG if channel=="blog" else u.GITHUB_CONFIG)
         self.assertFalse((self.agent.state / "downloads/stable.json").exists())
     def test_first_bootstrap_works_before_helper_is_installed(self):
         (self.control / "restore-update.py").unlink()
         read = u.Path.read_text
         def mocked_read(path,*args,**kwargs):
-            if str(path)=="/etc/os-release":return 'ID=linuxmint\nVERSION_ID="22.3"\n'
+            if str(path)=="/etc/os-release":return 'ID=linuxmint\nVERSION_ID="22.3"\nUBUNTU_CODENAME=noble\n'
             return read(path,*args,**kwargs)
         def bootstrap(agent,source):
             self.assertFalse((self.control / "restore-update.py").exists())
@@ -440,6 +472,26 @@ class Protocol(unittest.TestCase):
         u.validate_manifest(release,clock=clock)
         for key,val in (("expires_at","2020-01-01T00:00:00Z"),("platform","other"),("size",True),("app","other"),("notes",{})):
             with self.subTest(key=key),self.assertRaises(ValueError):u.validate_manifest({**release,key:val},clock=clock)
+
+class RaspberryPlatform(unittest.TestCase):
+    def test_host_selection(self):
+        pi='ID=debian\nVERSION_ID="13"\nVERSION_CODENAME=trixie\n'
+        self.assertEqual(u.host_profile(pi,"arm64"),"raspberrypi-trixie-arm64")
+        self.assertEqual(u.host_profile('ID=linuxmint\nVERSION_ID="22.3"\nUBUNTU_CODENAME=noble\n',"amd64"),"linuxmint22-amd64")
+        for source,arch in ((pi,"armhf"),(pi,"amd64"),(pi.replace('trixie','bookworm'),"arm64")):
+            with self.assertRaises(ValueError):u.host_profile(source,arch)
+    def test_feed_and_package_are_platform_bound(self):
+        platform="raspberrypi-trixie-arm64"
+        manifest={"app":"pulse-dietikon","schema":1,"channel":"stable","version":"0.4.0","min_from":"0.4.0","min_updater":5,"db_schema":1,"php_min":"8.4.0","platform":platform,"published_at":"2026-11-24T00:00:00Z","expires_at":"2027-11-24T00:00:00Z","size":100,"sha256":"a"*64,"url":u.ORIGIN+"v0.4.0/pulse-raspberry-0.4.0.zip","notes":{"en":"x","de":"x","fr":"x"}}
+        clock=dt.datetime(2026,11,24,12,tzinfo=dt.timezone.utc)
+        u.validate_manifest(manifest,clock=clock,platform=platform)
+        with self.assertRaises(ValueError):u.validate_manifest(manifest,clock=clock)
+        with self.assertRaises(ValueError):u.validate_manifest({**manifest,"url":u.ORIGIN+"v0.4.0/pulse-0.4.0.zip"},clock=clock,platform=platform)
+        names=["stable-raspberry.json","stable-raspberry.json.sig","pulse-raspberry-0.4.0.zip"]
+        data={"draft":False,"prerelease":False,"tag_name":"v0.4.0","assets":[{"name":name,"state":"uploaded","browser_download_url":u.ORIGIN+"v0.4.0/"+name,"url":f"https://api.github.com/repos/{u.REPOSITORY}/releases/assets/{i+1}"} for i,name in enumerate(names)]}
+        self.assertEqual(set(u.release_asset_urls(data,platform)[1]),set(names))
+        with self.assertRaises(ValueError):u.release_asset_urls(data)
+        with self.assertRaises(ValueError):u.release_asset_urls({**data,"assets":[]},platform)
 
 if __name__=="__main__":
     if os.geteuid()!=0:raise SystemExit("Use root inside a disposable Linux test environment; tests only use /tmp paths.")

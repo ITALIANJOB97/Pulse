@@ -1,3 +1,13 @@
+## 0.4.0 — 2026-11-24 (preparazione locale)
+
+- Installer da terminale con download GitHub verificato, configurazione automatica della TV e riavvio opzionale; candidato Raspberry separato dalla release stabile.
+
+- Installer Raspberry Pi OS Desktop Trixie ARM64, PHP 8.4, profilo a un worker e diagnostica USB.
+- Aggiornamenti firmati GitHub distinti per Raspberry/Mint, con backup e ripristino.
+- Predisposizione esplicita delle nuove filiali senza codice al primo setup; chiusura automatica dopo il primo amministratore.
+- Schermata TV con un solo indirizzo della rete locale e passaggio automatico alla Dashboard dopo il setup.
+- Guide EN/DE/FR e istruzioni di installazione aggiornate. Collaudo Raspberry fisico ancora necessario.
+
 ## 0.3.3 — 2026-11-20
 
 - Nuova scena natalizia con cinque illustrazioni trasparenti locali: Babbo Natale su slitta, renna, schiaccianoci, Zuckerstangen e alberi con regali; ghirlanda illuminata, campanelle, stelle, palline e neve.

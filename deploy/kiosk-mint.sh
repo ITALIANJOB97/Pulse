@@ -45,14 +45,14 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 0' INT TERM
 while [[ ! -e "$STATE/kiosk.stop" ]]; do
-    if [[ "$(curl --silent --max-time 5 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:8080/api/screen || true)" != 200 ]]; then
+    if [[ "$(curl --location --silent --max-time 5 --output /dev/null --write-out '%{http_code}' http://127.0.0.1:8080/welcome || true)" != 200 ]]; then
         sleep 3
         continue
     fi
     "$BROWSER" --kiosk --no-first-run --noerrdialogs --start-fullscreen \
         --disable-session-crashed-bubble --password-store=basic \
         --window-position=0,0 --window-size=1920,1080 \
-        --user-data-dir="$PROFILE" http://127.0.0.1:8080/display 9>&- &
+        --user-data-dir="$PROFILE" http://127.0.0.1:8080/welcome 9>&- &
     BROWSER_PID=$!
     while kill -0 "$BROWSER_PID" 2>/dev/null && [[ ! -e "$STATE/kiosk.stop" ]]; do sleep 1; done
     [[ ! -e "$STATE/kiosk.stop" ]] || break

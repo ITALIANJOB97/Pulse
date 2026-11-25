@@ -17,6 +17,11 @@ try {
         echo '<!doctype html><html lang="en"><meta charset="utf-8"><meta http-equiv="refresh" content="10"><title>PULSE</title><body style="background:#00559D;color:white;font:24px system-ui;padding:10vh"><h1>PULSE</h1><p>Update in progress · Aktualisierung läuft · Mise à jour en cours</p><p>Please wait · Bitte warten · Veuillez patienter</p></body></html>';exit;
     }
     boot();startSession();
+    if($path==='/welcome'){
+        if(!in_array(normalizedSetupIp((string)($_SERVER['REMOTE_ADDR']??'')),['127.0.0.1','::1'],true)){http_response_code(404);exit;}
+        if(installed())redirect('/display');
+        require PULSE_ROOT.'/app/views.php';renderBranchWelcome();exit;
+    }
     if(!installed()&&!in_array($path,['/setup','/action'],true))redirect('/setup');
     if($path==='/')redirect(installed()?'/admin':'/setup');
     if($path==='/api/updates'||$path==='/api/updates/check'){

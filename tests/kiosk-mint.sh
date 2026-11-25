@@ -49,6 +49,7 @@ touch "$TEST_DIR/ready"
 wait_launches 2
 bash "$SOURCE/deploy/kiosk-mint.sh"
 [[ "$(wc -l < "$TEST_DIR/launches")" == 2 ]] || { echo "Duplicate browser started."; exit 1; }
+grep -qx -- 'http://127.0.0.1:8080/welcome' "$TEST_DIR/arguments"
 grep -qx -- '--kiosk' "$TEST_DIR/arguments"
 grep -qx -- "--user-data-dir=$XDG_CONFIG_HOME/pulse-kiosk" "$TEST_DIR/arguments"
 if grep -qx -- '--no-sandbox' "$TEST_DIR/arguments"; then echo "Browser sandbox disabled."; exit 1; fi

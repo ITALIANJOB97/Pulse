@@ -298,7 +298,16 @@
     "countdown_image_required": "Choose a background image for the new countdown.",
     "countdown_not_found": "This countdown no longer exists. Return to the list and try again.",
     "countdown_delete_confirm": "Delete this countdown? It will disappear from the TV. Its image is retained in storage and backups.",
-    "countdown_team_kicker": "Team countdown"
+    "countdown_team_kicker": "Team countdown",
+    "branch_setup_ready": "Ready for your branch: no installation code is required. Create the first administrator to complete setup.",
+    "branch_welcome_title": "Welcome to your PULSE",
+    "branch_welcome_detail": "Open this address on a computer connected to the same internal network.",
+    "branch_network_title": "Waiting for a network connection",
+    "branch_network_detail": "Connect the network cable. The address will appear here automatically.",
+    "branch_address": "Setup address",
+    "branch_step_open": "Open the address in your browser.",
+    "branch_step_create": "Enter your store name and create your administrator account.",
+    "branch_step_ready": "The dashboard will start automatically on this screen."
   },
   "de": {
     "setup": "Ersteinrichtung",
@@ -599,7 +608,16 @@
     "countdown_image_required": "Für den neuen Countdown ein Hintergrundbild auswählen.",
     "countdown_not_found": "Dieser Countdown existiert nicht mehr. Zur Liste zurückkehren und erneut versuchen.",
     "countdown_delete_confirm": "Diesen Countdown löschen? Er verschwindet vom TV. Sein Bild bleibt im Speicher und in Backups erhalten.",
-    "countdown_team_kicker": "Team-Countdown"
+    "countdown_team_kicker": "Team-Countdown",
+    "branch_setup_ready": "Für Ihre Filiale vorbereitet: Kein Installationscode nötig. Erstellen Sie den ersten Administrator, um die Einrichtung abzuschliessen.",
+    "branch_welcome_title": "Willkommen bei Ihrem PULSE",
+    "branch_welcome_detail": "Öffnen Sie diese Adresse auf einem Computer im selben internen Netzwerk.",
+    "branch_network_title": "Warten auf die Netzwerkverbindung",
+    "branch_network_detail": "Schliessen Sie das Netzwerkkabel an. Die Adresse erscheint hier automatisch.",
+    "branch_address": "Adresse für die Einrichtung",
+    "branch_step_open": "Öffnen Sie die Adresse in Ihrem Browser.",
+    "branch_step_create": "Geben Sie Ihre Filiale ein und erstellen Sie Ihr Administratorkonto.",
+    "branch_step_ready": "Die Dashboard-Anzeige startet auf diesem Bildschirm automatisch."
   },
   "fr": {
     "setup": "Configuration initiale",
@@ -900,6 +918,15 @@
     "countdown_image_required": "Choisissez une image de fond pour le nouveau compte à rebours.",
     "countdown_not_found": "Ce compte à rebours n’existe plus. Revenez à la liste et réessayez.",
     "countdown_delete_confirm": "Supprimer ce compte à rebours ? Il disparaîtra de la TV. Son image reste conservée dans le stockage et les sauvegardes.",
-    "countdown_team_kicker": "Compte à rebours de l’équipe"
+    "countdown_team_kicker": "Compte à rebours de l’équipe",
+    "branch_setup_ready": "Prêt pour votre filiale : aucun code d’installation n’est nécessaire. Créez le premier administrateur pour terminer la configuration.",
+    "branch_welcome_title": "Bienvenue sur votre PULSE",
+    "branch_welcome_detail": "Ouvrez cette adresse sur un ordinateur connecté au même réseau interne.",
+    "branch_network_title": "En attente de connexion réseau",
+    "branch_network_detail": "Branchez le câble réseau. L’adresse apparaîtra ici automatiquement.",
+    "branch_address": "Adresse de configuration",
+    "branch_step_open": "Ouvrez l’adresse dans votre navigateur.",
+    "branch_step_create": "Indiquez votre filiale et créez votre compte administrateur.",
+    "branch_step_ready": "Le tableau de bord démarrera automatiquement sur cet écran."
   }
 }

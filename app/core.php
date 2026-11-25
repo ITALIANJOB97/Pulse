@@ -165,15 +165,16 @@ function setupToken(): string {
     return $token;
 }
 function initialize(array $data): void {
-    if (!is_file(storage('setup-token')) || !hash_equals(trim((string)file_get_contents(storage('setup-token'))), $data['token'])) {
-        throw new DomainException(t('setup_token_error'));
-    }
-    if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL) || !passwordValid($data['password']) || $data['name'] === '' || $data['store'] === '') {
-        throw new DomainException(t('invalid_input'));
-    }
     db()->exec('BEGIN IMMEDIATE');
     try {
         if (installed()) throw new DomainException(t('already_installed'));
+        $token = $data['token'] ?? '';
+        if (!branchSetupAllowed() && (!is_string($token) || !is_file(storage('setup-token')) || !hash_equals(trim((string)file_get_contents(storage('setup-token'))), $token))) {
+            throw new DomainException(t('setup_token_error'));
+        }
+        if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL) || !passwordValid($data['password']) || $data['name'] === '' || $data['store'] === '') {
+            throw new DomainException(t('invalid_input'));
+        }
         $q = db()->prepare('INSERT INTO admins(name,email,password_hash,created_at) VALUES(?,?,?,?)');
         $q->execute([$data['name'], $data['email'], password_hash($data['password'], PASSWORD_DEFAULT), gmdate('c')]);
         setSetting('store_name', $data['store']);
@@ -189,6 +190,7 @@ function initialize(array $data): void {
         db()->exec('COMMIT');
     } catch (Throwable $ex) { db()->exec('ROLLBACK'); throw $ex; }
     @unlink(storage('setup-token'));
+    @unlink(storage('branch-setup.json'));
 }
 function moduleKeys(): array {
     return ['spotlight','podium','team','roles','transfers','targets','daily','gallery','motto','hall','hall_story','tasks'];

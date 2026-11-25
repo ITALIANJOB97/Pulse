@@ -1,247 +1,130 @@
-PULSE · DIETIKON — INSTALLAZIONE RASPBERRY PI
-Versione 0.1.2 — Raspberry Pi 3, Raspberry Pi OS 64 bit, TV orizzontale Full HD.
-Eseguire i comandi sul Raspberry, tramite terminale o SSH.
-L'installazione sul Raspberry reale deve ancora essere verificata.
+PULSE 0.4.0 — RASPBERRY PI / NUOVE FILIALI
+25 novembre 2026 — pacchetto locale da collaudare sul dispositivo prima della spedizione.
 
-1. COMPONENTI
--------------
-Verificare sistema e architettura:
-    cat /etc/os-release
-    uname -m
+SISTEMA E COMPONENTI
+Raspberry Pi 3B+ (o superiore), Raspberry Pi OS 64-bit con Desktop,
+Debian 13 Trixie. Non usare la versione 32-bit, Lite o Bookworm.
+Sistema ufficiale: https://www.raspberrypi.com/software/operating-systems/
+Usare Raspberry Pi Imager, un alimentatore adatto e una microSD affidabile
+(consigliati almeno 32 GB). TV orizzontale 1920x1080, rete Ethernet/DHCP.
+Il Pi 3B+ ha 1 GB di RAM: PHP usa un solo worker, ma la fluidità di Chromium,
+immagini ed effetti va provata sull'hardware. Nelle impostazioni PULSE si
+possono disattivare animazioni celebrative e decorazioni stagionali.
 
-Atteso: aarch64. PULSE richiede PHP >= 8.4.
-Raspberry Pi OS basato su Debian Trixie offre PHP 8.4 nei repository.
-Se è presente una distribuzione precedente, verificarne l'aggiornamento
-prima di aggiungere repository PHP esterni.
+PREPARAZIONE A DIETIKON — RIPETERE SU CIASCUN RASPBERRY
+Procedura automatica da terminale: vedere docs/INSTALLAZIONE_ONLINE_RASPBERRY.md.
+Il file install-pulse-raspberry.py scarica il pacchetto esatto, verifica SHA256,
+installa il server e configura desktop automatico + PULSE TV. La pubblicazione
+GitHub del candidato Raspberry è separata dalla release stabile per Mint.
+La procedura manuale qui sotto rimane disponibile anche con pacchetto su USB.
 
-Installare:
-    sudo apt update
-    sudo apt install nginx php-fpm php-cli php-sqlite3 php-gd php-intl php-mbstring php-curl php-zip php-xml php-common chromium curl rsync unzip
+1. Installare Raspberry Pi OS Desktop 64-bit Trixie e avviarlo normalmente.
+   Creare un utente Linux locale. Impostare hostname diversi, ad esempio
+   pulse-filiale-1 e pulse-filiale-2. Lasciare la rete su DHCP: l'IP cambierà.
+   In Raspberry Pi Configuration / Control Centre attivare Desktop Autologin
+   e disattivare Screen Blanking; impostare risoluzione 1920x1080.
+   Si può aprire anche sudo raspi-config per configurare queste opzioni.
+2. Collegare Internet per installare i componenti. Estrarre COMPLETAMENTE
+   PULSE-Raspberry-Review.zip (candidato locale 0.4.0 aggiornato il 25 novembre).
+   Aprire il terminale nella cartella estratta
+   che contiene VERSION e deploy. Eseguire:
 
-Verificare:
-    php -v
-    php -m
+     sudo bash deploy/install-raspberry.sh --branch-setup
 
-Estensioni richieste: pdo_sqlite, sqlite3, gd, fileinfo, zip, curl, mbstring, intl.
-exif è facoltativa e corregge l'orientamento delle foto JPEG.
-Per il kiosk serve Raspberry Pi OS CON DESKTOP. Il backend funziona anche
-su Lite, ma Lite da solo non avvia un browser grafico.
-Non occorrono Node.js, npm, Composer o MySQL sul Raspberry.
-Il normale funzionamento non dipende da servizi Internet.
+   L'installer controlla sistema/architettura, installa Nginx, PHP 8.4 FPM/CLI,
+   SQLite, GD, Intl, Mbstring, Curl, Zip, XML, OPcache, Chromium, rsync e
+   strumenti di sistema dai repository. Configura server, backup e updater.
+   Crea un rapporto .txt in diagnostica/, anche in caso di errore.
+   NON eseguirlo su un dispositivo con PULSE già installato: si ferma senza
+   cancellare dati. Non eliminare /var/lib/pulse per forzare l'installazione.
+3. Nel terminale dell'utente desktop, SENZA sudo:
 
-2. COPIA E PRIMA INSTALLAZIONE
------------------------------
-Copiare l'intera cartella del progetto tramite SFTP/WinSCP, per esempio in:
-    /home/NOME_UTENTE/pulse-source
+     pulse-enable-kiosk
+     pulse-kiosk
 
-Non copiare database di prova nella futura installazione.
-Poi:
-    cd /home/NOME_UTENTE/pulse-source
-    sudo bash deploy/install-raspberry.sh
+   La TV mostra UN SOLO indirizzo della rete locale con la porta 8080.
+   Usa la connessione principale; senza una rotta disponibile preferisce
+   IPv4 su Ethernet, poi Wi-Fi. Gli indirizzi VPN non vengono proposti.
+   Riavviare per verificare che
+   appaia automaticamente anche dopo un'accensione. Se la rete è scollegata
+   compare un messaggio di attesa; l'indirizzo si aggiorna ogni 10 secondi.
+4. Per la consegna lasciare PULSE non configurato: NON creare l'amministratore
+   del negozio a Dietikon. Spegnere dal menu di sistema prima di scollegare.
+   Installare separatamente i due dispositivi; non clonare una scheda già
+   configurata con utenti, credenziali o dati di un'altra filiale.
 
-Lo script crea:
-- /opt/pulse/releases/0.1.2: codice della release;
-- /opt/pulse/current: collegamento alla release attiva;
-- /var/lib/pulse: database, immagini, sessioni e backup;
-- pool PHP-FPM dedicato, massimo due processi;
-- sito Nginx sulla porta 8080, senza rimuovere gli altri siti;
-- avvio automatico di Nginx e PHP-FPM;
-- timer giornalieri/settimanali e controllo aggiornamenti;
-- /usr/local/bin/pulse-kiosk per l'avvio della TV.
+COSA DEVE FARE LO STORE MANAGER
+1. Collegare Ethernet, HDMI e alimentazione; accendere TV e Raspberry.
+2. Leggere l'indirizzo sulla TV, ad esempio http://10.20.30.40:8080.
+3. Da un PC della rete interna aprire QUELL'indirizzo (non 127.0.0.1).
+4. Inserire nome della filiale, lingua, nome/email/password dell'amministratore.
+   Non serve il codice di installazione nella modalità predisposta sopra.
+5. Dopo il salvataggio la TV passa automaticamente alla Dashboard.
 
-Solo public/ è esposto dal server. I dati rimangono fuori dal codice.
-Il codice è root:www-data; solo /var/lib/pulse è scrivibile da www-data.
-Non usare chmod 777.
-Lo script è per la prima installazione: si ferma se PULSE è già presente.
-In caso di errore, controllare lo stato dei servizi/cartelle prima di ripeterlo.
+La porta è sempre 8080. Il PC e il Raspberry devono potersi raggiungere:
+una rete aziendale con VLAN/firewall può richiedere l'abilitazione interna
+TCP 8080 da parte dell'IT. Internet serve per scaricare gli aggiornamenti;
+la Dashboard continua a mostrare i dati locali anche senza Internet.
 
-3. CONFIGURAZIONE INIZIALE
--------------------------
-Dal PC nella stessa rete:
-    http://IP_DEL_RASPBERRY:8080/setup
+PRIMO ACCESSO SENZA CODICE — ATTIVAZIONE ESPLICITA
+--branch-setup è riservato ai due nuovi dispositivi predisposti. Fino al
+primo setup qualsiasi persona che li raggiunga direttamente sulla rete
+privata può creare il primo amministratore. Completato il setup, l'accesso
+si chiude automaticamente. La funzione non è attivata dagli aggiornamenti.
+La richiesta deve usare l'IP locale, non un hostname o reverse proxy.
+Senza --branch-setup rimane il codice della normale installazione.
+Per annullare la predisposizione prima del setup:
 
-Inserire il codice mostrato dallo script, nome dello store, lingua TV
-(DE/EN/FR), durata delle pagine e dati del primo amministratore.
-Non ci sono credenziali predefinite. La password deve essere lunga almeno
-12 caratteri e occupare al massimo 72 byte.
-Dopo il completamento la procedura iniziale viene bloccata.
+  sudo -u www-data env PULSE_STORAGE=/var/lib/pulse /usr/bin/php8.4 /opt/pulse/current/bin/console.php cancel-branch
 
-Per rileggere il codice PRIMA di completare la configurazione:
-    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php /opt/pulse/current/bin/console.php setup-token
+Per recuperare il normale codice (solo prima del setup):
 
-Accessi successivi:
-    http://IP_DEL_RASPBERRY:8080/login
+  sudo -u www-data env PULSE_STORAGE=/var/lib/pulse /usr/bin/php8.4 /opt/pulse/current/bin/console.php setup-token
 
-L'app parte vuota: aggiungere i Mitarbeiter e compilare le pagine.
-Questa base prevede inserimento manuale; import Excel/CSV e integrazioni
-con sistemi Galaxus non sono ancora presenti.
-I valori KPI vuoti rimangono mancanti, non diventano zero.
+AGGIORNAMENTI E BACKUP
+Il Raspberry controlla GitHub / ITALIANJOB97/Pulse senza credenziali.
+Usa stable-raspberry.json + firma e pulse-raspberry-VERSION.zip.
+Non usa il pacchetto Mint né il vecchio feed del blog. Ogni release futura
+va pubblicata con entrambi i pacchetti firmati; il builder e il publisher
+sono stati aggiornati per farlo. Questo ZIP locale non pubblica una release.
+Controllo rete ogni 6 ore; richieste amministratore verificate ogni 15 secondi.
+Installazione nella finestra notturna configurata o con Scarica e installa ora.
+Prima dell'aggiornamento: backup verificato, poi migrazione, controllo salute;
+se fallisce, ripristino della versione e dei dati precedenti.
+Il servizio privilegiato è separato dal codice e non viene sostituito
+silenziosamente da un pacchetto automatico.
+Per un futuro aggiornamento manuale, dalla NUOVA cartella estratta:
 
-La configurazione fornita usa HTTP nella rete interna. Per reti non fidate
-configurare HTTPS con il certificato della propria infrastruttura.
-Non pubblicare la porta di amministrazione direttamente su Internet.
+  sudo bash deploy/upgrade-raspberry.sh
 
-4. TV E RIAVVIO AUTOMATICO
--------------------------
-Usare il Desktop dell'utente normale, NON root.
-Configurare l'accesso automatico al Desktop tramite raspi-config o le
-impostazioni del Raspberry Pi OS. Impostare 1920x1080 orizzontale e
-disabilitare lo spegnimento automatico/blanking dello schermo.
+Richiede una versione superiore e un setup già completato.
+Backup giornalieri/settimanali: /var/lib/pulse/backups.
+Backup protetti pre-aggiornamento: /var/lib/pulse-updater/backups.
+Dati, foto e impostazioni: /var/lib/pulse; codice: /opt/pulse/current.
+Ogni filiale ha database e amministratori indipendenti.
 
-Su Raspberry Pi OS Desktop con labwc:
-    mkdir -p "$HOME/.config/labwc" "$HOME/.local/state/pulse"
-    nano "$HOME/.config/labwc/autostart"
+DIAGNOSI E MANUTENZIONE
+Per uscire temporaneamente dalla TV, dal terminale dell'utente desktop:
+  pulse-kiosk --stop
+Per riavviarla:
+  pulse-kiosk
+Per disabilitare l'avvio automatico:
+  pulse-enable-kiosk --disable
 
-Conservare le righe esistenti e aggiungere UNA volta:
-    /usr/local/bin/pulse-kiosk >> "$HOME/.local/state/pulse/kiosk.log" 2>&1 &
+Per creare un file da copiare sulla USB, dalla cartella estratta:
+  sudo bash deploy/diagnose-raspberry.sh
+Il file è in diagnostica/. Non inviare database o password.
+Controlli rapidi:
+  systemctl is-active nginx php8.4-fpm
+  systemctl status pulse-updates.timer --no-pager
+  curl -I http://127.0.0.1:8080/welcome
+  sudo cat /opt/pulse/current/VERSION
+Non formattare/reinstallare un dispositivo configurato senza un backup
+completo verificato di /var/lib/pulse e dei componenti di configurazione.
 
-Per provare subito:
-    /usr/local/bin/pulse-kiosk
-
-Il browser mostra:
-    http://127.0.0.1:8080/display
-
-Lo script aspetta che il server e la configurazione siano pronti, riapre
-Chromium se termina e impedisce l'avvio di copie duplicate.
-Se il Desktop usa X11 o un altro gestore, avviare lo stesso comando
-tramite il relativo autostart, senza modificare labwc inutilizzato.
-
-Per un display su un ALTRO dispositivo, usare il "TV access link"
-nelle Impostazioni. Copiare l'indirizzo del collegamento: contiene una
-chiave privata, revocabile dalle impostazioni.
-La TV locale funziona senza sessione amministratore; non può modificare dati.
-
-Le pagine ruotano automaticamente. Le liste lunghe sono suddivise in pagine.
-Frecce sinistra/destra: pagina precedente/successiva.
-Spazio: pausa/ripresa, utile per le prove.
-Le foto della galleria vengono mostrate una alla volta.
-Gli effetti del Mitarbeiter del mese e del podio durano circa cinque secondi.
-
-5. ARCHIVIO E BACKUP
--------------------
-Percorsi:
-    /var/lib/pulse/pulse.sqlite
-    /var/lib/pulse/media
-    /var/lib/pulse/backups
-    /var/lib/pulse/logs
-
-Orari Europe/Zurich:
-- giornaliero: 23:55;
-- settimanale: domenica 23:58;
-- controllo aggiornamenti: circa ogni ora.
-
-Conservazione ZIP: 30 giornalieri, 12 settimanali, 10 manuali.
-Ogni backup giornaliero/settimanale crea anche uno snapshot consultabile.
-Lo storico consultabile non viene eliminato automaticamente in questa base.
-Il backup contiene SQLite consistente, immagini e manifest con checksum.
-Le immagini rimosse dalla galleria restano disponibili per lo storico.
-
-I timer persistenti recuperano un'esecuzione mancata al riavvio.
-Lo snapshot registra data e dati al momento dell'esecuzione, senza
-ricostruire contenuti di giorni in cui il Raspberry era spento.
-
-Backup manuale:
-    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php /opt/pulse/current/bin/console.php backup manual
-
-Sostituire manual con daily o weekly per provare i rispettivi flussi.
-Dall'amministrazione è possibile creare e scaricare i backup.
-Una seconda copia su NAS/disco esterno protegge dalla perdita della microSD:
-la destinazione esterna automatica non è configurata in questa base.
-
-6. RIPRISTINO
--------------
-Il ripristino sostituisce dati, impostazioni e account con quelli del backup.
-Usare un backup PULSE della propria installazione. Vengono controllati:
-struttura, checksum del database, integrità SQLite, versione e immagini.
-Limite ripristino: 2 GiB. Un'installazione esistente viene prima salvata
-in un nuovo backup manuale.
-
-Fermare i servizi web (esempio PHP 8.4):
-    sudo systemctl stop nginx php8.4-fpm
-    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php /opt/pulse/current/bin/restore.php /PERCORSO/backup.zip --confirm
-
-Solo dopo un ripristino riuscito:
-    sudo systemctl start php8.4-fpm nginx
-
-Adattare il nome php8.4-fpm alla versione realmente installata.
-Stop/start interessano anche altri siti sugli stessi servizi.
-Le sessioni vengono invalidate. Accedere con un account presente nel backup.
-Potrebbe essere necessario aggiornare i link delle TV remote.
-
-7. AGGIORNAMENTI
----------------
-Sono presenti entrambi gli avvisi:
-A. Nuova versione disponibile.
-B. Aggiornamento installato.
-
-Il codice NON viene scaricato/eseguito automaticamente dal Web.
-L'installazione delle release resta un'operazione dell'amministratore.
-
-Per annunciare una nuova versione:
-- aumentare il numero in VERSION, per esempio 0.2.0;
-- preparare e testare la release;
-- pubblicare su un proprio indirizzo HTTPS un JSON basato su
-  deploy/release.example.json;
-- usare app = "pulse-dietikon", version = nuova versione e notes EN/DE/FR;
-- inserire l'URL in Impostazioni.
-
-Il manifest deve essere un JSON HTTPS diretto, senza redirect.
-Se il campo è vuoto non partono richieste esterne.
-Il confronto usa il numero versione. Se il controllo fallisce, resta
-disponibile l'ultima informazione verificata e l'amministratore vede l'errore.
-Il timer controlla circa ogni ora; nella pagina Updates c'è il controllo manuale.
-
-Installazione manuale di una release 0.2.0 già copiata sul Raspberry:
-    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php /opt/pulse/current/bin/console.php backup manual
-    sudo systemctl stop nginx php8.4-fpm
-    sudo install -d -o root -g www-data -m 0750 /opt/pulse/releases/0.2.0
-    sudo rsync -a --exclude=storage --exclude=.git --exclude=config/local.php /home/NOME_UTENTE/pulse-release-0.2.0/ /opt/pulse/releases/0.2.0/
-    sudo chown -R root:www-data /opt/pulse/releases/0.2.0
-    sudo find /opt/pulse/releases/0.2.0 -type d -exec chmod 0750 {} \;
-    sudo find /opt/pulse/releases/0.2.0 -type f -exec chmod 0640 {} \;
-    sudo -u www-data env PULSE_STORAGE=/var/lib/pulse php /opt/pulse/releases/0.2.0/bin/console.php migrate
-
-Se migrate riesce, attivare:
-    sudo ln -s /opt/pulse/releases/0.2.0 /opt/pulse/current-next
-    sudo mv -Tf /opt/pulse/current-next /opt/pulse/current
-    sudo systemctl start php8.4-fpm nginx
-
-Usare una directory release e un link current-next nuovi.
-Non sovrascrivere una release già presente senza verificarne lo stato.
-Database e immagini restano in /var/lib/pulse e non si copiano dalla release.
-Leggere le note della release per eventuali cambiamenti ai servizi.
-config/local.php non viene copiato automaticamente: nella configurazione
-standard il percorso dati è PULSE_STORAGE e le impostazioni sono nel database.
-
-Alla prima richiesta viene registrato il nuovo numero VERSION.
-La TV controlla i dati ogni 30 secondi: se cambia versione, avvisa e ricarica
-i file. Se era spenta, mostra l'avviso entro 24 ore dall'installazione,
-una volta per sessione del browser.
-Le altre modifiche ai contenuti non richiedono il riavvio di Chromium.
-
-Se la migrazione fallisce, non attivare la release. Ripristinare il backup
-se i dati sono stati modificati, verificare e poi riavviare i servizi.
-Conservare la release precedente finché la nuova non è stata verificata.
-
-8. VERIFICHE FINALI E LOG
-------------------------
-    systemctl status nginx php8.4-fpm
-    systemctl list-timers 'pulse-*'
-    journalctl -u pulse-backup@daily.service -n 50
-    journalctl -u pulse-updates.service -n 50
-    sudo nginx -t
-
-Log:
-    /var/lib/pulse/logs/php.log
-    /var/log/nginx/pulse-error.log
-    ~/.local/state/pulse/kiosk.log
-
-Prima dell'uso in negozio provare sul Pi 3:
-riavvio completo, un ciclo TV Full HD, foto, salvataggi, backup/ripristino
-su dati di prova e un aggiornamento di prova.
-
-Riferimenti ufficiali:
-https://www.raspberrypi.com/tutorials/how-to-use-a-raspberry-pi-in-kiosk-mode/
-https://www.php.net/supported-versions.php
-https://www.sqlite.org/backup.html
-
+COLLAUDO PRIMA DELLA SPEDIZIONE
+Verificare su un dispositivo di prova: installazione reale, riavvio, IP TV,
+setup da un secondo PC, rotazione Full HD per almeno 30 minuti, immagini,
+animazioni natalizie, upload, backup/ripristino e aggiornamento firmato.
+Le prove automatiche su workstation non certificano prestazioni ARM/1 GB,
+accelerazione video, monitor, rete aziendale o sessione grafica Raspberry.

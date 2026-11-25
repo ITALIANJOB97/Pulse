@@ -1,3 +1,6 @@
+> Pacchetto locale 0.4.0: [Raspberry Pi e nuove filiali](docs/FILIALI_RASPBERRY.md).
+> Installazione: [guida Raspberry](INSTALLAZIONE_RASPBERRY.txt). Collaudo hardware ancora da completare.
+
 # PULSE 0.3.3
 
 Natale animato: Babbo Natale saluta dalla slitta; renna e schiaccianoci saltellano, marciano o fanno capolino con percorsi casuali. Ghirlanda, neve, campanelle, Zuckerstangen e alberi con regali. Attivazione automatica dal 1 dicembre al 6 gennaio. [Decorazioni e calendario](docs/DECORAZIONI_STAGIONALI.md).
@@ -79,7 +82,7 @@ servono una sessione amministratore o il link TV privato, revocabile.
 ## Sviluppo locale
 
 Estensioni: pdo_sqlite, sqlite3, gd, fileinfo, zip, curl, mbstring, intl.
-exif facoltativa; sodium necessaria per il servizio aggiornamenti Mint. Nessun build frontend.
+exif facoltativa; sodium necessaria per il servizio aggiornamenti Mint e Raspberry. Nessun build frontend.
 
 ~~~sh
 php bin/console.php setup-token

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# XDG autostart works with Cinnamon, MATE and Xfce.
+# XDG autostart: Mint desktops and Raspberry Pi OS Desktop (lxsession-xdg-autostart).
 set -euo pipefail
 [[ "$(id -u)" != 0 ]] || { echo "Eseguire dal proprio utente desktop, senza sudo." >&2; exit 1; }
 CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -21,7 +21,7 @@ case "${1:-}" in
     "") [[ $# == 0 ]] || exit 1 ;;
     *) echo "Uso: pulse-enable-kiosk [--disable]" >&2; exit 1 ;;
 esac
-[[ -x /usr/local/bin/pulse-kiosk ]] || { echo "Installare prima il server con deploy/install-mint.sh."; exit 1; }
+[[ -x /usr/local/bin/pulse-kiosk ]] || { echo "Installare prima il server PULSE."; exit 1; }
 for file in "$AUTOSTART" "$LAUNCHER" "$STOP_LAUNCHER"; do
     if [[ -e "$file" || -L "$file" ]]; then
         [[ ! -L "$file" ]] && grep -qx 'X-PULSE-Managed=true' "$file" ||
@@ -33,7 +33,7 @@ cat > "$LAUNCHER" <<'DESKTOP'
 [Desktop Entry]
 Type=Application
 Name=PULSE TV
-Comment=Dashboard Dietikon a schermo intero
+Comment=Dashboard PULSE a schermo intero
 Exec=/usr/local/bin/pulse-kiosk
 TryExec=/usr/local/bin/pulse-kiosk
 Icon=video-display

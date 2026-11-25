@@ -9,7 +9,9 @@ import argparse
 from package_compatibility import verify_package
 parser = argparse.ArgumentParser()
 parser.add_argument("--review", action="store_true", help="Build a separate source review archive without replacing a published version")
-REVIEW = parser.parse_args().review
+parser.add_argument("--platform", choices=["mint", "raspberry", "all"], default="all")
+ARGS = parser.parse_args()
+REVIEW = ARGS.review
 
 ROOT = Path(__file__).resolve().parent.parent
 VERSION = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
@@ -94,8 +96,11 @@ def build(prefix: str, files: list[str]):
         temporary.unlink(missing_ok=True)
 
 
-build("PULSE-Update-Protocol-Review" if REVIEW else f"PULSE-Dietikon-Linux-Mint-{VERSION}", FILES)
-if not REVIEW:
+if ARGS.platform in ("mint", "all"):
+    build("PULSE-Update-Protocol-Review" if REVIEW else f"PULSE-Dietikon-Linux-Mint-{VERSION}", FILES)
+if ARGS.platform in ("raspberry", "all"):
+    build("PULSE-Raspberry-Review" if REVIEW else f"PULSE-Raspberry-Pi-{VERSION}", FILES)
+if not REVIEW and ARGS.platform in ("mint", "all"):
     build(f"PULSE-Diagnosi-Linux-Mint-{VERSION}", [
     "VERSION", "DIAGNOSI_LINUX_MINT.txt", "deploy/diagnose-mint.sh", "deploy/support-mint.py",
 ])
