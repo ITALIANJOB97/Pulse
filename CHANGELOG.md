@@ -1,4 +1,4 @@
-## 0.4.0 — 2026-11-24 (preparazione locale)
+## 0.4.0 — anteprima Raspberry pubblicata il 2026-11-25
 
 - Installer da terminale con download GitHub verificato, configurazione automatica della TV e riavvio opzionale; candidato Raspberry separato dalla release stabile.
 

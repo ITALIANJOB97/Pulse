@@ -1,5 +1,5 @@
-> Pacchetto locale 0.4.0: [Raspberry Pi e nuove filiali](docs/FILIALI_RASPBERRY.md).
-> Installazione: [guida Raspberry](INSTALLAZIONE_RASPBERRY.txt). Collaudo hardware ancora da completare.
+> Anteprima Raspberry 0.4.0: [release GitHub](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.4.0-raspberry-preview.1).
+> [Installazione automatica da terminale](docs/INSTALLAZIONE_ONLINE_RASPBERRY.md) · [guida Raspberry](INSTALLAZIONE_RASPBERRY.txt). Collaudo hardware ancora da completare; la stabile Mint rimane 0.3.3.
 
 # PULSE 0.3.3
 

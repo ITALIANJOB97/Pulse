@@ -1,6 +1,8 @@
 # Documentazione PULSE
 
-Versione in preparazione: **0.4.0**, aggiornata il 25 novembre 2026 (locale, non pubblicata).
+Anteprima Raspberry **0.4.0**, pubblicata il 25 novembre 2026:
+[v0.4.0-raspberry-preview.1](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.4.0-raspberry-preview.1).
+Resta da collaudare sull'hardware; il canale stabile Mint rimane **0.3.3**.
 
 - [Nuove filiali e Raspberry Pi](FILIALI_RASPBERRY.md).
 - [Installazione Raspberry e consegna](../INSTALLAZIONE_RASPBERRY.txt).

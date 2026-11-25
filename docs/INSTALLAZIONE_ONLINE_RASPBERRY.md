@@ -1,8 +1,8 @@
 # Raspberry: download e installazione da terminale
 
-25 novembre 2026. Installer preparato localmente per il collaudo di PULSE 0.4.0.
-La pubblicazione del tag `v0.4.0-raspberry-preview.1` va verificata prima di usare
-il comando GitHub. La release stabile attualmente verificata è la 0.3.3 (Mint).
+25 novembre 2026. [Anteprima Raspberry pubblicata su GitHub](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.4.0-raspberry-preview.1).
+Download anonimo dell'installer e dello ZIP verificati, inclusi SHA256 ed estrazione.
+La release stabile rimane la 0.3.3 (Mint).
 
 ## Prerequisiti
 
@@ -11,7 +11,7 @@ Internet, utente desktop con sudo. Eseguire dal terminale del Raspberry come
 utente normale. L'installer chiede la password sudo quando serve; non eseguirlo
 come root. Sono necessari Python 3 e curl, inclusi nella normale immagine Desktop.
 
-## Dopo la pubblicazione del candidato su GitHub
+## Comando da eseguire sul Raspberry
 
 ```bash
 curl --fail --show-error --location --proto '=https' --proto-redir '=https' \

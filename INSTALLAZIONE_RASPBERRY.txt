@@ -1,5 +1,5 @@
 PULSE 0.4.0 — RASPBERRY PI / NUOVE FILIALI
-25 novembre 2026 — pacchetto locale da collaudare sul dispositivo prima della spedizione.
+25 novembre 2026 — anteprima Raspberry da collaudare prima della spedizione.
 
 SISTEMA E COMPONENTI
 Raspberry Pi 3B+ (o superiore), Raspberry Pi OS 64-bit con Desktop,

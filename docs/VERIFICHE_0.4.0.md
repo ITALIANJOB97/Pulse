@@ -1,7 +1,8 @@
 # Verifiche PULSE 0.4.0 — Raspberry e nuove filiali
 
-24–25 novembre 2026. Preparazione locale: nessun caricamento GitHub/blog, nessuna
-installazione sul Mint del negozio e nessun accesso a dati reali.
+24–25 novembre 2026. Preparazione e pubblicazione della sola anteprima Raspberry
+su GitHub; nessun caricamento sul blog, nessuna installazione sul Mint del negozio
+e nessun accesso a dati reali.
 
 ## Evidenze eseguite
 
@@ -54,7 +55,22 @@ Il generatore `bin/build-raspberry-online.py` prepara ZIP, bootstrap con hash
 incorporato e SHA256SUMS per una pre-release Raspberry separata. Preparare gli
 asset non li pubblica e non modifica il canale stabile Mint.
 
-## Limiti e passo prima della pubblicazione
+## Pubblicazione dell'anteprima
+
+Il 25 novembre, con autorizzazione dell'utente, pubblicata
+[v0.4.0-raspberry-preview.1](https://github.com/ITALIANJOB97/Pulse/releases/tag/v0.4.0-raspberry-preview.1)
+dal commit `a36e483c6a96ded723193d6ab845b357985640bb` sul ramo
+`codex/raspberry-onboarding`. La release è una pre-release; latest rimane `v0.3.3`.
+Tre asset: installer, ZIP Raspberry e SHA256SUMS. Dimensioni e checksum del
+caricamento verificati. Download pubblico senza credenziali dell'installer e
+dello ZIP riuscito; il codice reale del bootstrap ha verificato hash ed estrazione
+senza installare componenti sul computer di prova.
+
+ZIP: 19.055.382 byte, SHA256
+`247d06261b9b8e822e8ae2ff516f9413e42b8ceb2d21d03dd7b25d60eecbf7c5`.
+Gli asset pubblicati restano immutati; queste note successive documentano l'esito.
+
+## Limiti e passo prima della pubblicazione stabile
 
 Non è disponibile un Raspberry fisico. Non sono ancora eseguiti l'installer apt
 su Pi OS Trixie, PHP 8.4 ARM64, avvio desktop/labwc, reboot reale e misura di

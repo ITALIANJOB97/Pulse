@@ -1,6 +1,7 @@
 # Nuove filiali: Raspberry Pi e primo accesso
 
-25 novembre 2026 · PULSE 0.4.0, preparazione locale.
+25 novembre 2026 · PULSE 0.4.0, anteprima Raspberry pubblicata.
+[Installazione automatica da terminale](INSTALLAZIONE_ONLINE_RASPBERRY.md).
 
 La procedura completa è in [INSTALLAZIONE_RASPBERRY.txt](../INSTALLAZIONE_RASPBERRY.txt).
 Ogni filiale ha il proprio server, amministratori, dipendenti e contenuti.
